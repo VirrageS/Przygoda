@@ -41,9 +41,9 @@
 		<td>{{ adventure.user }}</td>
 		<td>{{ adventure.date.strftime('%Y-%m-%d %H:%M') }}</td>
 		<td>{{ adventure.info }}</td>
-		<td>{{ adventure.users_joined }}</td>
+		<td>{{ adventure.joined }}</td>
 		{% if g.user.is_authenticated() %}
-		<td><a href="/join/{{ adventure.id }}">Dołącz</a>
+		<td><a href="/adventures/join/{{ adventure.id }}">Dołącz</a>
 		{% endif %}
 	  </tr>
 	  {% endfor %}
