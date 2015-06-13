@@ -1,3 +1,9 @@
+from flask_sqlalchemy import SQLAlchemy
+from flask import Flask,session, request, flash, url_for, redirect, render_template, abort ,g
+from flask.ext.login import login_user , logout_user , current_user , login_required
+
+from flask.ext.login import LoginManager
+
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column('user_id',db.Integer , primary_key=True)
