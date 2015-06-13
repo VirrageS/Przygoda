@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+  <form action="" method=post class="form-horizontal">
+	<h2>Stwórz nową przygodę</h2>
+
+	<div class="control-group">
+		<div class="controls">
+		 	<input type="text" name="info" placeholder="Data" required value="{{ request.form.info }}">
+		</div>
+	</div>
+
+	<div class="control-group">
+		<div class="controls">
+			<textarea name="info" rows=10 class="input-xlarge" placeholder="Informacje o przygodzie" required>{{ request.form.info }}</textarea>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<div class="controls">
+		  <button type="submit" class="btn btn-success">Stwórz nową przygodę</button>
+		  <a href="{{ url_for('index') }}">Powrót</a>
+		</div>
+	</div>
+  </form>
+{% endblock %}

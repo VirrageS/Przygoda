@@ -1,16 +1,53 @@
 {% extends "layout.html" %}
 {% block body %}
 <div id="main" class="container">
-    <h2>All Items</h2>
-    <table class="table table-hover">
-      <tr>
-        <th>#
-        <th>Title
-        <th>Date
-        <th>Text
-    </table>
-    <p>
+{% with %}
 
+	{% set location=(52.229937, 21.011380) %}
+	{% set style="width:400px;height:400px;"%}
 
+	{{
+	googlemap(
+		"przygoda",
+		location.0, location.1,
+		markers=[location,],
+		style=style
+		)
+	}}
+
+{% endwith %}
+
+	<h2>Przygody</h2>
+	<table class="table table-hover">
+		<tr>
+			<th>#</th>
+			<th>Założyciel</th>
+			<th>Data przygody</th>
+			<th>Informacje</th>
+			<th>Dołączyło</th>
+			{% if g.user.is_authenticated() %}
+			<th>Akcja</th>
+			{% endif %}
+		</tr>
+	  {% for adventure in adventures %}
+	  <tr>
+		<td>
+			{% if g.user.is_authenticated() %}
+			<a href="/adventures/{{ adventure.id }}">{{ adventure.id }}</a>
+			{% else %}
+			{{ adventure.id }}
+			{% endif %}
+		</td>
+		<td>{{ adventure.user }}</td>
+		<td>{{ adventure.date.strftime('%Y-%m-%d %H:%M') }}</td>
+		<td>{{ adventure.info }}</td>
+		<td>{{ adventure.users_joined }}</td>
+		{% if g.user.is_authenticated() %}
+		<td><a href="/join/{{ adventure.id }}">Dołącz</a>
+		{% endif %}
+	  </tr>
+	  {% endfor %}
+
+	</table>
 </div>
 {% endblock %}
