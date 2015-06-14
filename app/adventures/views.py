@@ -16,7 +16,7 @@ def new():
 		if not request.form['info']:
 			flash('Info is required', 'error')
 		else:
-			adventure = Adventure(g.user.username, datetime.utcnow(), request.form['info'], 1)
+			adventure = Adventure(user=g.user.username, date=datetime.utcnow(), info=request.form['info'], joined=1)
 			db.session.add(adventure)
 			db.session.commit()
 			flash(u'Adventure item was successfully created')
