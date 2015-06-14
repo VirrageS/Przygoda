@@ -13,8 +13,16 @@ Note that my current folder is `Desktop` (your path can differ)
 
 ## Initialize virtualenv and install dependencies
 Now we are installing virtual env to make app work
+To install virtual env type:
 
 	MacBook-Air-Janusz:Przygoda VirrageS$ sudo pip install virtualenv
+
+or:
+
+	MacBook-Air-Janusz:Przygoda VirrageS$ sudo easy_install virtualenv
+
+Now install dependencies for project
+
 	MacBook-Air-Janusz:Przygoda VirrageS$ virtualenv flaskenv
 	MacBook-Air-Janusz:Przygoda VirrageS$ source flaskenv/bin/activate
 	(flaskenv)MacBook-Air-Janusz:Przygoda VirrageS$ pip install -r requirements.txt
