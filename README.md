@@ -14,7 +14,7 @@ Note that my current folder is `Desktop` (your path can differ)
 ## Initialize virtualenv and install dependencies
 Now we are installing virtual env to make app work.
 
-To install virtual env type:
+To install virtual env (pick one which will be working :P):
 
 	MacBook-Air-Janusz:Przygoda VirrageS$ sudo pip install virtualenv
 
@@ -29,20 +29,23 @@ Now install dependencies for project
 	(flaskenv)MacBook-Air-Janusz:Przygoda VirrageS$ pip install -r requirements.txt
 
 ## Create database
-Creating database which will be used in app.
+Creating database which will be used by app. Note that everytime you do this old database is deleted!!
 
-It should be done only one time before first start.
-
+	MacBook-Air-Janusz:Przygoda VirrageS$
 	MacBook-Air-Janusz:Przygoda VirrageS$ source flaskenv/bin/activate
 	(flaskenv)MacBook-Air-Janusz:Przygoda VirrageS$ python shell.py
 	>>> from app import db
 	>>> db.create_all()
 	>>> exit()
 
+(You should do it only when launching app for the first time, added new module which requires new table or modified existing one).
+
 ## Run
 Note that if your are not in virtual env you should type:
 
+	MacBook-Air-Janusz:Przygoda VirrageS$
 	MacBook-Air-Janusz:Przygoda VirrageS$ source flaskenv/bin/activate
+	(flaskenv)MacBook-Air-Janusz:Przygoda VirrageS$
 
 Now you can easily run your app `python run.py`.
 
