@@ -3,6 +3,8 @@ from app import db
 from app.users import constants as USER
 
 class User(db.Model):
+	"""Provides class for User"""
+
 	__tablename__ = "users"
 	id = db.Column('user_id', db.Integer, primary_key=True)
 	username = db.Column('username', db.String(20), unique=True, index=True)

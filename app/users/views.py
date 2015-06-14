@@ -14,20 +14,27 @@ def register():
 		return render_template('users/register.html')
 
 	# @todo: check if request forms are filled properly
-	# @TODO: check if user exists in database
+	# @todo: check if user exists in database
 
-	# register user to database
-	user = User(request.form['username'] , request.form['password'], request.form['email'])
+	# create new user
+	user = User(
+		request.form['username'],
+		request.form['password'],
+		request.form['email']
+	)
+	# add user to database
 	db.session.add(user)
 	db.session.commit()
 
-	# message and redirecting to login
+	# everything okay so back
 	flash('User successfully registered')
 	return redirect(url_for('users.login'))
 
 # Login
 @mod.route('/login/', methods=['GET','POST'])
 def login():
+	"""Handels login path"""
+
 	if request.method == 'GET':
 		return render_template('users/login.html')
 
@@ -41,20 +48,31 @@ def login():
 		remember_me = True
 
 	# get user from database
-	registered_user = User.query.filter_by(username=username,password=password).first()
+	registered_user = User.query.filter_by(
+		username=username,
+		password=password
+	).first()
 
 	# failed to get user
 	if registered_user is None:
 		flash('Username or Password is invalid' , 'error')
 		return redirect(url_for('users.login'))
 
-	# users was loaded
-	login_user(registered_user, remember = remember_me)
+	# login user to system
+	login_user(registered_user, remember=remember_me)
+
+	# everything okay so back
 	flash('Logged in successfully')
 	return redirect(request.args.get('next') or url_for('simple_page.index'))
 
 # Logout
 @mod.route('/logout/')
 def logout():
+	"""Handels logout path"""
+
+	# logout user from system
 	logout_user()
+
+	# everything okay so back
+	flash('Logged out successfully')
 	return redirect(url_for('simple_page.index'))
