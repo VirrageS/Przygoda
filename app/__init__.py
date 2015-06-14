@@ -60,19 +60,14 @@ GoogleMaps(app)
 def not_found(error):
     return render_template('404.html'), 404
 
-# Main path - layout
-from app.adventures.models import Adventure
-@app.route("/")
-def index():
-    return render_template('index.html',
-        adventures = Adventure.query.order_by(Adventure.date.desc()).all()
-    )
-
 from app.users.views import mod as usersModule
 app.register_blueprint(usersModule)
 
 from app.adventures.views import mod as adventuresModules
 app.register_blueprint(adventuresModules)
+
+from app.views import mod as modules
+app.register_blueprint(modules)
 
 # Later on you'll import the other blueprints the same way:
 #from app.comments.views import mod as commentsModule
