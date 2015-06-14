@@ -12,7 +12,8 @@ Note that my current folder is `Desktop` (your path can differ)
 	MacBook-Air-Janusz:Przygoda VirrageS$
 
 ## Initialize virtualenv and install dependencies
-Now we are installing virtual env to make app work
+Now we are installing virtual env to make app work.
+
 To install virtual env type:
 
 	MacBook-Air-Janusz:Przygoda VirrageS$ sudo pip install virtualenv
@@ -29,6 +30,7 @@ Now install dependencies for project
 
 ## Create database
 Creating database which will be used in app.
+
 It should be done only one time before first start.
 
 	MacBook-Air-Janusz:Przygoda VirrageS$ source flaskenv/bin/activate
