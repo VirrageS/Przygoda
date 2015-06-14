@@ -13,12 +13,11 @@ def register():
 	if request.method == 'GET':
 		return render_template('users/register.html')
 
-
-	# @todo: check if request forms are filled properly
 	username = request.form['username']
 	password = request.form['password']
 	email = request.form['email']
 
+	# @todo: check if request forms are filled properly
 
 	# check for error
 	error = False
@@ -89,7 +88,7 @@ def login():
 
 	# failed to get user
 	if registered_user is None:
-		flash('Username or Password is invalid' , 'error')
+		flash('Username or Password is invalid', 'error')
 		return redirect(url_for('users.login'))
 
 	# login user to system
