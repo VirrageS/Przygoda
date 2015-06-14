@@ -4,10 +4,10 @@ Aplikacja Przygoda jest najlepszym sposobem na znajdowanie miłośników roweró
 # Installation
 
 ## Clone GitHub project
-Note that my current folder is `Desktop`
+Note that my current folder is `Desktop` (your path can differ)
 
 	MacBook-Air-Janusz:Desktop VirrageS$
-	MacBook-Air-Janusz:Desktop VirrageS$ git clone git@github.com:VirrageS/Przygoda.git
+	MacBook-Air-Janusz:Desktop VirrageS$ git clone https://github.com/VirrageS/Przygoda
 	MacBook-Air-Janusz:Desktop VirrageS$ cd Przygoda
 	MacBook-Air-Janusz:Przygoda VirrageS$
 
@@ -16,8 +16,8 @@ Now we are installing virtual env to make app work
 
 	MacBook-Air-Janusz:Przygoda VirrageS$ sudo pip install virtualenv
 	MacBook-Air-Janusz:Przygoda VirrageS$ virtualenv flaskenv
-	MacBook-Air-Janusz:Przygoda VirrageS$ cd flaskenv
-	MacBook-Air-Janusz:flaskenv VirrageS$ pip install -r requirements.txt
+	MacBook-Air-Janusz:Przygoda VirrageS$ source flaskenv/bin/activate
+	(flaskenv)MacBook-Air-Janusz:Przygoda VirrageS$ pip install -r requirements.txt
 
 ## Create database
 Creating database which will be used in app.
