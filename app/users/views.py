@@ -13,15 +13,50 @@ def register():
 	if request.method == 'GET':
 		return render_template('users/register.html')
 
+
 	# @todo: check if request forms are filled properly
-	# @todo: check if user exists in database
+	username = request.form['username']
+	password = request.form['password']
+	email = request.form['email']
+
+
+	# check for error
+	error = False
+
+	# username was not provided
+	if username is None or (username == ''):
+		flash('No username')
+		error = True
+
+	# password was not provided
+	if password is None or (password == ''):
+		flash('No password')
+		error = True
+
+	# email was not provided
+	if (email is None) or (email == ''):
+		flash('No email')
+		error = True
+
+	# error occured so we back
+	if error:
+		return render_template('users/register.html')
+
+	# check if user with name exists
+	checkUser = User.query.filter_by(username=username).first()
+
+	# check if users with email exists
+	if checkUser is None:
+		checkUser = User.query.filter_by(email=email).first()
+
+	# user with username exists
+	if checkUser != None:
+		flash('User with provided username or email arleady exists')
+		return render_template('users/register.html')
 
 	# create new user
-	user = User(
-		request.form['username'],
-		request.form['password'],
-		request.form['email']
-	)
+	user = User(username, password, email)
+
 	# add user to database
 	db.session.add(user)
 	db.session.commit()
@@ -42,7 +77,6 @@ def login():
 	username = request.form['username']
 	password = request.form['password']
 
-	# remember me - must be in form
 	remember_me = False
 	if 'remember_me' in request.form:
 		remember_me = True
