@@ -29,8 +29,9 @@ Teraz czas na wszystkie biblioteki:
 	(flaskenv)MacBook-Air-Janusz:Przygoda VirrageS$ pip install -r requirements.txt
 
 ## Tworzenie bazy danych
-Tworzymy bazę danych do naszej aplikacji. Za każdym razem jak wykonujemy
+Tworzymy bazę danych do naszej aplikacji. Pamiętaj: za każdym razem jak wykonujemy
 komende `db.create_all()` stara baza danych jest nadpisywana.
+
 Aby utworzyć bazę danych wpisujemy:
 
 	MacBook-Air-Janusz:Przygoda VirrageS$
@@ -70,19 +71,19 @@ dokumentację.
 ## Przykład:
 
 ```python
-	def test_add_user_to_database(self):
-		u = User(username='john', password='a', email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
-		u = User.query.filter_by(username='john').first()
-		assert u.username == 'john'
-		assert u.password == 'a'
-		assert u.email == 'john@example.com'
+def test_add_user_to_database(self):
+	u = User(username='john', password='a', email='john@example.com')
+	db.session.add(u)
+	db.session.commit()
+	u = User.query.filter_by(username='john').first()
+	assert u.username == 'john'
+	assert u.password == 'a'
+	assert u.email == 'john@example.com'
 
-		u = User(username='johner', password='a', email='susan@examplee.com')
-		db.session.add(u)
-		db.session.commit()
-		u = User.query.filter_by(username='johner').first()
-		assert u.username != 'john'
-		assert u.username == 'johner'
+	u = User(username='johner', password='a', email='susan@examplee.com')
+	db.session.add(u)
+	db.session.commit()
+	u = User.query.filter_by(username='johner').first()
+	assert u.username != 'john'
+	assert u.username == 'johner'
 ```
