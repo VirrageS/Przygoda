@@ -17,7 +17,7 @@ Now we are installing virtual env to make app work
 	MacBook-Air-Janusz:Przygoda VirrageS$ sudo pip install virtualenv
 	MacBook-Air-Janusz:Przygoda VirrageS$ virtualenv flaskenv
 	MacBook-Air-Janusz:Przygoda VirrageS$ cd flaskenv
-	MacBook-Air-Janusz:Przygoda VirrageS$ pip install -r requirements.txt
+	MacBook-Air-Janusz:flaskenv VirrageS$ pip install -r requirements.txt
 
 ## Create database
 Creating database which will be used in app.
