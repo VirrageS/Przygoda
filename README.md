@@ -1,35 +1,37 @@
 # Przygoda
 Aplikacja Przygoda jest najlepszym sposobem na znajdowanie miłośników rowerów
 
-# Installation
+# Instalacja
 
 ## Clone GitHub project
-Note that my current folder is `Desktop` (your path can differ)
+Klonujemy nasze repozytorium:
 
 	MacBook-Air-Janusz:Desktop VirrageS$
 	MacBook-Air-Janusz:Desktop VirrageS$ git clone https://github.com/VirrageS/Przygoda
 	MacBook-Air-Janusz:Desktop VirrageS$ cd Przygoda
 	MacBook-Air-Janusz:Przygoda VirrageS$
 
-## Initialize virtualenv and install dependencies
-Now we are installing virtual env to make app work.
+## Inicjacja wirtualnego środowiska i bibliotek
+Teraz instalujemy wirtualne środowisko pythona.
 
-To install virtual env (pick one which will be working :P):
+Wybierz jedną z opcji instalacji:
 
 	MacBook-Air-Janusz:Przygoda VirrageS$ sudo pip install virtualenv
 
-or:
+lub:
 
 	MacBook-Air-Janusz:Przygoda VirrageS$ sudo easy_install virtualenv
 
-Now install dependencies for project
+Teraz czas na wszystkie biblioteki:
 
 	MacBook-Air-Janusz:Przygoda VirrageS$ virtualenv flaskenv
 	MacBook-Air-Janusz:Przygoda VirrageS$ source flaskenv/bin/activate
 	(flaskenv)MacBook-Air-Janusz:Przygoda VirrageS$ pip install -r requirements.txt
 
-## Create database
-Creating database which will be used by app. Note that everytime you do this old database is deleted!!
+## Tworzenie bazy danych
+Tworzymy bazę danych do naszej aplikacji. Za każdym razem jak wykonujemy
+komende `db.create_all()` stara baza danych jest nadpisywana.
+Aby utworzyć bazę danych wpisujemy:
 
 	MacBook-Air-Janusz:Przygoda VirrageS$
 	MacBook-Air-Janusz:Przygoda VirrageS$ source flaskenv/bin/activate
@@ -38,19 +40,49 @@ Creating database which will be used by app. Note that everytime you do this old
 	>>> db.create_all()
 	>>> exit()
 
-(You should do it only when launching app for the first time, added new module which requires new table or modified existing one).
+Rekomendowane użycie: za pierwszym razem odpalenia aplikacji,
+po dodaniu noweg modułu lub modyfikacji istniejącego modułu (oczywiście
+jeżeli te moduły dziedziczą po `db.Model`).
 
-## Run
-Note that if your are not in virtual env you should type:
+## Odpalanie aplikacji
+Jeżeli nie jesteśmy w wirtualnym środowisku musimy wpisać:
 
 	MacBook-Air-Janusz:Przygoda VirrageS$
 	MacBook-Air-Janusz:Przygoda VirrageS$ source flaskenv/bin/activate
 	(flaskenv)MacBook-Air-Janusz:Przygoda VirrageS$
 
-Now you can easily run your app `python run.py`.
+Teraz odpalamy naszą aplikację dzięki `python run.py`.
 
 	(flaskenv)MacBook-Air-Janusz:Przygoda VirrageS$ python run.py
 	 * Running on http://127.0.0.1:5000/
 	 * Restarting with reloader
 
-Open your web-browser at [http://127.0.0.1:5000], you should be redirected to the website
+Teraz pozostało w przeglądarce wpisać [http://127.0.0.1:5000]
+i powinniśmy zostać przekierowani do naszej aplikacji.
+
+
+# Testowanie
+
+Testowanie odbywa się w pliku `tests.py` umieszczamy w nim wszystkie unit_test,
+które chcemy przetestować. Testy powinny mieć porządne nazwy funkcji i najlepiej
+dokumentację.
+
+## Przykład:
+
+```python
+	def test_add_user_to_database(self):
+		u = User(username='john', password='a', email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+		u = User.query.filter_by(username='john').first()
+		assert u.username == 'john'
+		assert u.password == 'a'
+		assert u.email == 'john@example.com'
+
+		u = User(username='johner', password='a', email='susan@examplee.com')
+		db.session.add(u)
+		db.session.commit()
+		u = User.query.filter_by(username='johner').first()
+		assert u.username != 'john'
+		assert u.username == 'johner'
+```
