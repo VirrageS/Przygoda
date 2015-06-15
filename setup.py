@@ -1,6 +1,7 @@
 import os
 import sys
 from setuptools import setup
+from config import basedir
 
 install_requires = ["requests"]
 tests_require = ["mock", "unittest2"]

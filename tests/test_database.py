@@ -2,7 +2,7 @@ import os
 import unittest
 
 from datetime import datetime
-from config import _basedir
+from config import basedir
 from app import app, db
 from app.users.models import User
 from app.adventures.models import Adventure
@@ -11,7 +11,7 @@ class DatabaseTestCase(unittest.TestCase):
 	def setUp(self):
 		app.config['TESTING'] = True
 		app.config['WTF_CSRF_ENABLED'] = False
-		app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(_basedir, 'test.db')
+		app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'test.db')
 		self.app = app.test_client()
 		db.create_all()
 
