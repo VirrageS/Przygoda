@@ -1,10 +1,7 @@
 import os
 import unittest
 
-import app
 from datetime import datetime
-from config import _basedir
-import app
 from app import app
 from app.adventures.models import Adventure
 
