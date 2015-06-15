@@ -3,15 +3,15 @@ import unittest
 
 
 def get_tests():
-    return full_suite()
+	return full_suite()
 
 def full_suite():
-    from .test_database import DatabaseTestCase
-    from .test_model_adventure import AdventureTestCase
-    from .test_model_user import UserTestCase
+	from .test_database import DatabaseTestCase
+	from .test_model_adventure import AdventureTestCase
+	from .test_model_user import UserTestCase
 
-    resourcesuite = unittest.TestLoader().loadTestsFromTestCase(DatabaseTestCase)
-    serializersuite = unittest.TestLoader().loadTestsFromTestCase(AdventureTestCase)
-    utilssuite = unittest.TestLoader().loadTestsFromTestCase(UserTestCase)
+	database_suite = unittest.TestLoader().loadTestsFromTestCase(DatabaseTestCase)
+	model_adventure_suite = unittest.TestLoader().loadTestsFromTestCase(AdventureTestCase)
+	model_user_suite = unittest.TestLoader().loadTestsFromTestCase(UserTestCase)
 
-    return unittest.TestSuite([resourcesuite, serializersuite, utilssuite])
+	return unittest.TestSuite([database_suite, model_adventure_suite, model_user_suite])
