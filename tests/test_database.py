@@ -7,7 +7,7 @@ from app import app, db
 from app.users.models import User
 from app.adventures.models import Adventure
 
-class TestCase(unittest.TestCase):
+class DatabaseTestCase(unittest.TestCase):
 	def setUp(self):
 		app.config['TESTING'] = True
 		app.config['WTF_CSRF_ENABLED'] = False
@@ -18,10 +18,6 @@ class TestCase(unittest.TestCase):
 	def tearDown(self):
 		db.session.remove()
 		db.drop_all()
-
-	def test_avatar(self):
-		u = User(username='john', password='a', email='john@example.com')
-		assert True
 
 	def test_add_adventure_to_database(self):
 		a = Adventure(user='john', date=datetime.utcnow(), info='Some info today', joined=10)
@@ -52,6 +48,3 @@ class TestCase(unittest.TestCase):
 		u = User.query.filter_by(username='johner').first()
 		assert u.username != 'john'
 		assert u.username == 'johner'
-
-if __name__ == '__main__':
-	unittest.main()
