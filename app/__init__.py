@@ -36,8 +36,6 @@ def install_secret_key(app, filename='secret_key'):
 if not app.config['DEBUG']:
 	install_secret_key(app)
 
-
-
 # Login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
