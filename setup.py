@@ -1,12 +1,10 @@
 import os
 import sys
 from setuptools import setup
-from config import basedir
+from config import base_dir
 
 install_requires = ["requests"]
-tests_require = ["mock", "unittest2"]
-
-base_dir = os.path.dirname(os.path.abspath(__file__))
+tests_require = ["unittest2"]
 
 version = "0.0.1"
 
@@ -16,14 +14,10 @@ if sys.argv[-1] == 'publish':
 	print("Published version %s, do `git push --tags` to push new tag to remote" % version)
 	sys.exit()
 
-if sys.argv[-1] == 'syncci':
-	os.system("panci --to=tox .travis.yml > tox.ini");
-	sys.exit();
-
 setup(
 	name = "przygoda",
 	version = version,
-	description = "A library that makes consuming a REST API easier and more convenient",
+	description = "Aplikacja Przygoda jest najlepszym sposobem na znajdowanie miłośników rowerów",
 	long_description="\n\n".join([
 		open(os.path.join(base_dir, "README.md"), "r").read()
 	]),
