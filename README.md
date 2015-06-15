@@ -64,26 +64,36 @@ i powinniśmy zostać przekierowani do naszej aplikacji.
 
 # Testowanie
 
-Testowanie odbywa się w pliku `tests.py` umieszczamy w nim wszystkie unit_test,
-które chcemy przetestować. Testy powinny mieć porządne nazwy funkcji i najlepiej
+Testowanie odbywa się automatycznie po `git push` przez Travis CI (na górze widać
+aktualny status). Manualnie możemy to zrobić:
+
+	(flaskenv)MacBook-Air-Janusz:przygoda VirrageS$ python setup.py test
+
+
+## Ogólne
+
+Testy umieszczamy folderze `tests`. Trzeba pamiętać aby dodać test do `__init__.py`
+tak żeby mógł być przetestowany. Testy powinny mieć porządne nazwy funkcji i najlepiej
 dokumentację.
 
 ## Przykład:
 
 ```python
-def test_add_user_to_database(self):
-	u = User(username='john', password='a', email='john@example.com')
-	db.session.add(u)
-	db.session.commit()
-	u = User.query.filter_by(username='john').first()
-	assert u.username == 'john'
-	assert u.password == 'a'
-	assert u.email == 'john@example.com'
+class UserTestCase(unittest.TestCase):
+	def setUp(self):
+		app.config['TESTING'] = True
+		app.config['WTF_CSRF_ENABLED'] = False
+		self.app = app.test_client()
 
-	u = User(username='johner', password='a', email='susan@examplee.com')
-	db.session.add(u)
-	db.session.commit()
-	u = User.query.filter_by(username='johner').first()
-	assert u.username != 'john'
-	assert u.username == 'johner'
+	def test_user_username(self):
+		u = User(username='john', password='a', email='john@example.com')
+		assert u.username == 'john'
+
+	def test_user_password(self):
+		u = User(username='john', password='a', email='john@example.com')
+		assert u.password == 'a'
+
+	def test_user_email(self):
+		u = User(username='john', password='a', email='john@example.com')
+		assert u.email == 'john@example.com'
 ```
