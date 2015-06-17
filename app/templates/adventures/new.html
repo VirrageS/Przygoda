@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-  <form action="" method=post class="form-horizontal">
+<form action="" method=post class="form-horizontal">
 	<h2>Stwórz nową przygodę</h2>
 
 	<div class="control-group">
@@ -18,8 +18,8 @@
 	<div class="control-group">
 		<div class="controls">
 		  <button type="submit" class="btn btn-success">Stwórz nową przygodę</button>
-		  <a href="{{ url_for('index') }}">Powrót</a>
+		  <a href="{{ url_for('simple_page.index') }}">Powrót</a>
 		</div>
 	</div>
-  </form>
+</form>
 {% endblock %}

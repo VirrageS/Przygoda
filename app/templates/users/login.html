@@ -2,21 +2,31 @@
 {% block body %}
 
 {% macro render_field(field, placeholder=None) %}
-{% if field.errors %}
-<div>
-{% elif field.flags.error %}
-<div>
-{% else %}
-<div>
-{% endif %}
-		{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
-		{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
-</div>
+	{% if field.errors %}
+	<div>
+	{% elif field.flags.error %}
+	<div>
+	{% else %}
+	<div>
+	{% endif %}
+
+	{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+	{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
+	</div>
 {% endmacro %}
+
+{% macro render_checkbox_field(field, text=None) -%}
+<div class="checkbox">
+	<label>
+		{{ field(type='checkbox', **kwargs) }} {{ text }}
+	</label>
+</div>
+{%- endmacro %}
 
 <div>
 	<div>
-		<legend>Sign in</legend>
+		<h2>Dołącz do Przygody</h2>
+
 		{% with errors = get_flashed_messages(category_filter=["error"]) %}
 		{% if errors %}
 		<div>
@@ -36,15 +46,36 @@
 		{% endfor %}
 		</div>
 		{% endif %}
-		<form method="POST" action="." accept-charset="UTF-8" role="form">
+
+		<form method="post" action="." accept-charset="UTF-8" role="form">
 			{{ form.csrf_token }}
-			{{ render_field(form.username, placeholder="Your Username", autofocus="") }}
-			{{ render_field(form.password, placeholder="Password") }}
-			{{ render_field(form.remember_me) }}
-			<div>
-			<a role="button" href="">Forgot your password?</a><span class="clearfix"></span>
+			<div class="control-group">
+				<div class="controls">
+					{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
+				</div>
 			</div>
-			<button type="submit" name="submit">Sign in</button>
+
+			<div class="control-group">
+				<div class="controls">
+					{{ render_field(form.password, placeholder="Hasło") }}
+				</div>
+			</div>
+
+			<div class="control-group">
+				<div class="controls">
+					{{ render_checkbox_field(form.remember_me, text="Nie wylogowuj mnie") }}
+				</div>
+			</div>
+
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn btn-success">Zaloguj się</button>
+				</div>
+			</div>
+
+			<div>
+				<a role="button" href="/users/lost">Zapomniałeś hasła?</a><span class="clearfix"></span>
+			</div>
 		</form>
 	</div>
 </div>
