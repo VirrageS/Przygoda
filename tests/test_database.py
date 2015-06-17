@@ -20,17 +20,17 @@ class DatabaseTestCase(unittest.TestCase):
 		db.drop_all()
 
 	def test_add_adventure_to_database(self):
-		a = Adventure(user='john', date=datetime.utcnow(), info='Some info today', joined=10)
+		a = Adventure(user_id=2, date=datetime.utcnow(), info='Some info today', joined=10)
 		db.session.add(a)
 		db.session.commit()
-		a = Adventure.query.filter_by(user='john').first()
+		a = Adventure.query.filter_by(user_id=2).first()
 		assert a.info == 'Some info today'
 		assert a.joined == 10
 
-		a = Adventure(user='john', date=datetime.utcnow(), info='Some info today', joined=10)
+		a = Adventure(user_id=2, date=datetime.utcnow(), info='Some info today', joined=10)
 		db.session.add(a)
 		db.session.commit()
-		b = Adventure.query.filter_by(user='john').all()
+		b = Adventure.query.filter_by(user_id=2).all()
 		assert len(b) == 2
 
 	def test_add_user_to_database(self):
@@ -38,6 +38,7 @@ class DatabaseTestCase(unittest.TestCase):
 		db.session.add(u)
 		db.session.commit()
 		u = User.query.filter_by(username='john').first()
+		assert u.id == 1
 		assert u.username == 'john'
 		assert u.password == 'a'
 		assert u.email == 'john@example.com'
@@ -46,5 +47,6 @@ class DatabaseTestCase(unittest.TestCase):
 		db.session.add(u)
 		db.session.commit()
 		u = User.query.filter_by(username='johner').first()
+		assert u.id == 2
 		assert u.username != 'john'
 		assert u.username == 'johner'
