@@ -57,9 +57,8 @@ def register():
 			flash('User with provided username or email arleady exists', 'error-message')
 			return render_template('users/register.html', form=form)
 
+		# create user and add to database
 		user = User(form.username.data, generate_password_hash(form.password.data), form.email.data)
-
-		# add user to database
 		db.session.add(user)
 		db.session.commit()
 
