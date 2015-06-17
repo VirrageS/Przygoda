@@ -2,6 +2,7 @@ Flask==0.10.1
 flask-login==0.2.11
 flask-mail
 flask-wtf
+wtforms_components
 sqlalchemy
 flask-sqlalchemy
 Flask-GoogleMaps==0.1.5
