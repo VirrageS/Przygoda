@@ -1,32 +1,87 @@
 {% extends "layout.html" %}
 {% block body %}
-<form action="" method=post class="form-horizontal">
-	<h2>Dołącz do Przygody</h2>
-	<div class="control-group">
-		<div class="controls">
-		  <input type="text" id="username" name="username" class="input-xlarge" placeholder="Nazwa użytkownika" value="{{ request.form.username }}"
-			required>
-		</div>
-	</div>
 
-	<div class="control-group">
-		<div class="controls">
-		  <input type="password" id="password" name="password" class="input-xlarge"
-			placeholder="Hasło" value="{{ request.form.password }}" required>
-		</div>
-	</div>
+{% macro render_field(field, placeholder=None) %}
+{% if field.errors %}
+<div>
+{% elif field.flags.error %}
+<div>
+{% else %}
+<div>
+{% endif %}
+		{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+		{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
+</div>
+{% endmacro %}
 
-	<div class="control-group">
-		<div class="controls">
-			<input type="email" id="email" name="email" class="input-xlarge"
-			placeholder="Email" value="{{ request.form.email }}" required>
-		</div>
-	</div>
+<div>
+	<div>
+		<h2>Dołącz do Przygody</h2></br>
 
-	<div class="control-group">
-		<div class="controls">
-		<button type="submit" class="btn btn-success">Zarejestruj się</button>
+		{% with errors = get_flashed_messages(category_filter=["error"]) %}
+		{% if errors %}
+		<div>
+		{% for error in errors %}
+		{{ error }}<br>
+		{% endfor %}
 		</div>
+		{% endif %}
+		{% endwith %}
+
+<!-- 		{% if form.errors %}
+		<div>
+		{% for field, error in form.errors.items() %}
+		{% for e in error %}
+		{{ e }}<br>
+		{% endfor %}
+		{% endfor %}
+		</div>
+		{% endif %} -->
+
+		<form method="POST" action="." accept-charset="UTF-8" role="form">
+			{{ form.csrf_token }}
+			<div class="control-group">
+				<div class="controls">
+					{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
+				</div>
+				<p class="col-sm-5 help-block">{{ form.username.errors[0] }}</p>
+			</div>
+
+			<div class="control-group">
+				<div class="controls">
+					{{ render_field(form.email, placeholder="Email") }}
+				</div>
+				<label for="firstname" class="error">{{ form.email.errors[0] }}</label>
+			</div>
+
+
+			<div class="control-group">
+				<div class="controls">
+					{{ render_field(form.password, placeholder="Hasło") }}
+				</div>
+				<p class="col-sm-5 help-block">{{ form.password.errors[0] }}</p>
+			</div>
+
+			<div class="control-group">
+				<div class="controls">
+					{{ render_field(form.confirm, placeholder="Powtórz hasło") }}
+				</div>
+				<p class="col-sm-5 help-block">{{ form.confirm.errors[0] }}</p>
+			</div>
+
+			<div class="control-group">
+				<div class="controls">
+					{{ render_field(form.accept_tos) }}
+				</div>
+			</div>
+
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn btn-success">Zarejestruj się</button>
+				</div>
+			</div>
+		</form>
 	</div>
-</form>
+</div>
+
 {% endblock %}
