@@ -38,12 +38,17 @@ def new():
 
 @mod.route('/<int:adventure_id>')
 def adventure_show(adventure_id):
+	# todo: check if id small enough because adventure_id can be so fucking large > 3701845749238573498573245983453485324658273456234857263458723456328475
+
 	flash(adventure_id)
 	return render_template('adventures/show.html', adventure_id=adventure_id)
 
 @mod.route('/join/<int:adventure_id>')
 @login_required
 def join(adventure_id):
+	# todo: check if id small enough because adventure_id can be so fucking large > 3701845749238573498573245983453485324658273456234857263458723456328475
+
+	flash(adventure_id)
 	return render_template('adventures/my.html')
 
 @mod.route('/my/')
