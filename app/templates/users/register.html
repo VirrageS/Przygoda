@@ -2,21 +2,22 @@
 {% block body %}
 
 {% macro render_field(field, placeholder=None) %}
-{% if field.errors %}
-<div>
-{% elif field.flags.error %}
-<div>
-{% else %}
-<div>
-{% endif %}
-		{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
-		{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
-</div>
+	{% if field.errors %}
+	<div>
+	{% elif field.flags.error %}
+	<div>
+	{% else %}
+	<div>
+	{% endif %}
+
+	{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+	{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
+	</div>
 {% endmacro %}
 
 <div>
 	<div>
-		<h2>Dołącz do Przygody</h2></br>
+		<h2>Dołącz do Przygody</h2><br>
 
 		{% with errors = get_flashed_messages(category_filter=["error"]) %}
 		{% if errors %}
@@ -44,34 +45,35 @@
 				<div class="controls">
 					{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
 				</div>
-				<p class="col-sm-5 help-block">{{ form.username.errors[0] }}</p>
+				<div class="control-group error">
+					<small class="control-group error help-block">{{ form.username.errors[0] }}</small>
+				</div>
 			</div>
 
 			<div class="control-group">
 				<div class="controls">
 					{{ render_field(form.email, placeholder="Email") }}
 				</div>
-				<label for="firstname" class="error">{{ form.email.errors[0] }}</label>
+				<div class="control-group error">
+					<small class="control-group error help-block">{{ form.email.errors[0] }}</small>
+				</div>
 			</div>
-
 
 			<div class="control-group">
 				<div class="controls">
 					{{ render_field(form.password, placeholder="Hasło") }}
 				</div>
-				<p class="col-sm-5 help-block">{{ form.password.errors[0] }}</p>
+				<div class="control-group error">
+					<small class="control-group error help-block">{{ form.password.errors[0] }}</small>
+				</div>
 			</div>
 
 			<div class="control-group">
 				<div class="controls">
 					{{ render_field(form.confirm, placeholder="Powtórz hasło") }}
 				</div>
-				<p class="col-sm-5 help-block">{{ form.confirm.errors[0] }}</p>
-			</div>
-
-			<div class="control-group">
-				<div class="controls">
-					{{ render_field(form.accept_tos) }}
+				<div class="control-group error">
+					<small class="control-group error help-block">{{ form.confirm.errors[0] }}</small>
 				</div>
 			</div>
 
