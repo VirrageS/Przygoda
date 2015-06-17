@@ -26,3 +26,13 @@ class Coordinate(db.Model):
 		self.adventure_id = adventure_id
 		self.latitude = latitude
 		self.longitude = longitude
+
+class AdventureParticipant(db.Model):
+	__tablename__ = 'adventure_participants'
+	adventure_id = db.Column(db.Integer, db.ForeignKey('adventures.id'))
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+	def __init__(self, adventure_id, user_id):
+		self.adventure_id = adventure_id
+		self.user_id = user_id
+
