@@ -79,4 +79,14 @@ def join(adventure_id):
 @mod.route('/my/')
 @login_required
 def my_adventures():
-	return render_template('adventures/my.html')
+	all_adventures = []
+
+	# get all adventures
+	adventures = Adventure.query.filter_by(user_id=g.user.id).order_by(Adventure.date.asc()).all()
+	for adventure in adventures:
+		# get joined participants
+		joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+
+		all_adventures.append({'id': adventure.id, 'date': adventure.date, 'info': adventure.info, 'joined': len(joined)})
+
+	return render_template('adventures/my.html', adventures=all_adventures)
