@@ -7,11 +7,11 @@
 	{% set style="width:400px;height:400px;"%}
 
 	{{
-	googlemap(
-		"przygoda",
-		location.0, location.1,
-		markers=[location,],
-		style=style
+		googlemap(
+			"przygoda",
+			location.0, location.1,
+			markers=all_coordinates,
+			style=style
 		)
 	}}
 

@@ -26,8 +26,8 @@ def new():
 		db.session.commit()
 
 		# add participant of adventure to database
-		adventureParticipant = AdventureParticipant(adventure_id=adventure.id, user_id=g.user.id)
-		db.session.add(adventureParticipant)
+		participant = AdventureParticipant(adventure_id=adventure.id, user_id=g.user.id)
+		db.session.add(participant)
 		db.session.commit()
 
 		# everything is okay
@@ -38,18 +38,29 @@ def new():
 
 @mod.route('/<int:adventure_id>')
 def adventure_show(adventure_id):
-	# todo: check if id small enough because adventure_id can be so fucking large > 3701845749238573498573245983453485324658273456234857263458723456328475
+	# todo: make better checkout - check if adventure_id is small enough to query database
+	if adventure_id >= 10000:
+		return redirect(url_for('simple_page.index'))
 
-	flash(adventure_id)
 	return render_template('adventures/show.html', adventure_id=adventure_id)
 
 @mod.route('/join/<int:adventure_id>')
 @login_required
 def join(adventure_id):
-	# todo: check if id small enough because adventure_id can be so fucking large > 3701845749238573498573245983453485324658273456234857263458723456328475
+	# todo: make better checkout - check if adventure_id is small enough to query database
+	if adventure_id >= 10000:
+		return redirect(url_for('simple_page.index'))
 
-	flash(adventure_id)
-	return render_template('adventures/my.html')
+	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=g.user.id).first()
+	if participant is not None:
+		flash('You arleady have joined to this adventure')
+	else:
+		participant = AdventureParticipant(adventure_id=adventure_id, user_id=g.user.id)
+		db.session.add(participant)
+		db.session.commit()
+		flash('You have joined to this adventure')
+
+	return redirect(url_for('simple_page.index'))
 
 @mod.route('/my/')
 @login_required

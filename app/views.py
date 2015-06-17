@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template, flash, g, session, redire
 from werkzeug import check_password_hash, generate_password_hash
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 
-from app.adventures.models import Adventure, AdventureParticipant
+from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.users.models import User
 
 mod = Blueprint('simple_page', __name__, template_folder='templates')
@@ -19,7 +19,12 @@ def index():
 		if user is not None:
 			all_adventures.append({'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': len(joined)})
 
-	return render_template('index.html', adventures=all_adventures)
+	coordinates = Coordinate.query.all()
+	all_coordinates = []
+	for coordinate in coordinates:
+		all_coordinates.append((coordinates.longtitude, coordinates.latitude))
+
+	return render_template('index.html', adventures=all_adventures, coordinates=all_coordinates)
 
 # About us
 @mod.route("/about")
