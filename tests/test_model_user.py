@@ -10,14 +10,13 @@ class UserTestCase(unittest.TestCase):
 		self.app = app.test_client()
 
 	def test_user_username(self):
-		u = User(username='john', password='a', email='john@example.com')
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
 		assert u.username == 'john'
 
 	def test_user_password(self):
-		u = User(username='john', password='a', email='john@example.com')
-		# todo: hash password
-		assert u.password == 'a'
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		assert check_password_hash(u.password, 'a')
 
 	def test_user_email(self):
-		u = User(username='john', password='a', email='john@example.com')
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
 		assert u.email == 'john@example.com'
