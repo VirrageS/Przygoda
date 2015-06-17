@@ -36,11 +36,17 @@ def new():
 
 	return render_template('adventures/new.html', form=form)
 
-@mod.route('/join/')
-def join():
-	return render_template('adventure/new.html')
+@mod.route('/<int:adventure_id>')
+def adventure_show(adventure_id):
+	flash(adventure_id)
+	return render_template('adventures/show.html', adventure_id=adventure_id)
+
+@mod.route('/join/<int:adventure_id>')
+@login_required
+def join(adventure_id):
+	return render_template('adventures/my.html')
 
 @mod.route('/my/')
 @login_required
 def my_adventures():
-	return render_template('adventure/my.html')
+	return render_template('adventures/my.html')
