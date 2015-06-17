@@ -1,6 +1,7 @@
 import unittest
 
 from app import app
+from werkzeug import check_password_hash, generate_password_hash
 from app.users.models import User
 
 class UserTestCase(unittest.TestCase):
