@@ -15,3 +15,14 @@ class Adventure(db.Model):
 		self.date = date
 		self.info = info
 		self.joined = joined
+
+class Coordinate(db.Model):
+	__tablename__ = 'coordinates'
+	adventure_id = db.Column(db.Integer, db.ForeignKey('adventures.id'))
+	latitude = db.Column('latitude', db.Real)
+	longitude = db.Column('longitude', db.Real)
+
+	def __init__(self, adventure_id, latitude, longitude):
+		self.adventure_id = adventure_id
+		self.latitude = latitude
+		self.longitude = longitude
