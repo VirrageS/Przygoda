@@ -1,6 +1,5 @@
 from datetime import datetime
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
-from werkzeug import check_password_hash, generate_password_hash
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 
 from app import db
