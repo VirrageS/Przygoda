@@ -25,7 +25,7 @@
 
 <div>
 	<div>
-		<h2>Dołącz do Przygody</h2>
+		<h2>Zaloguj się do Przygody</h2><br>
 
 		{% with errors = get_flashed_messages(category_filter=["error"]) %}
 		{% if errors %}
@@ -37,7 +37,7 @@
 		{% endif %}
 		{% endwith %}
 
-		{% if form.errors %}
+<!-- 		{% if form.errors %}
 		<div>
 		{% for field, error in form.errors.items() %}
 		{% for e in error %}
@@ -45,7 +45,7 @@
 		{% endfor %}
 		{% endfor %}
 		</div>
-		{% endif %}
+		{% endif %} -->
 
 		<form method="post" action="." accept-charset="UTF-8" role="form">
 			{{ form.csrf_token }}
@@ -53,11 +53,17 @@
 				<div class="controls">
 					{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
 				</div>
+				<div class="control-group error">
+					<small class="control-group error help-block">{{ form.username.errors[0] }}</small>
+				</div>
 			</div>
 
 			<div class="control-group">
 				<div class="controls">
 					{{ render_field(form.password, placeholder="Hasło") }}
+				</div>
+				<div class="control-group error">
+					<small class="control-group error help-block">{{ form.password.errors[0] }}</small>
 				</div>
 			</div>
 
