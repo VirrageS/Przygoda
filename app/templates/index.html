@@ -1,21 +1,19 @@
 {% extends "layout.html" %}
 {% block body %}
 <div id="main" class="container">
-{% with %}
+	{% with %}
+		{% set location=(52.229937, 21.011380) %}
+		{% set style="width:400px;height:400px;"%}
 
-	{% set location=(52.229937, 21.011380) %}
-	{% set style="width:400px;height:400px;"%}
-
-	{{
-		googlemap(
-			"przygoda",
-			location.0, location.1,
-			markers=all_coordinates,
-			style=style
-		)
-	}}
-
-{% endwith %}
+		{{
+			googlemap(
+				"przygoda",
+				location.0, location.1,
+				markers=all_coordinates,
+				style=style
+			)
+		}}
+	{% endwith %}
 
 	<h2>Przygody</h2>
 	<table class="table table-hover">
@@ -49,7 +47,6 @@
 				{% endif %}
 			</tr>
 		{% endfor %}
-
 	</table>
 </div>
 {% endblock %}
