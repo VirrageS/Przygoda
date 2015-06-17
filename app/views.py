@@ -11,16 +11,22 @@ mod = Blueprint('simple_page', __name__, template_folder='templates')
 @mod.route("/")
 def index():
 	all_adventures = []
+	all_coordinates = []
 
+	# get all adventures
 	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
 	for adventure in adventures:
+		# get creator of the event
 		user = User.query.filter_by(id=adventure.user_id).first()
+
+		# get joined participants
 		joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+
+		# check if creator still exists
 		if user is not None:
 			all_adventures.append({'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': len(joined)})
 
 	coordinates = Coordinate.query.all()
-	all_coordinates = []
 	for coordinate in coordinates:
 		all_coordinates.append((coordinates.longtitude, coordinates.latitude))
 

@@ -5,6 +5,7 @@ from flask.ext.login import LoginManager, login_user, logout_user, current_user,
 from app import db
 from app.adventures.models import Adventure, AdventureParticipant
 from app.adventures.forms import NewForm
+from app.users.models import User
 
 mod = Blueprint('adventures', __name__, url_prefix='/adventures')
 
@@ -42,7 +43,20 @@ def adventure_show(adventure_id):
 	if adventure_id >= 10000:
 		return redirect(url_for('simple_page.index'))
 
-	return render_template('adventures/show.html', adventure_id=adventure_id)
+	final_adventure = {}
+
+	# get adventure and creator of it
+	adventure = Adventure.query.filter_by(id=adventure_id).first()
+	user = User.query.filter_by(id=adventure.user_id).first()
+
+	# get joined participants
+	joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+
+	# check if creator exists
+	if user is not None:
+		final_adventure = {'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': len(joined)}
+
+	return render_template('adventures/show.html', adventure=final_adventure)
 
 @mod.route('/join/<int:adventure_id>')
 @login_required
