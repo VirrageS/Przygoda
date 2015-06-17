@@ -3,7 +3,7 @@ from app import db
 
 class Adventure(db.Model):
 	__tablename__ = 'adventure'
-	id = db.Column('adventure_id', db.Integer, primary_key=True)
+	id = db.Column('adventure_id', db.BigInteger, autoincrement=True, primary_key=True)
 	user_id = db.Column('id', db.Integer)
 	date = db.Column('date', db.DateTime)
 	info = db.Column('info', db.String)

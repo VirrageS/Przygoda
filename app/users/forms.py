@@ -9,6 +9,6 @@ class LoginForm(Form):
 
 class RegisterForm(Form):
 	username = TextField('Username', [validators.Length(min=4, max=25)])
-	email = TextField('Email Address', [validators.Length(min=6, max=35)])
+	email = TextField('Email Address', [Email(), validators.Length(min=6, max=35)])
 	password = PasswordField('Password', [Required()])
 	confirm = PasswordField('Repeat Password', [Required(), EqualTo('password', message='Passwords must match')])
