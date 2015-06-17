@@ -1,25 +1,70 @@
 {% extends "layout.html" %}
 {% block body %}
-<form action="" method=post class="form-horizontal">
-	<h2>Stwórz nową przygodę</h2>
 
-	<div class="control-group">
-		<div class="controls">
-		 	<input type="text" name="info" placeholder="Data" required value="{{ request.form.info }}">
-		</div>
-	</div>
+{% macro render_field(field, placeholder=None) %}
+	{% if field.errors %}
+	<div>
+	{% elif field.flags.error %}
+	<div>
+	{% else %}
+	<div>
+	{% endif %}
 
-	<div class="control-group">
-		<div class="controls">
-			<textarea name="info" rows=10 class="input-xlarge" placeholder="Informacje o przygodzie" required>{{ request.form.info }}</textarea>
-		</div>
+	{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+	{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
 	</div>
+{% endmacro %}
 
-	<div class="control-group">
-		<div class="controls">
-		  <button type="submit" class="btn btn-success">Stwórz nową przygodę</button>
-		  <a href="{{ url_for('simple_page.index') }}">Powrót</a>
+<div>
+	<div>
+		<h2>Stwórz przygodę</h2><br>
+
+		{% with errors = get_flashed_messages(category_filter=["error"]) %}
+		{% if errors %}
+		<div>
+		{% for error in errors %}
+		{{ error }}<br>
+		{% endfor %}
 		</div>
+		{% endif %}
+		{% endwith %}
+
+<!-- 		{% if form.errors %}
+		<div>
+		{% for field, error in form.errors.items() %}
+		{% for e in error %}
+		{{ e }}<br>
+		{% endfor %}
+		{% endfor %}
+		</div>
+		{% endif %} -->
+
+		<form method="post" action="." accept-charset="UTF-8" role="form">
+			{{ form.csrf_token }}
+			<div class="control-group">
+				<div class="controls">
+					{{ render_field(form.date, placeholder="Data przygody", autofocus="") }}
+				</div>
+				<div class="control-group error">
+					<small class="control-group error help-block">{{ form.date.errors[0] }}</small>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<div class="controls">
+					{{ render_field(form.info, placeholder="Informacje o przygodzie") }}
+				</div>
+				<div class="control-group error">
+					<small class="control-group error help-block">{{ form.info.errors[0] }}</small>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn btn-success">Stwórz nową przygodę</button>
+				</div>
+			</div>
+		</form>
 	</div>
-</form>
+</div>
 {% endblock %}
