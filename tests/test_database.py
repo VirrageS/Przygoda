@@ -6,7 +6,7 @@ from config import base_dir
 from werkzeug import check_password_hash, generate_password_hash
 from app import app, db
 from app.users.models import User
-from app.adventures.models import Adventure
+from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 
 class DatabaseTestCase(unittest.TestCase):
 	def setUp(self):
@@ -51,3 +51,12 @@ class DatabaseTestCase(unittest.TestCase):
 		assert u.id == 2
 		assert u.username != 'john'
 		assert u.username == 'johner'
+
+	def test_add_coordinate_to_database(self):
+		c = Coordinate(adventure_id=1, latitude=52.229937, longitude=21.011380)
+		db.session.add(c)
+		db.session.commit()
+
+		c = Coordinate.query.filter_by(adventure_id=1).first()
+		assert c.latitude == 52.229937
+		assert c.longitude == 21.011380
