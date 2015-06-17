@@ -21,7 +21,7 @@ def new():
 
 	# verify the new form
 	if form.validate_on_submit():
-		adventure = Adventure(user=g.user.username, date=form.date.data, info=form.info.data, joined=1)
+		adventure = Adventure(user_id=g.user.id, date=form.date.data, info=form.info.data, joined=1)
 
 		# add adventure to database
 		db.session.add(adventure)
@@ -31,8 +31,8 @@ def new():
 
 	return render_template('adventures/new.html', form=form)
 
-@mod.route('/adventures/')
-def adventures():
+@mod.route('/join/')
+def join():
 	return render_template('adventure/new.html')
 
 @mod.route('/my/')

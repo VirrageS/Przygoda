@@ -9,7 +9,7 @@ mod = Blueprint('simple_page', __name__, template_folder='templates')
 # Index - main path
 @mod.route("/")
 def index():
-	return render_template('index.html', adventures=Adventure.query.order_by(Adventure.date.desc()).all())
+	return render_template('index.html', adventures=Adventure.query.order_by(Adventure.date.asc()).all())
 
 # About us
 @mod.route("/about")
