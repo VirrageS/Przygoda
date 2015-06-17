@@ -20,11 +20,19 @@ def index():
 		user = User.query.filter_by(id=adventure.user_id).first()
 
 		# get joined participants
-		joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
 
 		# check if creator still exists
 		if user is not None:
-			all_adventures.append({'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': len(joined)})
+			all_adventures.append(
+				{
+					'id': adventure.id,
+					'username': user.username,
+					'date': adventure.date,
+					'info': adventure.info,
+					'joined': len(participants)
+				}
+			)
 
 	coordinates = Coordinate.query.all()
 	for coordinate in coordinates:

@@ -8,7 +8,14 @@
 		<td>[creator: {{ adventure.username }}]</td>
 		<td>[date: {{ adventure.date }}]</td>
 		<td>[info: {{ adventure.info }}]</td>
-		<td>[joined: {{ adventure.joined }}]</td>
+		<td>
+			[joined: {{ adventure.joined }}]
+			[participants:
+			{% for participant in participants %}
+				{{ participant.user_id }},
+			{% endfor %}
+			]
+		</td>
 	</tr>
 </table>
 {% endblock %}

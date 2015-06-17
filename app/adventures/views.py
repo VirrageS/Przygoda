@@ -50,13 +50,13 @@ def adventure_show(adventure_id):
 	user = User.query.filter_by(id=adventure.user_id).first()
 
 	# get joined participants
-	joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
 
 	# check if creator exists
 	if user is not None:
-		final_adventure = {'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': len(joined)}
+		final_adventure = {'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': len(participants)}
 
-	return render_template('adventures/show.html', adventure=final_adventure)
+	return render_template('adventures/show.html', adventure=final_adventure, participants=participants)
 
 @mod.route('/join/<int:adventure_id>')
 @login_required

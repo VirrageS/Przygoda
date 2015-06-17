@@ -10,10 +10,10 @@
 	</tr>
 	{% for adventure in adventures %}
 		<tr>
-			<td>{{ adventure['id'] }}</td>
-			<td>{{ adventure['date'].strftime('%d %m %Y') }}</td>
-			<td>{{ adventure['info'] }}</td>
-			<td>{{ adventure['joined'] }}</td>
+			<td>{{ adventure.id }}</td>
+			<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
+			<td>{{ adventure.info }}</td>
+			<td>{{ adventure.joined }}</td>
 		</tr>
 	{% endfor %}
 </table>
