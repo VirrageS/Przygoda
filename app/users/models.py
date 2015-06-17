@@ -6,12 +6,12 @@ class User(db.Model):
 	"""Provides class for User"""
 
 	__tablename__ = "users"
-	id = db.Column('user_id', db.BigInteger, autoincrement=True, primary_key=True)
+	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column('username', db.String(120), unique=True, index=True)
 	password = db.Column('password', db.String(128))
 	email = db.Column('email', db.String(50), unique=True, index=True)
 	registered_on = db.Column('registered_on', db.DateTime)
-	role = db.Column(db.SmallInteger, default=USER.USER)
+	role = db.Column('role', db.SmallInteger, default=USER.USER)
 
 	def __init__(self, username, password, email):
 		self.username = username

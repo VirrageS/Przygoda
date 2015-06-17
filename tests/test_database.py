@@ -3,6 +3,7 @@ import unittest
 
 from datetime import datetime
 from config import base_dir
+from werkzeug import check_password_hash, generate_password_hash
 from app import app, db
 from app.users.models import User
 from app.adventures.models import Adventure
@@ -34,16 +35,16 @@ class DatabaseTestCase(unittest.TestCase):
 		assert len(b) == 2
 
 	def test_add_user_to_database(self):
-		u = User(username='john', password='a', email='john@example.com')
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
 		db.session.add(u)
 		db.session.commit()
 		u = User.query.filter_by(username='john').first()
 		assert u.id == 1
 		assert u.username == 'john'
-		assert u.password == 'a'
+		assert check_password_hash(u.password, 'a')
 		assert u.email == 'john@example.com'
 
-		u = User(username='johner', password='a', email='susan@examplee.com')
+		u = User(username='johner', password=generate_password_hash('a'), email='susan@examplee.com')
 		db.session.add(u)
 		db.session.commit()
 		u = User.query.filter_by(username='johner').first()

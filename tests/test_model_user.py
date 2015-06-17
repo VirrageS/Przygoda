@@ -15,6 +15,7 @@ class UserTestCase(unittest.TestCase):
 
 	def test_user_password(self):
 		u = User(username='john', password='a', email='john@example.com')
+		# todo: hash password
 		assert u.password == 'a'
 
 	def test_user_email(self):
