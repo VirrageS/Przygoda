@@ -11,15 +11,15 @@ mod = Blueprint('users', __name__, url_prefix='/users')
 # Login
 @mod.route('/login/', methods=['GET','POST'])
 def login():
-	"""Handels login path"""
+	"""Handels user login"""
 
-	# If sign in form is submitted
+	# if login form is submitted
 	form = LoginForm(request.form)
 
 	if request.method == 'GET':
 		return render_template('users/login.html', form=form)
 
-	# Verify the sign in form
+	# verify the login form
 	if form.validate_on_submit():
 		registered_user = User.query.filter_by(username=form.username.data).first()
 
@@ -46,18 +46,18 @@ def register():
 	# verify the register form
 	if form.validate_on_submit():
 		# check if user with name exists
-		checkUser = User.query.filter_by(username=form.username.data).first()
+		check_user = User.query.filter_by(username=form.username.data).first()
 
 		# check if users with email exists
-		if checkUser is None:
-			checkUser = User.query.filter_by(email=form.email.data).first()
+		if check_user is None:
+			check_user = User.query.filter_by(email=form.email.data).first()
 
 		# user with username exists
-		if checkUser != None:
+		if check_user != None:
 			flash('User with provided username or email arleady exists', 'error-message')
 			return render_template('users/register.html', form=form)
 
-		user = User(form.username.data, generate_password_hash(form.email.data), form.email.data)
+		user = User(form.username.data, generate_password_hash(form.password.data), form.email.data)
 
 		# add user to database
 		db.session.add(user)

@@ -28,6 +28,8 @@ body {
 					{% if g.user.is_authenticated() %}
 						<li><a href="">Witaj {{ g.user.username }}</a></li>
 						<li><a href="{{ url_for('users.logout') }}">Wyloguj się</a></li>
+						<li><a href="{{ url_for('adventures.new') }}">Dodaj przygodę</a></li>
+						<li><a href="{{ url_for('adventures.my_adventures') }}">Moje przygody</a></li>
 					{% endif %}
 					{% if not g.user.is_authenticated() %}
 						<li><a href="{{ url_for('users.login') }}">Logowanie</a></li>

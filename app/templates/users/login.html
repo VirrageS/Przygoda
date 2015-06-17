@@ -53,9 +53,13 @@
 				<div class="controls">
 					{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
 				</div>
-				<div class="control-group error">
-					<small class="control-group error help-block">{{ form.username.errors[0] }}</small>
-				</div>
+				{% if form.username.errors %}
+					{% for error in form.username.errors %}
+						<div class="control-group error">
+							<small class="control-group error help-block">{{ error] }}</small>
+						</div>
+					{% endfor %}
+				{% endif %}
 			</div>
 
 			<div class="control-group">

@@ -5,6 +5,7 @@ from flask.ext.login import LoginManager, login_user, logout_user, current_user,
 
 from app import db
 from app.adventures.models import Adventure
+from app.adventures.forms import NewForm
 
 mod = Blueprint('adventures', __name__, url_prefix='/adventures')
 
@@ -12,19 +13,29 @@ mod = Blueprint('adventures', __name__, url_prefix='/adventures')
 @mod.route('/new/', methods=['GET', 'POST'])
 @login_required
 def new():
-	if request.method == 'POST':
-		if not request.form['info']:
-			flash('Info is required', 'error')
-		else:
-			adventure = Adventure(user=g.user.username, date=datetime.utcnow(), info=request.form['info'], joined=1)
-			db.session.add(adventure)
-			db.session.commit()
-			flash(u'Adventure item was successfully created')
-			return redirect(url_for('index'))
+	# if new form has been submitted
+	form = NewForm(request.form)
 
-	return render_template('adventures/new.html')
+	if request.method == 'GET':
+		return render_template('adventures/new.html', form=form)
+
+	# verify the new form
+	if form.validate_on_submit():
+		adventure = Adventure(user=g.user.username, date=form.date.data, info=form.info.data, joined=1)
+
+		# add adventure to database
+		db.session.add(adventure)
+		db.session.commit()
+		flash('Adventure item was successfully created')
+		return redirect(url_for('simple_page.index'))
+
+	return render_template('adventures/new.html', form=form)
 
 @mod.route('/adventures/')
-@login_required
 def adventures():
 	return render_template('adventure/new.html')
+
+@mod.route('/my/')
+@login_required
+def my_adventures():
+	return render_template('adventure/my.html')
