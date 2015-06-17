@@ -3,7 +3,7 @@ from flask import Blueprint, request, render_template, flash, g, session, redire
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 
 from app import db
-from app.adventures.models import Adventure
+from app.adventures.models import Adventure, AdventureParticipant
 from app.adventures.forms import NewForm
 
 mod = Blueprint('adventures', __name__, url_prefix='/adventures')
@@ -20,11 +20,17 @@ def new():
 
 	# verify the new form
 	if form.validate_on_submit():
-		adventure = Adventure(user_id=g.user.id, date=form.date.data, info=form.info.data, joined=1)
-
 		# add adventure to database
+		adventure = Adventure(user_id=g.user.id, date=form.date.data, info=form.info.data, joined=1)
 		db.session.add(adventure)
 		db.session.commit()
+
+		# add participant of adventure to database
+		adventureParticipant = AdventureParticipant(adventure_id=adventure.id, user_id=g.user.id)
+		db.session.add(adventureParticipant)
+		db.session.commit()
+
+		# everything is okay
 		flash('Adventure item was successfully created')
 		return redirect(url_for('simple_page.index'))
 

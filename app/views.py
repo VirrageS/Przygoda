@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template, flash, g, session, redire
 from werkzeug import check_password_hash, generate_password_hash
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 
-from app.adventures.models import Adventure
+from app.adventures.models import Adventure, AdventureParticipant
 from app.users.models import User
 
 mod = Blueprint('simple_page', __name__, template_folder='templates')
@@ -15,8 +15,9 @@ def index():
 	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
 	for adventure in adventures:
 		user = User.query.filter_by(id=adventure.user_id).first()
+		joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
 		if user is not None:
-			all_adventures.append({'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': adventure.joined})
+			all_adventures.append({'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': len(joined)})
 
 	return render_template('index.html', adventures=all_adventures)
 

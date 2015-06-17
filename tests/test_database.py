@@ -53,6 +53,9 @@ class DatabaseTestCase(unittest.TestCase):
 		assert u.username == 'johner'
 
 	def test_add_coordinate_to_database(self):
+		"""Testing adding coordinantes of adventure to datebase.
+		Main thing is that we have to check if float is begin serialized properly"""
+
 		c = Coordinate(adventure_id=1, latitude=52.229937, longitude=21.011380)
 		db.session.add(c)
 		db.session.commit()
