@@ -3,13 +3,22 @@ from werkzeug import check_password_hash, generate_password_hash
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 
 from app.adventures.models import Adventure
+from app.users.models import User
 
 mod = Blueprint('simple_page', __name__, template_folder='templates')
 
 # Index - main path
 @mod.route("/")
 def index():
-	return render_template('index.html', adventures=Adventure.query.order_by(Adventure.date.asc()).all())
+	all_adventures = []
+
+	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
+	for adventure in adventures:
+		user = User.query.filter_by(id=adventure.user_id).first()
+		if user is not None:
+			all_adventures.append({'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': adventure.joined})
+
+	return render_template('index.html', adventures=all_adventures)
 
 # About us
 @mod.route("/about")
