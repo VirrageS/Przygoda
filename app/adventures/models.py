@@ -18,9 +18,10 @@ class Adventure(db.Model):
 
 class Coordinate(db.Model):
 	__tablename__ = 'coordinates'
+	id = db.Column(db.Integer, primary_key=True)
 	adventure_id = db.Column(db.Integer, db.ForeignKey('adventures.id'))
-	latitude = db.Column('latitude', db.Real)
-	longitude = db.Column('longitude', db.Real)
+	latitude = db.Column('latitude', db.Float)
+	longitude = db.Column('longitude', db.Float)
 
 	def __init__(self, adventure_id, latitude, longitude):
 		self.adventure_id = adventure_id
@@ -29,6 +30,7 @@ class Coordinate(db.Model):
 
 class AdventureParticipant(db.Model):
 	__tablename__ = 'adventure_participants'
+	id = db.Column(db.Integer, primary_key=True)
 	adventure_id = db.Column(db.Integer, db.ForeignKey('adventures.id'))
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
