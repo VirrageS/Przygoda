@@ -56,7 +56,7 @@ class DatabaseTestCase(unittest.TestCase):
 		"""Testing adding coordinantes of adventure to datebase.
 		Main thing is that we have to check if float is begin serialized properly"""
 
-		c = Coordinate(adventure_id=1, latitude=52.229937, longitude=21.011380)
+		c = Coordinate(adventure_id=1, path_point=1, latitude=52.229937, longitude=21.011380)
 		db.session.add(c)
 		db.session.commit()
 
