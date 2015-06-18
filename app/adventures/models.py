@@ -1,6 +1,7 @@
 from datetime import datetime
 from app import db
 from app.users.models import User
+from app.adventures.constants import MODES
 
 class Adventure(db.Model):
 	__tablename__ = 'adventures'
@@ -9,12 +10,16 @@ class Adventure(db.Model):
 	date = db.Column('date', db.DateTime)
 	info = db.Column('info', db.String)
 	joined = db.Column('joined', db.Integer)
+	mode = db.Column('mode', db.SmallInteger, default=MODES.RECREATIONAL)
 
 	def __init__(self, user_id, date, info, joined=1):
 		self.user_id = user_id
 		self.date = date
 		self.info = info
 		self.joined = joined
+
+	def get_mode(self):
+		return MODES.MODES[self.mode]
 
 class Coordinate(db.Model):
 	__tablename__ = 'coordinates'
