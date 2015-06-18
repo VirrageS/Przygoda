@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Przygoda</h2>
+
+<table>
+	<tr>
+		<td>[id: {{ adventure.id }}]</td>
+		<td>[creator: {{ adventure.username }}]</td>
+		<td>[date: {{ adventure.date }}]</td>
+		<td>[info: {{ adventure.info }}]</td>
+		<td>
+			[joined: {{ adventure.joined }}]
+			[participants:
+			{% for participant in participants %}
+				{{ participant.username }},
+			{% endfor %}
+			]
+		</td>
+	</tr>
+</table>
+{% endblock %}
