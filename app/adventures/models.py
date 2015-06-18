@@ -25,11 +25,13 @@ class Coordinate(db.Model):
 	__tablename__ = 'coordinates'
 	id = db.Column(db.Integer, primary_key=True)
 	adventure_id = db.Column(db.Integer, db.ForeignKey('adventures.id'))
+	path_point = db.Column('path_point', db.Integer)
 	latitude = db.Column('latitude', db.Float)
 	longitude = db.Column('longitude', db.Float)
 
-	def __init__(self, adventure_id, latitude, longitude):
+	def __init__(self, adventure_id, path_point, latitude, longitude):
 		self.adventure_id = adventure_id
+		self.path_point = path_point
 		self.latitude = latitude
 		self.longitude = longitude
 
