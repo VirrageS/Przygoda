@@ -87,7 +87,7 @@ def join(adventure_id):
 def my_adventures():
 	final_adventures = []
 
-	# get all adventures
+	# get all adventures which created user
 	adventures = Adventure.query.filter_by(user_id=g.user.id).order_by(Adventure.date.asc()).all()
 	for adventure in adventures:
 		# get joined participants
@@ -95,4 +95,35 @@ def my_adventures():
 
 		final_adventures.append({'id': adventure.id, 'date': adventure.date, 'info': adventure.info, 'joined': len(joined)})
 
-	return render_template('adventures/my.html', adventures=final_adventures)
+	# get all adventures to which user joined
+	joined_adventures = []
+
+	return render_template('adventures/my.html', adventures=final_adventures, joined_adventures=joined_adventures)
+
+@mod.route('/edit/<int:adventure_id>')
+@login_required
+def edit(adventure_id):
+	# todo: make better checkout - check if adventure_id is small enough to query database
+	if adventure_id >= 10000:
+		return redirect(url_for('simple_page.index'))
+
+	final_adventure = {}
+	final_participants = []
+
+	# get adventure and creator of it
+	adventure = Adventure.query.filter_by(id=adventure_id).first()
+	user = User.query.filter_by(id=adventure.user_id).first()
+
+	# get joined participants
+	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+	for participant in participants:
+		user = User.query.filter_by(id=participant.user_id).first()
+
+		if user is not None:
+			final_participants.append(user)
+
+	# check if creator exists
+	if user is not None:
+		final_adventure = {'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': len(participants)}
+
+	return render_template('adventures/edit.html', adventure=final_adventure, participants=final_participants)
