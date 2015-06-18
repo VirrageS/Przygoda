@@ -44,20 +44,25 @@ def adventure_show(adventure_id):
 		return redirect(url_for('simple_page.index'))
 
 	final_adventure = {}
+	final_participants = []
 
 	# get adventure and creator of it
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	user = User.query.filter_by(id=adventure.user_id).first()
 
 	# get joined participants
-	# todo: change to User class to get username (now we only can get user_id)
 	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+	for participant in participants:
+		user = User.query.filter_by(id=participant.user_id).first()
+
+		if user is not None:
+			final_participants.append(user)
 
 	# check if creator exists
 	if user is not None:
 		final_adventure = {'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': len(participants)}
 
-	return render_template('adventures/show.html', adventure=final_adventure, participants=participants)
+	return render_template('adventures/show.html', adventure=final_adventure, participants=final_participants)
 
 @mod.route('/join/<int:adventure_id>')
 @login_required
@@ -80,7 +85,7 @@ def join(adventure_id):
 @mod.route('/my/')
 @login_required
 def my_adventures():
-	all_adventures = []
+	final_adventures = []
 
 	# get all adventures
 	adventures = Adventure.query.filter_by(user_id=g.user.id).order_by(Adventure.date.asc()).all()
@@ -88,6 +93,6 @@ def my_adventures():
 		# get joined participants
 		joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
 
-		all_adventures.append({'id': adventure.id, 'date': adventure.date, 'info': adventure.info, 'joined': len(joined)})
+		final_adventures.append({'id': adventure.id, 'date': adventure.date, 'info': adventure.info, 'joined': len(joined)})
 
-	return render_template('adventures/my.html', adventures=all_adventures)
+	return render_template('adventures/my.html', adventures=final_adventures)
