@@ -86,6 +86,7 @@ def join(adventure_id):
 @login_required
 def my_adventures():
 	final_adventures = []
+	final_joined_adventures = []
 
 	# get all adventures which created user
 	adventures = Adventure.query.filter_by(user_id=g.user.id).order_by(Adventure.date.asc()).all()
@@ -96,9 +97,16 @@ def my_adventures():
 		final_adventures.append({'id': adventure.id, 'date': adventure.date, 'info': adventure.info, 'joined': len(joined)})
 
 	# get all adventures to which user joined
-	joined_adventures = []
+	joined_adventures = AdventureParticipant.query.filter_by(user_id=g.user.id).all()
+	for joined_adventure in joined_adventures:
+		# get adventure
+		adventure = Adventure.query.filter_by(id=joined_adventure.adventure_id).first()
 
-	return render_template('adventures/my.html', adventures=final_adventures, joined_adventures=joined_adventures)
+		# check if user is not creator (we do not want duplicates)
+		if (adventure is not None) and (adventure.user_id != g.user.id):
+			final_joined_adventures.append(adventure)
+
+	return render_template('adventures/my.html', adventures=final_adventures, joined_adventures=final_joined_adventures)
 
 @mod.route('/edit/<int:adventure_id>')
 @login_required
