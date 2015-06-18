@@ -24,9 +24,9 @@ lub:
 
 Teraz czas na wszystkie biblioteki:
 
-	MacBook-Air-Janusz:przygoda VirrageS$ virtualenv flaskenv
-	MacBook-Air-Janusz:przygoda VirrageS$ source flaskenv/bin/activate
-	(flaskenv)MacBook-Air-Janusz:przygoda VirrageS$ pip install -r requirements.txt
+	MacBook-Air-Janusz:przygoda VirrageS$ virtualenv env
+	MacBook-Air-Janusz:przygoda VirrageS$ source env/bin/activate
+	(env)MacBook-Air-Janusz:przygoda VirrageS$ pip install -r requirements.txt
 
 ## Tworzenie bazy danych
 Tworzymy bazę danych do naszej aplikacji. Pamiętaj: za każdym razem jak wykonujemy
@@ -35,8 +35,8 @@ komende `db.create_all()` stara baza danych jest nadpisywana.
 Aby utworzyć bazę danych wpisujemy:
 
 	MacBook-Air-Janusz:przygoda VirrageS$
-	MacBook-Air-Janusz:przygoda VirrageS$ source flaskenv/bin/activate
-	(flaskenv)MacBook-Air-Janusz:przygoda VirrageS$ python shell.py
+	MacBook-Air-Janusz:przygoda VirrageS$ source env/bin/activate
+	(env)MacBook-Air-Janusz:przygoda VirrageS$ python shell.py
 	>>> from app import db
 	>>> db.create_all()
 	>>> exit()
@@ -49,12 +49,12 @@ jeżeli te moduły dziedziczą po `db.Model`).
 Jeżeli nie jesteśmy w wirtualnym środowisku musimy wpisać:
 
 	MacBook-Air-Janusz:przygoda VirrageS$
-	MacBook-Air-Janusz:przygoda VirrageS$ source flaskenv/bin/activate
-	(flaskenv)MacBook-Air-Janusz:przygoda VirrageS$
+	MacBook-Air-Janusz:przygoda VirrageS$ source env/bin/activate
+	(env)MacBook-Air-Janusz:przygoda VirrageS$
 
 Teraz odpalamy naszą aplikację dzięki `python run.py`.
 
-	(flaskenv)MacBook-Air-Janusz:przygoda VirrageS$ python run.py
+	(env)MacBook-Air-Janusz:przygoda VirrageS$ python run.py
 	 * Running on http://127.0.0.1:5000/
 	 * Restarting with reloader
 
@@ -67,7 +67,7 @@ i powinniśmy zostać przekierowani do naszej aplikacji.
 Testowanie odbywa się automatycznie po `git push` przez Travis CI (na górze widać
 aktualny status). Manualnie możemy to zrobić:
 
-	(flaskenv)MacBook-Air-Janusz:przygoda VirrageS$ python setup.py test
+	(env)MacBook-Air-Janusz:przygoda VirrageS$ python setup.py test
 
 
 ## Ogólne
