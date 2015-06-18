@@ -1,7 +1,7 @@
 from datetime import datetime
 from app import db
 from app.users.models import User
-from app.adventures.constants import MODES
+from app.adventures import constants as MODES
 
 class Adventure(db.Model):
 	__tablename__ = 'adventures'
