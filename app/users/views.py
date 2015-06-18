@@ -70,6 +70,7 @@ def register():
 
 # Logout
 @mod.route('/logout/')
+@login_required
 def logout():
 	"""Handels logout path"""
 
@@ -79,3 +80,8 @@ def logout():
 	# everything okay so back
 	flash('Logged out successfully')
 	return redirect(url_for('simple_page.index'))
+
+@mod.route('/account/')
+@login_required
+def account():
+	return render_template('users/account.html')
