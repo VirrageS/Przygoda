@@ -6,14 +6,14 @@ from app.adventures import constants as MODES
 class Adventure(db.Model):
 	__tablename__ = 'adventures'
 	id = db.Column(db.Integer, primary_key=True)
-	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	date = db.Column('date', db.DateTime)
 	info = db.Column('info', db.String)
 	joined = db.Column('joined', db.Integer)
 	mode = db.Column('mode', db.SmallInteger, default=MODES.RECREATIONAL)
 
-	def __init__(self, user_id, date, info, joined=1):
-		self.user_id = user_id
+	def __init__(self, creator_id, date, info, joined=1):
+		self.creator_id = creator_id
 		self.date = date
 		self.info = info
 		self.joined = joined

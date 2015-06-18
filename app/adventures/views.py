@@ -22,7 +22,7 @@ def new():
 	# verify the new form
 	if form.validate_on_submit():
 		# add adventure to database
-		adventure = Adventure(user_id=g.user.id, date=form.date.data, info=form.info.data, joined=1)
+		adventure = Adventure(creator_id=g.user.id, date=form.date.data, info=form.info.data, joined=1)
 		db.session.add(adventure)
 		db.session.commit()
 
@@ -48,7 +48,7 @@ def adventure_show(adventure_id):
 
 	# get adventure and creator of it
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
-	user = User.query.filter_by(id=adventure.user_id).first()
+	user = User.query.filter_by(id=adventure.creator_id).first()
 
 	# get joined participants
 	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
@@ -71,7 +71,7 @@ def join(adventure_id):
 	if adventure_id >= 10000:
 		return redirect(url_for('simple_page.index'))
 
-	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=g.user.id).first()
+	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, creator_id=g.user.id).first()
 	if participant is not None:
 		flash('You arleady have joined to this adventure')
 	else:
@@ -89,7 +89,7 @@ def my_adventures():
 	final_joined_adventures = []
 
 	# get all adventures which created user
-	adventures = Adventure.query.filter_by(user_id=g.user.id).order_by(Adventure.date.asc()).all()
+	adventures = Adventure.query.filter_by(creator_id=g.user.id).order_by(Adventure.date.asc()).all()
 	for adventure in adventures:
 		# get joined participants
 		joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
@@ -103,7 +103,7 @@ def my_adventures():
 		adventure = Adventure.query.filter_by(id=joined_adventure.adventure_id).first()
 
 		# check if user is not creator (we do not want duplicates)
-		if (adventure is not None) and (adventure.user_id != g.user.id):
+		if (adventure is not None) and (adventure.creator_id != g.user.id):
 			final_joined_adventures.append(adventure)
 
 	return render_template('adventures/my.html', adventures=final_adventures, joined_adventures=final_joined_adventures)
@@ -120,7 +120,7 @@ def edit(adventure_id):
 
 	# get adventure and creator of it
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
-	user = User.query.filter_by(id=adventure.user_id).first()
+	user = User.query.filter_by(id=adventure.creator_id).first()
 
 	# get joined participants
 	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()

@@ -21,17 +21,17 @@ class DatabaseTestCase(unittest.TestCase):
 		db.drop_all()
 
 	def test_add_adventure_to_database(self):
-		a = Adventure(user_id=2, date=datetime.utcnow(), info='Some info today', joined=10)
+		a = Adventure(creator_id=2, date=datetime.utcnow(), info='Some info today', joined=10)
 		db.session.add(a)
 		db.session.commit()
-		a = Adventure.query.filter_by(user_id=2).first()
+		a = Adventure.query.filter_by(creator_id=2).first()
 		assert a.info == 'Some info today'
 		assert a.joined == 10
 
-		a = Adventure(user_id=2, date=datetime.utcnow(), info='Some info today', joined=10)
+		a = Adventure(creator_id=2, date=datetime.utcnow(), info='Some info today', joined=10)
 		db.session.add(a)
 		db.session.commit()
-		b = Adventure.query.filter_by(user_id=2).all()
+		b = Adventure.query.filter_by(creator_id=2).all()
 		assert len(b) == 2
 
 	def test_add_user_to_database(self):
