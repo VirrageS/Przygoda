@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Moje konto</h2>
+
+Nazwa użytkownika: {{ g.user.username }} | <a href="">Zmień nazwę użytkownika</a><br>
+Email: {{ g.user.email }} | <a href="">Zmień email</a><br>
+Hasło: {{ g.user.password }} | <a href="">Zmień hasło</a><br>
+{% endblock %}
