@@ -71,7 +71,7 @@ def join(adventure_id):
 	if adventure_id >= 10000:
 		return redirect(url_for('simple_page.index'))
 
-	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, creator_id=g.user.id).first()
+	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=g.user.id).first()
 	if participant is not None:
 		flash('You arleady have joined to this adventure')
 	else:
