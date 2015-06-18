@@ -50,6 +50,7 @@ def adventure_show(adventure_id):
 	user = User.query.filter_by(id=adventure.user_id).first()
 
 	# get joined participants
+	# todo: change to User class to get username (now we only can get user_id)
 	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
 
 	# check if creator exists
