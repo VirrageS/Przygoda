@@ -17,7 +17,7 @@ def index():
 	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
 	for adventure in adventures:
 		# get creator of the event
-		user = User.query.filter_by(id=adventure.user_id).first()
+		user = User.query.filter_by(id=adventure.creator_id).first()
 
 		# get joined participants
 		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
