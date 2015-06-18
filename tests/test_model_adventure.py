@@ -30,15 +30,15 @@ class CoordinateTestCase(unittest.TestCase):
 		self.app = app.test_client()
 
 	def test_coordinate_adventure_id(self):
-		c = Coordinate(adventure_id=1, latitude=52.229937, longitude=21.011380)
+		c = Coordinate(adventure_id=1, path_point=1, latitude=52.229937, longitude=21.011380)
 		assert c.adventure_id == 1
 
 	def test_coordinate_latitude(self):
-		c = Coordinate(adventure_id=1, latitude=52.229937, longitude=21.011380)
+		c = Coordinate(adventure_id=1, path_point=1, latitude=52.229937, longitude=21.011380)
 		assert c.latitude == 52.229937
 
 	def test_coordinate_longitude(self):
-		c = Coordinate(adventure_id=1, latitude=52.229937, longitude=21.011380)
+		c = Coordinate(adventure_id=1, path_point=1, latitude=52.229937, longitude=21.011380)
 		assert c.longitude == 21.011380
 
 if __name__ == '__main__':
