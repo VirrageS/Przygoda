@@ -10,7 +10,7 @@
 	</tr>
 	{% for adventure in adventures %}
 		<tr>
-			<td>{{ adventure.id }}</td>
+			<td><a href="/adventures/edit/{{ adventure.id }}">{{ adventure.id }}</a></td>
 			<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
 			<td>{{ adventure.info }}</td>
 			<td>{{ adventure.joined }}</td>
@@ -29,7 +29,7 @@
 	</tr>
 	{% for adventure in joined_adventures %}
 		<tr>
-			<td>{{ adventure.id }}</td>
+			<td><a href="/adventures/{{ adventure.id }}">{{ adventure.id }}</a></td>
 			<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
 			<td>{{ adventure.info }}</td>
 			<td>{{ adventure.joined }}</td>
