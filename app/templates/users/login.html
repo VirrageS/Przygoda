@@ -1,92 +1,70 @@
+<!-- extend base layout -->
 {% extends "layout.html" %}
+
 {% block body %}
-
-{% macro render_field(field, placeholder=None) %}
-	{% if field.errors %}
-	<div>
-	{% elif field.flags.error %}
-	<div>
-	{% else %}
-	<div>
-	{% endif %}
-
-	{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
-	{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
-	</div>
-{% endmacro %}
-
-{% macro render_checkbox_field(field, text=None) -%}
-<div class="checkbox">
-	<label>
-		{{ field(type='checkbox', **kwargs) }} {{ text }}
-	</label>
-</div>
-{%- endmacro %}
-
-<div>
-	<div>
-		<h2>Zaloguj się do Przygody</h2><br>
-
-		{% with errors = get_flashed_messages(category_filter=["error"]) %}
-		{% if errors %}
+	{% macro render_field(field, placeholder=None) %}
+		{% if field.errors %}
 		<div>
-		{% for error in errors %}
-		{{ error }}<br>
-		{% endfor %}
-		</div>
+		{% elif field.flags.error %}
+		<div>
+		{% else %}
+		<div>
 		{% endif %}
-		{% endwith %}
 
-<!-- 		{% if form.errors %}
-		<div>
-		{% for field, error in form.errors.items() %}
-		{% for e in error %}
-		{{ e }}<br>
-		{% endfor %}
-		{% endfor %}
+		{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+		{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
 		</div>
-		{% endif %} -->
+	{% endmacro %}
 
-		<form method="post" action="." accept-charset="UTF-8" role="form">
-			{{ form.csrf_token }}
-			<div class="control-group">
-				<div class="controls">
-					{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
-				</div>
-				{% if form.username.errors %}
-					{% for error in form.username.errors %}
-						<div class="control-group error">
-							<small class="control-group error help-block">{{ error }}</small>
-						</div>
-					{% endfor %}
-				{% endif %}
-			</div>
+	{% macro render_checkbox_field(field, text=None) -%}
+		<div class="checkbox">
+			<label>
+				{{ field(type='checkbox', **kwargs) }} {{ text }}
+			</label>
+		</div>
+	{%- endmacro %}
 
-			<div class="control-group">
-				<div class="controls">
-					{{ render_field(form.password, placeholder="Hasło") }}
-				</div>
-				<div class="control-group error">
-					<small class="control-group error help-block">{{ form.password.errors[0] }}</small>
-				</div>
-			</div>
+	<h2>Zaloguj się do Przygody</h2><br>
 
-			<div class="control-group">
-				<div class="controls">
-					{{ render_checkbox_field(form.remember_me, text="Nie wylogowuj mnie") }}
-				</div>
-			</div>
+	<form action="" method="post" name="login">
+		{{ form.hidden_tag() }}
 
-			<div class="control-group">
-				<div class="controls">
-					<button type="submit" class="btn btn-success">Zaloguj się</button>
-				</div>
+		<div class="control-group">
+			<div class="controls">
+				{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
 			</div>
+			{% if form.username.errors %}
+				{% for error in form.username.errors %}
+					<div class="control-group error">
+						<small class="control-group error help-block">{{ error }}</small>
+					</div>
+				{% endfor %}
+			{% endif %}
+		</div>
 
-			<div>
-				<a role="button" href="/users/lost">Zapomniałeś hasła?</a><span class="clearfix"></span>
+		<div class="control-group">
+			<div class="controls">
+				{{ render_field(form.password, placeholder="Hasło") }}
 			</div>
-		</form>
-	</div>
-</div>
+			<div class="control-group error">
+				<small class="control-group error help-block">{{ form.password.errors[0] }}</small>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				{{ render_checkbox_field(form.remember_me, text="Nie wylogowuj mnie") }}
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn btn-success">Zaloguj się</button>
+			</div>
+		</div>
+
+		<div>
+			<a role="button" href="/users/lost">Zapomniałeś hasła?</a><span class="clearfix"></span>
+		</div>
+	</form>
 {% endblock %}

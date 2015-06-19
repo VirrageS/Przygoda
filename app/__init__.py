@@ -50,7 +50,7 @@ if not app.config['DEBUG']:
 # Login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'users.login' # path to login (handel 'required_login')
 
 from app.users.models import User
 @login_manager.user_loader
@@ -60,6 +60,8 @@ def load_user(id):
 @app.before_request
 def before_request():
 	g.user = current_user
+
+# todo: make CsrfProtection
 
 # Google maps
 from flask.ext.googlemaps import GoogleMaps

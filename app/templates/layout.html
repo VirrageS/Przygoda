@@ -3,10 +3,10 @@
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 <meta charset="utf-8">
 <style>
-body {
-	padding-top: 60px;
-	padding-bottom: 100px;
-}
+	body {
+		padding-top: 60px;
+		padding-bottom: 100px;
+	}
 </style>
 <link href="/static/css/bootstrap.css" rel="stylesheet">
 <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
@@ -43,20 +43,10 @@ body {
 </div>
 
 <div id="main" class="container">
+	{% include "flash.html" %}
 
-	{% with messages = get_flashed_messages() %}
-	{% if messages %}
-		<div class="alert">
-			<ul class="flashes">
-			{% for message in messages %}
-				<li>{{ message }}</li>
-			{% endfor %}
-			</ul>
-		</div>
-	{% endif %}
-	{% endwith %}
-
-	{% block body %}{% endblock %}
+	{% block body %}
+	{% endblock %}
 	<hr>
 	<footer id="footer">
 		<span class="navbar-text">&copy;2015 Przygoda.pl. All rights reserved.</span>

@@ -1,41 +1,42 @@
 {% extends "layout.html" %}
-{% block body %}
-<h2>Moje przygody</h2>
-<table class="table table-hover">
-	<tr>
-		<th>#</th>
-		<th>Data przygody</th>
-		<th>Informacje</th>
-		<th>Dołączyło</th>
-		<th>Akcja</th>
-	</tr>
-	{% for adventure in adventures %}
-		<tr>
-			<td>{{ adventure.id }}</td>
-			<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
-			<td>{{ adventure.info }}</td>
-			<td>{{ adventure.joined }}</td>
-			<td><a href="/adventures/edit/{{ adventure.id }}">Edytuj</a></td>
-		</tr>
-	{% endfor %}
-</table>
 
-<br>
-<h2>Do tych przygód dołączyłeś</h2>
-<table class="table table-hover">
-	<tr>
-		<th>#</th>
-		<th>Data przygody</th>
-		<th>Informacje</th>
-		<th>Dołączyło</th>
-	</tr>
-	{% for adventure in joined_adventures %}
+{% block body %}
+	<h2>Moje przygody</h2>
+	<table class="table table-hover">
 		<tr>
-			<td><a href="/adventures/{{ adventure.id }}">{{ adventure.id }}</a></td>
-			<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
-			<td>{{ adventure.info }}</td>
-			<td>{{ adventure.joined }}</td>
+			<th>#</th>
+			<th>Data przygody</th>
+			<th>Informacje</th>
+			<th>Dołączyło</th>
+			<th>Akcja</th>
 		</tr>
-	{% endfor %}
-</table>
+		{% for adventure in adventures %}
+			<tr>
+				<td>{{ adventure.id }}</td>
+				<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
+				<td>{{ adventure.info }}</td>
+				<td>{{ adventure.joined }}</td>
+				<td><a href="/adventures/edit/{{ adventure.id }}">Edytuj</a></td>
+			</tr>
+		{% endfor %}
+	</table>
+
+	<br>
+	<h2>Do tych przygód dołączyłeś</h2>
+	<table class="table table-hover">
+		<tr>
+			<th>#</th>
+			<th>Data przygody</th>
+			<th>Informacje</th>
+			<th>Dołączyło</th>
+		</tr>
+		{% for adventure in joined_adventures %}
+			<tr>
+				<td><a href="/adventures/{{ adventure.id }}">{{ adventure.id }}</a></td>
+				<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
+				<td>{{ adventure.info }}</td>
+				<td>{{ adventure.joined }}</td>
+			</tr>
+		{% endfor %}
+	</table>
 {% endblock %}

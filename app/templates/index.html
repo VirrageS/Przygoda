@@ -1,9 +1,10 @@
+<!-- extend base layout -->
 {% extends "layout.html" %}
+
 {% block body %}
-<div id="main" class="container">
 	{% with %}
 		{% set location=(52.229937, 21.011380) %}
-		{% set style="width:400px;height:400px;"%}
+		{% set style="width:400px; height:400px;"%}
 
 		{{
 			googlemap(
@@ -48,5 +49,4 @@
 			</tr>
 		{% endfor %}
 	</table>
-</div>
 {% endblock %}

@@ -1,83 +1,62 @@
 {% extends "layout.html" %}
 {% block body %}
 
-{% macro render_field(field, placeholder=None) %}
-	{% if field.errors %}
-	<div>
-	{% elif field.flags.error %}
-	<div>
-	{% else %}
-	<div>
-	{% endif %}
+	{% macro render_field(field, placeholder=None) %}
+		{% if field.errors %}
+		<div>
+		{% elif field.flags.error %}
+		<div>
+		{% else %}
+		<div>
+		{% endif %}
 
-	{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
-	{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
-	</div>
-{% endmacro %}
-
-<h2>Edycja przygody</h2><br>
-
-{% with errors = get_flashed_messages(category_filter=["error"]) %}
-{% if errors %}
-<div>
-{% for error in errors %}
-{{ error }}<br>
-{% endfor %}
-</div>
-{% endif %}
-{% endwith %}
-
-<!-- 		{% if form.errors %}
-<div>
-{% for field, error in form.errors.items() %}
-{% for e in error %}
-{{ e }}<br>
-{% endfor %}
-{% endfor %}
-</div>
-{% endif %} -->
-
-{% with %}
-	{% set location=(52.229937, 21.011380) %}
-	{% set style="width:400px;height:400px;"%}
-
-	{{
-		googlemap(
-			"przygoda",
-			location.0, location.1,
-			markers=all_coordinates,
-			style=style
-		)
-	}}
-{% endwith %}
-
-
-<br>
-<form method="post" action="{{ adventure_id }}" accept-charset="UTF-8" role="form">
-	{{ form.csrf_token }}
-	{{ render_field(form.id) }}
-	<div class="control-group">
-		<div class="controls">
-			{{ render_field(form.date, placeholder="Data przygody", autofocus="") }}
+		{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+		{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
 		</div>
-		<div class="control-group error">
-			<small class="control-group error help-block">{{ form.date.errors[0] }}</small>
-		</div>
-	</div>
+	{% endmacro %}
 
-	<div class="control-group">
-		<div class="controls">
-			{{ render_field(form.info, placeholder="Informacje o przygodzie") }}
-		</div>
-		<div class="control-group error">
-			<small class="control-group error help-block">{{ form.info.errors[0] }}</small>
-		</div>
-	</div>
+	<h2>Edycja przygody</h2><br>
 
-	<div class="control-group">
-		<div class="controls">
-			<button type="submit" class="btn btn-success">Zapisz zmiany w przygodzie</button>
+	{% with %}
+		{% set location=(52.229937, 21.011380) %}
+		{% set style="width:400px;height:400px;"%}
+
+		{{
+			googlemap(
+				"przygoda",
+				location.0, location.1,
+				markers=all_coordinates,
+				style=style
+			)
+		}}
+	{% endwith %}
+
+	<br>
+	<form action="" method="post" name="edit">
+		{{ form.hidden_tag() }}
+
+		<div class="control-group">
+			<div class="controls">
+				{{ render_field(form.date, placeholder="Data przygody", autofocus="") }}
+			</div>
+			<div class="control-group error">
+				<small class="control-group error help-block">{{ form.date.errors[0] }}</small>
+			</div>
 		</div>
-	</div>
-</form>
+
+		<div class="control-group">
+			<div class="controls">
+				{{ render_field(form.info, placeholder="Informacje o przygodzie") }}
+			</div>
+			<div class="control-group error">
+				<small class="control-group error help-block">{{ form.info.errors[0] }}</small>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn btn-success">Zapisz zmiany w przygodzie</button>
+			</div>
+		</div>
+	</form>
 {% endblock %}
