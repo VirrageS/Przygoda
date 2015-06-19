@@ -6,7 +6,21 @@ from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures.forms import NewForm, EditForm
 from app.users.models import User
 
+from config import DATABASE_QUERY_TIMEOUT
+
 mod = Blueprint('adventures', __name__, url_prefix='/adventures')
+
+
+@mod.after_request
+def after_request(response):
+	for query in get_debug_queries():
+		if query.duration >= DATABASE_QUERY_TIMEOUT:
+			app.logger.warning(
+				"SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" %
+				(query.statement, query.parameters, query.duration,
+				 query.context)
+			)
+	return response
 
 # New trip
 @mod.route('/new/', methods=['GET', 'POST'])
@@ -29,6 +43,8 @@ def new():
 		participant = AdventureParticipant(adventure_id=adventure.id, user_id=g.user.id)
 		db.session.add(participant)
 		db.session.commit()
+
+		# add coordinates of adventure to database
 
 		# everything is okay
 		flash('Adventure item was successfully created')
