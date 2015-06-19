@@ -1,6 +1,7 @@
 from flask.ext.wtf import Form
-from wtforms import TextField, DateField, TextAreaField, validators, HiddenField
+from wtforms import DateField, TextAreaField, validators, HiddenField
 from wtforms.validators import Required
+
 #from wtforms_components import DateRange
 #from datetime import datetime, date
 

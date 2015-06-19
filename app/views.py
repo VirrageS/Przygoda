@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, g, session, url_for
+from flask import Blueprint, render_template
 
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.users.models import User
