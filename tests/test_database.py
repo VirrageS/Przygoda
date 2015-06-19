@@ -74,5 +74,5 @@ class DatabaseTestCase(unittest.TestCase):
 		db.session.commit()
 
 		a = AdventureParticipant.query.filter_by(adventure_id=1).first()
-		assert c is not None
+		assert a is not None
 		assert a.user_id == 1
