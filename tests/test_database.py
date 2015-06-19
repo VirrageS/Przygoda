@@ -69,7 +69,7 @@ class DatabaseTestCase(unittest.TestCase):
 		"""Testing adding adventure participant to database"""
 
 		a = AdventureParticipant(adventure_id=1, user_id=1)
-		db.session.add(c)
+		db.session.add(a)
 		db.session.commit()
 
 		a = AdventureParticipant.query.filter_by(adventure_id=1).first()
