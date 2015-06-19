@@ -56,10 +56,21 @@ class DatabaseTestCase(unittest.TestCase):
 		"""Testing adding coordinantes of adventure to datebase.
 		Main thing is that we have to check if float is begin serialized properly"""
 
-		c = Coordinate(adventure_id=1, path_point=1, latitude=52.229937, longitude=21.011380)
+		c = Coordinate(adventure_id=1, path_point=10, latitude=52.229937, longitude=21.011380)
 		db.session.add(c)
 		db.session.commit()
 
 		c = Coordinate.query.filter_by(adventure_id=1).first()
+		assert c.path_point == 10
 		assert c.latitude == 52.229937
 		assert c.longitude == 21.011380
+
+	def test_add_adventure_participant_to_database(self):
+		"""Testing adding adventure participant to database"""
+
+		a = AdventureParticipant(adventure_id=1, user_id=1)
+		db.session.add(c)
+		db.session.commit()
+
+		a = AdventureParticipant.query.filter_by(adventure_id=1).first()
+		assert user_id == 1
