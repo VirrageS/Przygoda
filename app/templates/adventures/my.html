@@ -16,7 +16,7 @@
 				<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
 				<td>{{ adventure.info }}</td>
 				<td>{{ adventure.joined }}</td>
-				<td><a href="/adventures/edit/{{ adventure.id }}">Edytuj</a></td>
+				<td><a href="/adventures/edit/{{ adventure.id }}">Edytuj</a> | <a href="/adventures/delete/{{ adventure.id }}">Usuń</a></td>
 			</tr>
 		{% endfor %}
 	</table>

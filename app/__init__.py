@@ -4,11 +4,14 @@ import sys
 from flask import Flask, render_template, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
+from flask.ext.googlemaps import GoogleMaps
+
 
 app = Flask(__name__)
 app.config.from_object('config')
 
 db = SQLAlchemy(app)
+GoogleMaps(app)
 
 # if not debuging we should keep log of our app
 if not app.debug:
@@ -44,7 +47,7 @@ def install_secret_key(app, filename='secret_key'):
 		print('head -c 24 /dev/urandom > {filename}'.format(filename=filename))
 		sys.exit(1)
 
-if not app.config['DEBUG']:
+if not app.debug:
 	install_secret_key(app)
 
 # Login setup
@@ -60,12 +63,6 @@ def load_user(id):
 @app.before_request
 def before_request():
 	g.user = current_user
-
-# todo: make CsrfProtection
-
-# Google maps
-from flask.ext.googlemaps import GoogleMaps
-GoogleMaps(app)
 
 @app.errorhandler(404)
 def not_found():

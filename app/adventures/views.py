@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template, g, flash, redirect, url_f
 from flask.ext.login import login_required
 
 from app import db
-from app.adventures.models import Adventure, AdventureParticipant
+from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures.forms import NewForm, EditForm
 from app.users.models import User
 
@@ -113,7 +113,7 @@ def my_adventures():
 	joined_adventures = AdventureParticipant.query.filter_by(user_id=g.user.id).all()
 	for joined_adventure in joined_adventures:
 		# get adventure
-		adventure = Adventure.query.filter_by(id=joined_adventure.adventure_id).first()
+		adventure = Adventure.query.get(joined_adventure.adventure_id)
 
 		# check if user is not creator (we do not want duplicates)
 		if (adventure is not None) and (adventure.creator_id != g.user.id):
@@ -130,16 +130,16 @@ def edit(adventure_id=0):
 		return redirect(url_for('simple_page.index'))
 
 	# get adventure
-	adventure = Adventure.query.filter_by(id=adventure_id).first()
+	adventure = Adventure.query.get(adventure_id)
 
 	# check if adventure exists
 	if adventure is None:
-		flash('Invalid adventure :C')
+		flash('Adventure not found.')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is creator of adventure
 	if adventure.creator_id != g.user.id:
-		flash('You are not creator of this adventure!')
+		flash('You cannot edit this adventure!')
 		return redirect(url_for('simple_page.index'))
 
 	# get form
@@ -158,3 +158,40 @@ def edit(adventure_id=0):
 		return redirect(url_for('simple_page.index'))
 
 	return render_template('adventures/edit.html', form=form, adventure_id=adventure_id)
+
+@mod.route('/delete/<int:adventure_id>')
+@login_required
+def delete(adventure_id):
+	# check if adventure_id is not max_int
+	if adventure_id >= 9223372036854775807:
+		return redirect(url_for('simple_page.index'))
+
+	# get adventure
+	adventure = Adventure.query.get(adventure_id)
+
+	# check if adventure has been found
+	if adventure is None:
+		flash('Adventure not found.')
+		return redirect(url_for('simple_page.index'))
+
+	# check if user is creator of adventure
+	if adventure.creator_id != g.user.id:
+		flash('You cannot delete this adventure!')
+		return redirect(url_for('simple_page.index'))
+
+	# delete adventure
+	db.session.delete(adventure)
+
+	# delete all adventure participants
+	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+	for participant in participants:
+		db.session.delete(participant)
+
+	# delete all adventure coordinates
+	coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
+	for coordinate in coordinates:
+		db.session.delete(coordinate)
+
+	db.session.commit()
+	flash('Your adventure has been deleted.')
+	return redirect(url_for('simple_page.index'))
