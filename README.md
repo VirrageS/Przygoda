@@ -1,4 +1,4 @@
-# Przygoda [![Build Status](https://travis-ci.org/VirrageS/przygoda.svg?branch=master)](https://travis-ci.org/VirrageS/przygoda)
+# Przygoda [![Circle CI](https://circleci.com/gh/VirrageS/przygoda.svg?style=svg)](https://circleci.com/gh/VirrageS/przygoda)
 Aplikacja Przygoda jest najlepszym sposobem na znajdowanie miłośników rowerów
 
 # Instalacja
