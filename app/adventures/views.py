@@ -59,7 +59,13 @@ def adventure_show(adventure_id):
 
 	# check if creator exists
 	if user is not None:
-		final_adventure = {'id': adventure.id, 'username': user.username, 'date': adventure.date, 'info': adventure.info, 'joined': len(participants)}
+		final_adventure = {
+			'id': adventure.id,
+			'username': user.username,
+			'date': adventure.date,
+			'info': adventure.info,
+			'joined': len(participants)
+		}
 
 	return render_template('adventures/show.html', adventure=final_adventure, participants=final_participants)
 
@@ -116,13 +122,14 @@ def my_adventures():
 @mod.route('/edit/<int:adventure_id>', methods=['GET', 'POST'])
 @login_required
 def edit(adventure_id=0):
-	# todo: make better checkout - check if adventure_id is small enough to query database
-	if (adventure_id >= 10000):
+	# check if adventure_id is not max_int
+	if (adventure_id >= 9223372036854775807):
 		return redirect(url_for('simple_page.index'))
 
 	# get adventure
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 
+	# check if adventure exists
 	if adventure is None:
 		flash('Invalid adventure :C')
 		return redirect(url_for('simple_page.index'))
@@ -132,9 +139,10 @@ def edit(adventure_id=0):
 		flash('You are not creator of this adventure!')
 		return redirect(url_for('simple_page.index'))
 
+	# get form
 	form = EditForm(request.form, obj=adventure)
 
-	## verify the new form
+	# verify the edit form
 	if form.validate_on_submit():
 		# get edited adventure from the form
 		form.populate_obj(adventure)
@@ -147,49 +155,3 @@ def edit(adventure_id=0):
 		return redirect(url_for('simple_page.index'))
 
 	return render_template('adventures/edit.html', form=form, adventure_id=adventure_id)
-
-	#final_adventure = {}
-	#final_participants = []
-
-	## get adventure and creator of it
-	#adventure = Adventure.query.filter_by(id=adventure_id).first()
-	#if adventure is not None:
-	#	user = User.query.filter_by(id=adventure.creator_id).first()
-
-	#	# get joined participants
-	#	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-	#	for participant in participants:
-	#		user = User.query.filter_by(id=participant.user_id).first()
-
-	#		if user is not None:
-	#			final_participants.append(user)
-
-	#	# check if creator exists
-	#	if user is not None:
-	#		final_adventure = {
-	#			'id': adventure.id,
-	#			'username': user.username,
-	#			'date': adventure.date,
-	#			'info': adventure.info,
-	#			'joined': len(participants)
-	#		}
-
-	## if new form has been submitted
-	#form = EditForm(request.form, adventure)
-
-	#if request.method == 'GET':
-	#	return render_template('adventures/edit.html', adventure_id=adventure_id, form=form, adventure=final_adventure, participants=final_participants)
-
-	## verify the new form
-	#if form.validate_on_submit():
-	#	# get edited adventure from form
-	#	form.populate_obj(adventure)
-
-	#	# add adventure to database
-	#	db.session.commit()
-
-	#	# everything is okay
-	#	flash('Adventure item was successfully created')
-	#	return redirect(url_for('simple_page.index'))
-
-	#return render_template('adventures/edit.html', adventure_id=adventure_id, form=form, adventure=final_adventure, participants=final_participants)
