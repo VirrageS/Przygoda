@@ -1,12 +1,26 @@
 from werkzeug import check_password_hash, generate_password_hash
 from flask import Blueprint, request, render_template, flash, redirect, url_for
 from flask.ext.login import login_user, logout_user, login_required
+from flask.ext.sqlalchemy import get_debug_queries
 
 from app import db
 from app.users.models import User
 from app.users.forms import RegisterForm, LoginForm
 
+from config import DATABASE_QUERY_TIMEOUT
+
 mod = Blueprint('users', __name__, url_prefix='/users')
+
+@mod.after_request
+def after_request(response):
+	for query in get_debug_queries():
+		if query.duration >= DATABASE_QUERY_TIMEOUT:
+			app.logger.warning(
+				"SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" %
+				(query.statement, query.parameters, query.duration,
+				 query.context)
+			)
+	return response
 
 # Login
 @mod.route('/login/', methods=['GET','POST'])

@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template, g, flash, redirect, url_for
 from flask.ext.login import login_required
+from flask.ext.sqlalchemy import get_debug_queries
 
 from app import db
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
