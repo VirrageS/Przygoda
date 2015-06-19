@@ -1,4 +1,4 @@
-# Przygoda [![Circle CI](https://circleci.com/gh/VirrageS/przygoda.svg?style=svg)](https://circleci.com/gh/VirrageS/przygoda)
+# Przygoda [![Circle CI](https://circleci.com/gh/VirrageS/przygoda.svg?style=svg&circle-token=bbdd9a0c1379c15241b877d9678c64538730b6d5)](https://circleci.com/gh/VirrageS/przygoda)
 Aplikacja Przygoda jest najlepszym sposobem na znajdowanie miłośników rowerów
 
 # Instalacja
