@@ -38,8 +38,8 @@ def new():
 
 @mod.route('/<int:adventure_id>')
 def adventure_show(adventure_id):
-	# todo: make better checkout - check if adventure_id is small enough to query database
-	if adventure_id >= 10000:
+	# check if adventure_id is not max_int
+	if adventure_id >= 9223372036854775807:
 		return redirect(url_for('simple_page.index'))
 
 	final_adventure = {}
@@ -72,14 +72,17 @@ def adventure_show(adventure_id):
 @mod.route('/join/<int:adventure_id>')
 @login_required
 def join(adventure_id):
-	# todo: make better checkout - check if adventure_id is small enough to query database
-	if adventure_id >= 10000:
+	# check if adventure_id is not max_int
+	if adventure_id >= 9223372036854775807:
 		return redirect(url_for('simple_page.index'))
 
 	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=g.user.id).first()
+
+	# check if user joined adventure
 	if participant is not None:
 		flash('You arleady have joined to this adventure')
 	else:
+		# add user to adventure participants to database
 		participant = AdventureParticipant(adventure_id=adventure_id, user_id=g.user.id)
 		db.session.add(participant)
 		db.session.commit()
@@ -123,7 +126,7 @@ def my_adventures():
 @login_required
 def edit(adventure_id=0):
 	# check if adventure_id is not max_int
-	if (adventure_id >= 9223372036854775807):
+	if adventure_id >= 9223372036854775807:
 		return redirect(url_for('simple_page.index'))
 
 	# get adventure
