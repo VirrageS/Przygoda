@@ -114,7 +114,6 @@ def my_adventures():
 	return render_template('adventures/my.html', adventures=final_adventures, joined_adventures=final_joined_adventures)
 
 # Edit adventure
-@mod.route('/edit/', methods=['GET', 'POST'])
 @mod.route('/edit/<int:adventure_id>', methods=['GET', 'POST'])
 @login_required
 def edit(adventure_id=0):

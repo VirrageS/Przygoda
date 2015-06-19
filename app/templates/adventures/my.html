@@ -7,13 +7,15 @@
 		<th>Data przygody</th>
 		<th>Informacje</th>
 		<th>Dołączyło</th>
+		<th>Akcja</th>
 	</tr>
 	{% for adventure in adventures %}
 		<tr>
-			<td><a href="/adventures/edit/{{ adventure.id }}">{{ adventure.id }}</a></td>
+			<td>{{ adventure.id }}</td>
 			<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
 			<td>{{ adventure.info }}</td>
 			<td>{{ adventure.joined }}</td>
+			<td><a href="/adventures/edit/{{ adventure.id }}">Edytuj</a></td>
 		</tr>
 	{% endfor %}
 </table>
