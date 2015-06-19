@@ -61,6 +61,7 @@ class DatabaseTestCase(unittest.TestCase):
 		db.session.commit()
 
 		c = Coordinate.query.filter_by(adventure_id=1).first()
+		assert c is not None
 		assert c.path_point == 10
 		assert c.latitude == 52.229937
 		assert c.longitude == 21.011380
@@ -73,4 +74,5 @@ class DatabaseTestCase(unittest.TestCase):
 		db.session.commit()
 
 		a = AdventureParticipant.query.filter_by(adventure_id=1).first()
+		assert c is not None
 		assert a.user_id == 1
