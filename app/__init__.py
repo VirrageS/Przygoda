@@ -3,7 +3,7 @@ import sys
 
 from flask import Flask, render_template, g
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.login import LoginManager, logout_user, current_user, login_required
+from flask.ext.login import LoginManager, logout_user, current_user
 
 app = Flask(__name__)
 app.config.from_object('config')

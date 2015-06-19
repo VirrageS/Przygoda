@@ -1,6 +1,5 @@
-from datetime import datetime
-from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
-from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
+from flask import Blueprint, request, render_template, flash, g, redirect, url_for
+from flask.ext.login import login_user, logout_user, current_user, login_required
 
 from app import db
 from app.adventures.models import Adventure, AdventureParticipant

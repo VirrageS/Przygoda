@@ -1,6 +1,4 @@
-from flask import Blueprint, request, render_template, flash, g, session, url_for
-from werkzeug import check_password_hash, generate_password_hash
-from flask.ext.login import login_user, logout_user, current_user, login_required
+from flask import Blueprint, request, render_template, g, session, url_for
 
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.users.models import User
