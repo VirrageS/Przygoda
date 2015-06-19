@@ -3,7 +3,7 @@ import sys
 
 from flask import Flask, render_template, g
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
+from flask.ext.login import LoginManager, logout_user, current_user, login_required
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -66,7 +66,7 @@ from flask.ext.googlemaps import GoogleMaps
 GoogleMaps(app)
 
 @app.errorhandler(404)
-def not_found(error):
+def not_found():
 	return render_template('404.html'), 404
 
 from app.users.views import mod as usersModule

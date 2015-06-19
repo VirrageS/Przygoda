@@ -1,13 +1,16 @@
-from flask.ext.wtf import Form, RecaptchaField
-from wtforms import BooleanField, TextField, DateField, TextAreaField, validators
-from wtforms.validators import Required, EqualTo, Email
-from wtforms_components import DateRange
-from datetime import datetime, date
+from flask.ext.wtf import Form
+from wtforms import TextField, DateField, TextAreaField, validators, HiddenField
+from wtforms.validators import Required, Email
+#from wtforms_components import DateRange
+#from datetime import datetime, date
 
 class NewForm(Form):
 	#validators=[DateRange(min=datetime.date().utcnow())]
 	date = DateField('Data', format='%d.%m.%Y')
-	info = TextAreaField('Password', [Required()])
+	info = TextAreaField('Info', [Required()])
+
+class EditForm(NewForm):
+	id = HiddenField()
 
 class RegisterForm(Form):
 	username = TextField('Username', [validators.Length(min=4, max=25)])

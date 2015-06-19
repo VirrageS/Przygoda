@@ -1,6 +1,6 @@
-from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
+from flask import Blueprint, request, render_template, flash, g, session, url_for
 from werkzeug import check_password_hash, generate_password_hash
-from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
+from flask.ext.login import login_user, logout_user, current_user, login_required
 
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.users.models import User
@@ -36,7 +36,7 @@ def index():
 
 	coordinates = Coordinate.query.all()
 	for coordinate in coordinates:
-		all_coordinates.append((coordinates.longtitude, coordinates.latitude))
+		all_coordinates.append((coordinate.longtitude, coordinate.latitude))
 
 	return render_template('index.html', adventures=all_adventures, coordinates=all_coordinates)
 
@@ -66,6 +66,6 @@ def carrers():
 	return render_template('carrers.html')
 
 # Support
-@mod.route("/help")
-def help():
-	return render_template('help.html')
+@mod.route("/support")
+def support():
+	return render_template('support.html')

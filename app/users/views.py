@@ -53,7 +53,7 @@ def register():
 			check_user = User.query.filter_by(email=form.email.data).first()
 
 		# user with username exists
-		if check_user != None:
+		if check_user is not None:
 			flash('User with provided username or email arleady exists', 'error-message')
 			return render_template('users/register.html', form=form)
 
