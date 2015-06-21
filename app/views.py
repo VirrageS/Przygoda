@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, flash
 
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
+from app.adventures import constants as ADVENTURES
 from app.users.models import User
 
 mod = Blueprint('simple_page', __name__, template_folder='templates')
@@ -32,11 +33,17 @@ def index():
 				}
 			)
 
-	coordinates = Coordinate.query.all()
-	for coordinate in coordinates:
-		all_coordinates.append((coordinate.longtitude, coordinate.latitude))
+		coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
+		markers = []
+		for coordinate in coordinates:
+			markers.append((coordinate.latitude, coordinate.longitude))
 
-	return render_template('index.html', adventures=all_adventures, coordinates=all_coordinates)
+		if len(markers) > 0:
+			all_coordinates.append(markers)
+
+	#flash(all_coordinates)
+
+	return render_template('index.html', adventures=all_adventures, adventures_markers=all_coordinates)
 
 # About us
 @mod.route("/about")

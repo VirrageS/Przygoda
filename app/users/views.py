@@ -1,11 +1,11 @@
 from werkzeug import check_password_hash, generate_password_hash
-from flask import Blueprint, request, render_template, flash, redirect, url_for
+from flask import Blueprint, request, render_template, g, flash, redirect, url_for
 from flask.ext.login import login_user, logout_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
 from app import db
 from app.users.models import User
-from app.users.forms import RegisterForm, LoginForm
+from app.users.forms import RegisterForm, LoginForm, AccountForm
 
 from config import DATABASE_QUERY_TIMEOUT
 
@@ -68,7 +68,7 @@ def register():
 
 		# user with username exists
 		if check_user is not None:
-			flash('User with provided username or email arleady exists', 'error-message')
+			flash('User with provided username or email arleady exists')
 			return render_template('users/register.html', form=form)
 
 		# create user and add to database
@@ -95,7 +95,27 @@ def logout():
 	flash('Logged out successfully')
 	return redirect(url_for('simple_page.index'))
 
-@mod.route('/account/')
+@mod.route('/account/', methods=['GET','POST'])
 @login_required
 def account():
-	return render_template('users/account.html')
+	# get form
+	form = AccountForm(request.form, obj=g.user)
+
+	# verify the register form
+	if form.validate_on_submit():
+		if (form.old_password.data is not None) and (form.old_password.data is not '') and (not check_password_hash(g.user.password, form.old_password.data)):
+			# everything is okay
+			flash('Old password is not correct')
+			return redirect(url_for('users.account'))
+
+		# get edited user from the form
+		form.populate_obj(g.user)
+
+		# add/update user to database
+		db.session.commit()
+
+		# everything is okay
+		flash('You acccount has been successfully edited')
+		return redirect(url_for('users.account'))
+
+	return render_template('users/account.html', form=form)

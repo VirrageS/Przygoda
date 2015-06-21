@@ -8,7 +8,7 @@ class User(db.Model):
 	__tablename__ = "users"
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column('username', db.String(120), unique=True, index=True)
-	password = db.Column('password', db.String(128))
+	password = db.Column('password', db.String(255))
 	email = db.Column('email', db.String(50), unique=True, index=True)
 	registered_on = db.Column('registered_on', db.DateTime)
 	role = db.Column('role', db.SmallInteger, default=USER.USER)

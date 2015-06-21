@@ -8,3 +8,6 @@ MODES = {
 	AMATEURISH: 'amatorski',
 	DOWNHILL: 'downhill',
 }
+
+PATH_FIRST_POINT = 0
+PATH_LAST_POINT = 1

@@ -164,6 +164,24 @@ def edit(adventure_id=0):
 
 	# verify the edit form
 	if form.validate_on_submit():
+		# delete existing coordinates for the adventure_id
+		db.session.query(Coordinate).filter_by(adventure_id=adventure_id).delete()
+
+		# get coordinates
+		i = 0
+		while True:
+			marker = request.form.get('marker_' + str(i))
+			if (marker is None) or (marker is ''):
+				break
+
+			raw_coordinate = eval(str(marker))
+			if raw_coordinate is not None:
+				coordinate = Coordinate(adventure_id=adventure_id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
+				db.session.add(coordinate)
+
+			db.session.commit()
+			i = i + 1
+
 		# get edited adventure from the form
 		form.populate_obj(adventure)
 
@@ -174,7 +192,13 @@ def edit(adventure_id=0):
 		flash('Adventure has been successfully edited')
 		return redirect(url_for('simple_page.index'))
 
-	return render_template('adventures/edit.html', form=form, adventure_id=adventure_id)
+	# get coordinates of existing points
+	all_coordinates = []
+	coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
+	for coordinate in coordinates:
+		all_coordinates.append((coordinate.latitude, coordinate.longitude))
+
+	return render_template('adventures/edit.html', form=form, adventure_id=adventure_id, markers=all_coordinates)
 
 @mod.route('/delete/<int:adventure_id>')
 @login_required

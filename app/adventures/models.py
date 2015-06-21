@@ -1,5 +1,5 @@
 from app import db
-from app.adventures import constants as MODES
+from app.adventures import constants as ADVENTURES
 
 class Adventure(db.Model):
 	__tablename__ = 'adventures'
@@ -8,7 +8,7 @@ class Adventure(db.Model):
 	date = db.Column('date', db.DateTime)
 	info = db.Column('info', db.String)
 	joined = db.Column('joined', db.Integer)
-	mode = db.Column('mode', db.SmallInteger, default=MODES.RECREATIONAL)
+	mode = db.Column('mode', db.SmallInteger, default=ADVENTURES.RECREATIONAL)
 
 	def __init__(self, creator_id, date, info, joined=1):
 		self.creator_id = creator_id
@@ -17,7 +17,7 @@ class Adventure(db.Model):
 		self.joined = joined
 
 	def get_mode(self):
-		return MODES.MODES[self.mode]
+		return ADVENTURES.MODES[self.mode]
 
 class Coordinate(db.Model):
 	__tablename__ = 'coordinates'

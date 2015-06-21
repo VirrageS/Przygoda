@@ -1,8 +1,73 @@
 {% extends "layout.html" %}
 {% block body %}
-	<h2>Moje konto</h2>
+	{% macro render_field(field, placeholder=None) %}
+		{% if field.errors %}
+		<div>
+		{% elif field.flags.error %}
+		<div>
+		{% else %}
+		<div>
+		{% endif %}
 
-	Nazwa użytkownika: {{ g.user.username }} | <a href="">Zmień nazwę użytkownika</a><br>
-	Email: {{ g.user.email }} | <a href="">Zmień email</a><br>
-	Hasło: {{ g.user.password }} | <a href="">Zmień hasło</a><br>
+		{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+		{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
+		</div>
+	{% endmacro %}
+
+	<h2>Moje konto</h2><br>
+
+	<form action="" method="post" name="register">
+		{{ form.hidden_tag() }}
+
+		<div class="control-group">
+			<div class="controls">
+				{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
+			</div>
+			<div class="control-group error">
+				<small class="control-group error help-block">{{ form.username.errors[0] }}</small>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				{{ render_field(form.email, placeholder="Email") }}
+			</div>
+			<div class="control-group error">
+				<small class="control-group error help-block">{{ form.email.errors[0] }}</small>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				{{ render_field(form.password, placeholder="Nowe hasło") }}
+			</div>
+			<div class="control-group error">
+				<small class="control-group error help-block">{{ form.password.errors[0] }}</small>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				{{ render_field(form.confirm, placeholder="Powtórz hasło") }}
+			</div>
+			<div class="control-group error">
+				<small class="control-group error help-block">{{ form.confirm.errors[0] }}</small>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				{{ render_field(form.old_password, placeholder="Stare hasło") }}
+			</div>
+			<div class="control-group error">
+				<small class="control-group error help-block">{{ form.old_password.errors[0] }}</small>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn btn-success">Zaktualizuj</button>
+			</div>
+		</div>
+	</form>
 {% endblock %}

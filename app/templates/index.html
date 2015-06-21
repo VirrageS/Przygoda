@@ -2,19 +2,63 @@
 {% extends "layout.html" %}
 
 {% block body %}
-	{% with %}
-		{% set location=(52.229937, 21.011380) %}
-		{% set style="width:400px; height:400px;"%}
+	<style>
+		#map-canvas {
+			height: 400px;
+			width: 400px;
+			margin: 0px;
+			padding: 0px
+		}
+	</style>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
+	<script>
+		function initialize() {
+			var mapOptions = {
+				zoom: 13,
+				center: new google.maps.LatLng(52.229937, 21.011380),
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
 
-		{{
-			googlemap(
-				"przygoda",
-				location.0, location.1,
-				markers=all_coordinates,
-				style=style
-			)
-		}}
-	{% endwith %}
+			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+			var polyOptions = {
+				strokeColor: '#000000',
+				strokeOpacity: 0.7,
+				strokeWeight: 3,
+				// editable: true
+			};
+
+			{% for adventure_markers in adventures_markers %}
+				var pathCoordinates = []
+				{% for marker in adventure_markers %}
+					var pos = new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }});
+					pathCoordinates.push(pos);
+
+					var marker = new google.maps.Marker({
+						position: pos,
+						draggable: false,
+						title: '#',
+						map: map,
+						animation: google.maps.Animation.DROP
+					});
+				{% endfor %}
+
+				var path = new google.maps.Polyline({
+					path: pathCoordinates,
+					geodesic: true,
+					strokeColor: '#FF0000',
+					strokeOpacity: 1.0,
+					strokeWeight: 2
+				});
+
+				path.setMap(map);
+			{% endfor %}
+		}
+
+		google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
+
+	<div id="map-canvas"></div>
 
 	<h2>Przygody</h2>
 	<table class="table table-hover">
