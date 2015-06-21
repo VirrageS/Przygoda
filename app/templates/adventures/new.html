@@ -17,23 +17,134 @@
 
 	<h2>Stwórz przygodę</h2><br>
 
-	{% with %}
-		{% set location=(52.229937, 21.011380) %}
-		{% set style="width:400px;height:400px;"%}
+	<style>
+		#map-canvas {
+			height: 400px;
+			width: 400px;
+			margin: 0px;
+			padding: 0px
+		}
+	</style>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
+	<script>
+		var poly;
+		var map;
+		var markers = [];
 
-		{{
-			googlemap(
-				"przygoda",
-				location.0, location.1,
-				markers=all_coordinates,
-				style=style
-			)
-		}}
-	{% endwith %}
+		function initialize() {
+			var mapOptions = {
+				zoom: 13,
+				center: new google.maps.LatLng(52.229937, 21.011380),
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
+
+			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+			var polyOptions = {
+				strokeColor: '#000000',
+				strokeOpacity: 0.7,
+				strokeWeight: 3,
+				// editable: true
+			};
+
+			poly = new google.maps.Polyline(polyOptions);
+			poly.setMap(map);
+
+			{% for marker in markers %}
+				pos = new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }})
+				addMarker(pos)
+			{% endfor %}
+
+			// add a listener for the click event
+			google.maps.event.addListener(map, 'click', function(event) {
+				addMarker(event.latLng);
+			});
+		}
+
+		// updates marker input value which will be passed
+		function updateMarkerStatus(number, position) {
+			var markerStatus = document.getElementById('marker_' + number.toString());
+
+			if (markerStatus) {
+				markerStatus.value = position;
+			} else {
+				var input = document.createElement("input");
+				input.id = 'marker_' + number.toString();
+				input.name = 'marker_' + number.toString();
+				input.type = "hidden";
+				input.value = position;
+
+				document.getElementById("markers").appendChild(input);
+			}
+		}
+
+		function addMarker(markerPosition) {
+			var path = poly.getPath();
+
+			// add new waypoint on polyline
+			path.push(markerPosition);
+
+			// add a new marker at the new plotted point on the polyline.
+			var marker = new google.maps.Marker({
+				position: markerPosition,
+				draggable: true,
+				title: '#' + (path.getLength() - 1),
+				map: map,
+				animation: google.maps.Animation.DROP,
+				number: path.getLength() - 1
+			});
+
+			// add new marker to markers array
+			markers.push(marker);
+
+			// update status after add
+			updateMarkerStatus(marker.number, marker.getPosition());
+
+			// add listener for dragend which handels updating polyline
+			google.maps.event.addListener(marker, 'dragend', function() {
+				path.setAt(this.number, this.getPosition());
+				updateMarkerStatus(this.number, this.getPosition());
+			});
+
+			// add listener for right click which handels marker's deleting
+			google.maps.event.addListener(marker, 'rightclick', function() {
+				// updateMarkerStatus(marker.position, marker.number);
+				path.removeAt(this.number);
+				this.setMap(null);
+
+				// delete marker from markers array
+				var index = markers.indexOf(this);
+				if (index > -1) {
+					markers.splice(index, 1);
+				}
+
+				for (var i = 0; i < path.getLength(); i++) {
+					// set new marker numbers
+					for (var j = 0; j < markers.length; j++) {
+						if (markers[j].getPosition() === path.getAt(i)) {
+							// update marker number and status
+							markers[j].number = i;
+							markers[j].setTitle('#' + i);
+							// alert(markers[j].number === i);
+
+							// todo: bug - it stops without any reason
+							// updateMarkerStatus(marker[j].number, marker[j].getPosition());
+						}
+					}
+				}
+			});
+		}
+
+		google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
+
+	<div id="map-canvas"></div>
 
 	<br>
 	<form action="" method="post" name="new">
 		{{ form.hidden_tag() }}
+
+		<div id="markers"></div>
 
 		<div class="control-group">
 			<div class="controls">

@@ -23,36 +23,7 @@ def after_request(response):
 			)
 	return response
 
-# New trip
-@mod.route('/new/', methods=['GET', 'POST'])
-@login_required
-def new():
-	# if new form has been submitted
-	form = NewForm(request.form)
-
-	if request.method == 'GET':
-		return render_template('adventures/new.html', form=form)
-
-	# verify the new form
-	if form.validate_on_submit():
-		# add adventure to database
-		adventure = Adventure(creator_id=g.user.id, date=form.date.data, info=form.info.data, joined=1)
-		db.session.add(adventure)
-		db.session.commit()
-
-		# add participant of adventure to database
-		participant = AdventureParticipant(adventure_id=adventure.id, user_id=g.user.id)
-		db.session.add(participant)
-		db.session.commit()
-
-		# add coordinates of adventure to database
-
-		# everything is okay
-		flash('Adventure item was successfully created')
-		return redirect(url_for('simple_page.index'))
-
-	return render_template('adventures/new.html', form=form)
-
+# Show adventure with id
 @mod.route('/<int:adventure_id>')
 def adventure_show(adventure_id):
 	# check if adventure_id is not max_int
@@ -86,6 +57,7 @@ def adventure_show(adventure_id):
 
 	return render_template('adventures/show.html', adventure=final_adventure, participants=final_participants)
 
+# Join to adventure with id
 @mod.route('/join/<int:adventure_id>')
 @login_required
 def join(adventure_id):
@@ -107,6 +79,7 @@ def join(adventure_id):
 
 	return redirect(url_for('simple_page.index'))
 
+# Check all created and joined adventures
 @mod.route('/my/')
 @login_required
 def my_adventures():
@@ -200,6 +173,50 @@ def edit(adventure_id=0):
 
 	return render_template('adventures/edit.html', form=form, adventure_id=adventure_id, markers=all_coordinates)
 
+# New adventure
+@mod.route('/new/', methods=['GET', 'POST'])
+@login_required
+def new():
+	# if new form has been submitted
+	form = NewForm(request.form)
+
+	if request.method == 'GET':
+		return render_template('adventures/new.html', form=form)
+
+	# verify the new form
+	if form.validate_on_submit():
+		# add adventure to database
+		adventure = Adventure(creator_id=g.user.id, date=form.date.data, info=form.info.data, joined=1)
+		db.session.add(adventure)
+		db.session.commit()
+
+		# add participant of adventure to database
+		participant = AdventureParticipant(adventure_id=adventure.id, user_id=g.user.id)
+		db.session.add(participant)
+		db.session.commit()
+
+		# add coordinates of adventure to database
+		i = 0
+		while True:
+			marker = request.form.get('marker_' + str(i))
+			if (marker is None) or (marker is ''):
+				break
+
+			raw_coordinate = eval(str(marker))
+			if raw_coordinate is not None:
+				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
+				db.session.add(coordinate)
+
+			db.session.commit()
+			i = i + 1
+
+		# everything is okay
+		flash('Adventure item was successfully created')
+		return redirect(url_for('simple_page.index'))
+
+	return render_template('adventures/new.html', form=form)
+
+# Delete adventure
 @mod.route('/delete/<int:adventure_id>')
 @login_required
 def delete(adventure_id):
