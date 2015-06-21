@@ -3,7 +3,7 @@ from flask import Blueprint, request, render_template, g, flash, redirect, url_f
 from flask.ext.login import login_user, logout_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
-from app import db
+from app import app, db
 from app.users.models import User
 from app.users.forms import RegisterForm, LoginForm, AccountForm
 

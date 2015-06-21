@@ -2,7 +2,9 @@ from flask import Blueprint, request, render_template, g, flash, redirect, url_f
 from flask.ext.login import login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
-from app import db
+import ast # for convering string to double
+
+from app import app, db
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures.forms import NewForm, EditForm
 from app.users.models import User
@@ -11,6 +13,12 @@ from config import DATABASE_QUERY_TIMEOUT
 
 mod = Blueprint('adventures', __name__, url_prefix='/adventures')
 
+def isfloat(value):
+	try:
+		float(value)
+		return True
+	except ValueError:
+		return False
 
 @mod.after_request
 def after_request(response):
@@ -147,12 +155,11 @@ def edit(adventure_id=0):
 			if (marker is None) or (marker is ''):
 				break
 
-			raw_coordinate = eval(str(marker))
-			if raw_coordinate is not None:
+			raw_coordinate = ast.literal_eval(str(marker))
+			if (raw_coordinate is not None) and (isfloat(raw_coordinate[0]) and isfloat(raw_coordinate[1])):
 				coordinate = Coordinate(adventure_id=adventure_id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
 				db.session.add(coordinate)
 
-			db.session.commit()
 			i = i + 1
 
 		# get edited adventure from the form
@@ -188,12 +195,10 @@ def new():
 		# add adventure to database
 		adventure = Adventure(creator_id=g.user.id, date=form.date.data, info=form.info.data, joined=1)
 		db.session.add(adventure)
-		db.session.commit()
 
 		# add participant of adventure to database
 		participant = AdventureParticipant(adventure_id=adventure.id, user_id=g.user.id)
 		db.session.add(participant)
-		db.session.commit()
 
 		# add coordinates of adventure to database
 		i = 0
@@ -202,13 +207,15 @@ def new():
 			if (marker is None) or (marker is ''):
 				break
 
-			raw_coordinate = eval(str(marker))
-			if raw_coordinate is not None:
+			raw_coordinate = ast.literal_eval(str(marker))
+			if (raw_coordinate is not None) and (isfloat(raw_coordinate[0]) and isfloat(raw_coordinate[1])):
 				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
 				db.session.add(coordinate)
 
-			db.session.commit()
 			i = i + 1
+
+		# commit changes
+		db.session.commit()
 
 		# everything is okay
 		flash('Adventure item was successfully created')

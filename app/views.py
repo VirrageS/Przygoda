@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, flash
+from flask import Blueprint, render_template
 
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
-from app.adventures import constants as ADVENTURES
+#from app.adventures import constants as ADVENTURES
 from app.users.models import User
 
 mod = Blueprint('simple_page', __name__, template_folder='templates')
@@ -40,8 +40,6 @@ def index():
 
 		if len(markers) > 0:
 			all_coordinates.append(markers)
-
-	#flash(all_coordinates)
 
 	return render_template('index.html', adventures=all_adventures, adventures_markers=all_coordinates)
 
