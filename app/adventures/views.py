@@ -5,6 +5,7 @@ from flask.ext.sqlalchemy import get_debug_queries
 import ast # for convering string to double
 
 from app import app, db
+from app.adventures.miscellaneous import isfloat
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures.forms import NewForm, EditForm
 from app.users.models import User
@@ -12,13 +13,6 @@ from app.users.models import User
 from config import DATABASE_QUERY_TIMEOUT
 
 mod = Blueprint('adventures', __name__, url_prefix='/adventures')
-
-def isfloat(value):
-	try:
-		float(value)
-		return True
-	except ValueError:
-		return False
 
 @mod.after_request
 def after_request(response):
