@@ -94,18 +94,19 @@ def my_adventures():
 		# get joined participants
 		joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
 
-		final_adventures.append({
-			'id': adventure.id,
-			'date': adventure.date,
-			'info': adventure.info,
-			'joined': len(joined)
-		})
+		if joined is not None:
+			final_adventures.append({
+				'id': adventure.id,
+				'date': adventure.date,
+				'info': adventure.info,
+				'joined': len(joined)
+			})
 
 	# get all adventures to which user joined
 	joined_adventures = AdventureParticipant.query.filter_by(user_id=g.user.id).all()
 	for joined_adventure in joined_adventures:
 		# get adventure
-		adventure = Adventure.query.get(joined_adventure.adventure_id)
+		adventure = Adventure.query.filter_by(id=joined_adventure.adventure_id).first()
 
 		# check if user is not creator (we do not want duplicates)
 		if (adventure is not None) and (adventure.creator_id != g.user.id):
@@ -141,6 +142,7 @@ def edit(adventure_id=0):
 	if form.validate_on_submit():
 		# delete existing coordinates for the adventure_id
 		db.session.query(Coordinate).filter_by(adventure_id=adventure_id).delete()
+		db.session.commit()
 
 		# get coordinates
 		i = 0
@@ -153,14 +155,12 @@ def edit(adventure_id=0):
 			if (raw_coordinate is not None) and (isfloat(raw_coordinate[0]) and isfloat(raw_coordinate[1])):
 				coordinate = Coordinate(adventure_id=adventure_id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
 				db.session.add(coordinate)
+				db.session.commit()
 
 			i = i + 1
 
 		# get edited adventure from the form
 		form.populate_obj(adventure)
-
-		# add adventure to database
-		db.session.commit()
 
 		# everything is okay
 		flash('Adventure has been successfully edited')
@@ -189,10 +189,12 @@ def new():
 		# add adventure to database
 		adventure = Adventure(creator_id=g.user.id, date=form.date.data, info=form.info.data, joined=1)
 		db.session.add(adventure)
+		db.session.commit()
 
 		# add participant of adventure to database
 		participant = AdventureParticipant(adventure_id=adventure.id, user_id=g.user.id)
 		db.session.add(participant)
+		db.session.commit()
 
 		# add coordinates of adventure to database
 		i = 0
@@ -205,11 +207,9 @@ def new():
 			if (raw_coordinate is not None) and (isfloat(raw_coordinate[0]) and isfloat(raw_coordinate[1])):
 				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
 				db.session.add(coordinate)
+				db.session.commit()
 
 			i = i + 1
-
-		# commit changes
-		db.session.commit()
 
 		# everything is okay
 		flash('Adventure item was successfully created')
@@ -238,19 +238,21 @@ def delete(adventure_id):
 		flash('You cannot delete this adventure!')
 		return redirect(url_for('simple_page.index'))
 
-	# delete adventure
-	db.session.delete(adventure)
-
 	# delete all adventure participants
 	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
 	for participant in participants:
 		db.session.delete(participant)
+		db.session.commit()
 
 	# delete all adventure coordinates
 	coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
 	for coordinate in coordinates:
 		db.session.delete(coordinate)
+		db.session.commit()
 
+	# delete adventure
+	db.session.delete(adventure)
 	db.session.commit()
+
 	flash('Your adventure has been deleted.')
 	return redirect(url_for('simple_page.index'))
