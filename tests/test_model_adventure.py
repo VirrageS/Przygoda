@@ -13,25 +13,21 @@ class AdventureTestCase(unittest.TestCase):
 		self.app = app.test_client()
 
 	def test_adventure_creator_id(self):
-		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today', joined=10)
+		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today')
 		assert a.creator_id == 1
 
 	def test_adventure_date(self):
 		date = datetime.utcnow()
-		a = Adventure(creator_id=1, date=date, mode=ADVENTURES.AMATEURISH, info='Some info today', joined=10)
+		a = Adventure(creator_id=1, date=date, mode=ADVENTURES.AMATEURISH, info='Some info today')
 		assert a.date == date
 
 	def test_adventure_mode(self):
-		a = Adventure(creator_id=3, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today', joined=10)
+		a = Adventure(creator_id=3, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today')
 		assert a.mode == ADVENTURES.AMATEURISH
 
 	def test_adventure_info(self):
-		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today', joined=10)
+		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today')
 		assert a.info == 'Some info today'
-
-	def test_adventure_joined(self):
-		a = Adventure(creator_id=3, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today', joined=10)
-		assert a.joined == 10
 
 class CoordinateTestCase(unittest.TestCase):
 	def setUp(self):

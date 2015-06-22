@@ -20,8 +20,7 @@ def after_request(response):
 		if query.duration >= DATABASE_QUERY_TIMEOUT:
 			app.logger.warning(
 				"SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" %
-				(query.statement, query.parameters, query.duration,
-				 query.context)
+				(query.statement, query.parameters, query.duration, query.context)
 			)
 	return response
 
@@ -187,7 +186,7 @@ def new():
 	# verify the new form
 	if form.validate_on_submit():
 		# add adventure to database
-		adventure = Adventure(creator_id=g.user.id, date=form.date.data, mode=form.mode.data, info=form.info.data, joined=1)
+		adventure = Adventure(creator_id=g.user.id, date=form.date.data, mode=form.mode.data, info=form.info.data)
 		db.session.add(adventure)
 		db.session.commit()
 

@@ -8,14 +8,12 @@ class Adventure(db.Model):
 	date = db.Column('date', db.DateTime)
 	mode = db.Column('mode', db.SmallInteger)
 	info = db.Column('info', db.String)
-	joined = db.Column('joined', db.Integer)
 
-	def __init__(self, creator_id, date, mode, info, joined=1):
+	def __init__(self, creator_id, date, mode, info):
 		self.creator_id = creator_id
 		self.date = date
 		self.mode = mode
 		self.info = info
-		self.joined = joined
 
 	def get_mode(self):
 		return ADVENTURES.MODES[self.mode]

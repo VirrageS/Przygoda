@@ -18,8 +18,7 @@ def after_request(response):
 		if query.duration >= DATABASE_QUERY_TIMEOUT:
 			app.logger.warning(
 				"SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" %
-				(query.statement, query.parameters, query.duration,
-				 query.context)
+				(query.statement, query.parameters, query.duration, query.context)
 			)
 	return response
 
