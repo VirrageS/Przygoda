@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
-#from app.adventures import constants as ADVENTURES
+from app.adventures import constants as ADVENTURES
 from app.users.models import User
 
 mod = Blueprint('simple_page', __name__, template_folder='templates')
@@ -29,7 +29,8 @@ def index():
 					'username': user.username,
 					'date': adventure.date,
 					'info': adventure.info,
-					'joined': len(participants)
+					'joined': len(participants),
+					'mode': ADVENTURES.MODES[int(adventure.mode)]
 				}
 			)
 

@@ -157,6 +157,15 @@
 
 		<div class="control-group">
 			<div class="controls">
+				{{ render_field(form.mode) }}
+			</div>
+			<div class="control-group error">
+				<small class="control-group error help-block">{{ form.mode.errors[0] }}</small>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
 				{{ render_field(form.info, placeholder="Informacje o przygodzie") }}
 			</div>
 			<div class="control-group error">

@@ -6,13 +6,14 @@ class Adventure(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	date = db.Column('date', db.DateTime)
+	mode = db.Column('mode', db.SmallInteger)
 	info = db.Column('info', db.String)
 	joined = db.Column('joined', db.Integer)
-	mode = db.Column('mode', db.SmallInteger, default=ADVENTURES.RECREATIONAL)
 
-	def __init__(self, creator_id, date, info, joined=1):
+	def __init__(self, creator_id, date, mode, info, joined=1):
 		self.creator_id = creator_id
 		self.date = date
+		self.mode = mode
 		self.info = info
 		self.joined = joined
 

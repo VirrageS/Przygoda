@@ -187,7 +187,7 @@ def new():
 	# verify the new form
 	if form.validate_on_submit():
 		# add adventure to database
-		adventure = Adventure(creator_id=g.user.id, date=form.date.data, info=form.info.data, joined=1)
+		adventure = Adventure(creator_id=g.user.id, date=form.date.data, mode=form.mode.data, info=form.info.data, joined=1)
 		db.session.add(adventure)
 		db.session.commit()
 

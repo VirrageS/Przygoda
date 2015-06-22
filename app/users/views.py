@@ -11,6 +11,7 @@ from config import DATABASE_QUERY_TIMEOUT
 
 mod = Blueprint('users', __name__, url_prefix='/users')
 
+# check for slow quieries
 @mod.after_request
 def after_request(response):
 	for query in get_debug_queries():
@@ -51,20 +52,15 @@ def login():
 # Register
 @mod.route('/register/', methods=['GET','POST'])
 def register():
+	"""Provides registering for user"""
+
 	# if register form is submitted
 	form = RegisterForm(request.form)
 
-	if request.method == 'GET':
-		return render_template('users/register.html', form=form)
-
 	# verify the register form
 	if form.validate_on_submit():
-		# check if user with name exists
-		check_user = User.query.filter_by(username=form.username.data).first()
-
-		# check if users with email exists
-		if check_user is None:
-			check_user = User.query.filter_by(email=form.email.data).first()
+		# check if user with provided name or email exists
+		check_user = User.query.filter((User.username == form.username.data) | (User.email == form.email.data)).first()
 
 		# user with username exists
 		if check_user is not None:

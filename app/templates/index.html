@@ -68,6 +68,7 @@
 			<th>Data przygody</th>
 			<th>Informacje</th>
 			<th>Dołączyło</th>
+			<th>Typ</th>
 			{% if g.user.is_authenticated() %}
 			<th>Akcja</th>
 			{% endif %}
@@ -87,6 +88,7 @@
 				<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
 				<td>{{ adventure.info }}</td>
 				<td>{{ adventure.joined }}</td>
+				<td>{{ adventure.mode }}</td>
 				{% if g.user.is_authenticated() %}
 					<td><a href="/adventures/join/{{ adventure.id }}">Dołącz</a>
 				{% endif %}

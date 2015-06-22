@@ -5,6 +5,7 @@ from flask import Flask, render_template, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 
+# set app
 app = Flask(__name__)
 app.config.from_object('config')
 
@@ -46,7 +47,7 @@ def install_secret_key(app, filename='secret_key'):
 if not app.debug:
 	install_secret_key(app)
 
-# Login setup
+# login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'users.login' # path to login (handel 'required_login')
