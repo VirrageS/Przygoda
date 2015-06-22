@@ -23,7 +23,7 @@ def after_request(response):
 	for query in get_debug_queries():
 		if query.duration >= DATABASE_QUERY_TIMEOUT:
 			app.logger.warning(
-				"SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n",
+				"SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" %
 				(query.statement, query.parameters, query.duration, query.context)
 			)
 	return response
@@ -66,8 +66,8 @@ def register():
 	if form.validate_on_submit():
 		# check if user with provided name or email exists
 		check_user = User.query.filter(
-			(User.username == form.username.data)
-			| (User.email == form.email.data)
+			(User.username == form.username.data) |
+			(User.email == form.email.data)
 		).first()
 
 		# user with username exists
