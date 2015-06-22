@@ -21,3 +21,15 @@ class UserTestCase(unittest.TestCase):
 	def test_user_email(self):
 		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
 		assert u.email == 'john@example.com'
+
+	def test_user_confirmed(self):
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		assert u.confirmed == False
+
+	def test_user_confirmed_on(self):
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		assert u.confirmed_on is None
+
+	def test_user_registered_on(self):
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		assert u.registered_on is not None

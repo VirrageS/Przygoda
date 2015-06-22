@@ -8,7 +8,7 @@ class User(UserMixin, db.Model):
 
 	__tablename__ = "users"
 	id = db.Column(db.Integer, primary_key=True)
-	social_id = db.Column(db.String(64), nullable=False, unique=True)
+	social_id = db.Column(db.String(128), nullable=False, unique=True)
 	username = db.Column('username', db.String(120), unique=True, index=True)
 	password = db.Column('password', db.String(255))
 	email = db.Column('email', db.String(50), unique=True, index=True)
@@ -17,7 +17,10 @@ class User(UserMixin, db.Model):
 	confirmed = db.Column(db.Boolean, nullable=False, default=False)
 	confirmed_on = db.Column(db.DateTime, nullable=True)
 
-	def __init__(self, username, password, email, confirmed, social_id='', paid=False, confirmed_on=None):
+	def __init__(self, username, password, email, confirmed=False, social_id=None, paid=False, confirmed_on=None):
+		if social_id is None:
+			social_id = username
+
 		self.social_id = social_id
 		self.username = username
 		self.password = password
@@ -41,9 +44,9 @@ class User(UserMixin, db.Model):
 
 	def get_id(self):
 		try:
-			return unicode(self.id)  # python 2
+			return unicode(self.id) # python 2
 		except NameError:
-			return str(self.id)  # python 3
+			return str(self.id) # python 3
 
 	def __repr__(self):
 		return '<User %r>' % (self.username)

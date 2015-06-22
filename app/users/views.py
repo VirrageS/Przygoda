@@ -80,7 +80,6 @@ def register():
 			username=form.username.data,
 			password=generate_password_hash(form.password.data),
 			email=form.email.data,
-			confirmed=False,
 			social_id='facebook' + form.username.data # todo: change to better unique somehing
 		)
 		db.session.add(user)
