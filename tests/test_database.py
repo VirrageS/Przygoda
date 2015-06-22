@@ -4,9 +4,11 @@ import unittest
 from datetime import datetime
 from config import base_dir
 from werkzeug import check_password_hash, generate_password_hash
+
 from app import app, db
 from app.users.models import User
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
+from app.adventures import constants as ADVENTURES
 
 class DatabaseTestCase(unittest.TestCase):
 	def setUp(self):
@@ -21,16 +23,19 @@ class DatabaseTestCase(unittest.TestCase):
 		db.drop_all()
 
 	def test_add_adventure_to_database(self):
-		a = Adventure(creator_id=2, date=datetime.utcnow(), info='Some info today', joined=10)
+		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today', joined=10)
 		db.session.add(a)
 		db.session.commit()
 		a = Adventure.query.filter_by(creator_id=2).first()
+		assert a.mode == ADVENTURES.RECREATIONAL
 		assert a.info == 'Some info today'
 		assert a.joined == 10
 
-		a = Adventure(creator_id=2, date=datetime.utcnow(), info='Some info today', joined=10)
+		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today', joined=10)
 		db.session.add(a)
 		db.session.commit()
+		assert a == ADVENTURES.AMATEURISH
+
 		b = Adventure.query.filter_by(creator_id=2).all()
 		assert len(b) == 2
 
