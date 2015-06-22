@@ -4,7 +4,7 @@ import sys
 from flask import Flask, render_template, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
-from flask.ext.mail import Message, Mail
+from flask.ext.mail import Mail
 
 # set app
 app = Flask(__name__)

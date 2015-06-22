@@ -13,9 +13,13 @@ class User(UserMixin, db.Model):
 	password = db.Column('password', db.String(255))
 	email = db.Column('email', db.String(50), unique=True, index=True)
 	registered_on = db.Column('registered_on', db.DateTime)
-	role = db.Column('role', db.SmallInteger, default=USER.USER)
+	# confirm
 	confirmed = db.Column(db.Boolean, nullable=False, default=False)
 	confirmed_on = db.Column(db.DateTime, nullable=True)
+	# extra
+	role = db.Column('role', db.SmallInteger, default=USER.USER)
+	paid = db.Column(db.Boolean, nullable=False, default=False)
+
 
 	def __init__(self, username, password, email, confirmed=False, social_id=None, paid=False, confirmed_on=None):
 		if social_id is None:
@@ -28,6 +32,7 @@ class User(UserMixin, db.Model):
 		self.registered_on = datetime.utcnow()
 		self.confirmed = confirmed
 		self.confirmed_on = confirmed_on
+		self.paid = paid
 
 	def is_authenticated(self):
 		return True
