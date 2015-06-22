@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import BooleanField, TextField, PasswordField, validators
+from wtforms import BooleanField, StringField, PasswordField, validators
 from wtforms.validators import Required, EqualTo, Email, Optional
 
 class RequiredIf(Required):
@@ -18,19 +18,19 @@ class RequiredIf(Required):
 			super(RequiredIf, self).__call__(form, field)
 
 class LoginForm(Form):
-	username = TextField('Username', [validators.Length(min=4, max=25)])
+	username = StringField('Username', [validators.Length(min=4, max=25)])
 	password = PasswordField('Password', [Required()])
 	remember_me = BooleanField('Remember me', [])
 
 class RegisterForm(Form):
-	username = TextField('Username', [validators.Length(min=4, max=25)])
-	email = TextField('Email Address', [Email(), validators.Length(min=6, max=35)])
+	username = StringField('Username', [validators.Length(min=4, max=25)])
+	email = StringField('Email Address', [Email(), validators.Length(min=6, max=35)])
 	password = PasswordField('Password', [Required()])
 	confirm = PasswordField('Repeat Password', [Required(), EqualTo('password', message='Passwords must match')])
 
 class AccountForm(Form):
-	username = TextField('Username', [Optional(), validators.Length(min=4, max=25)])
-	email = TextField('Email Address', [Email(), validators.Length(min=6, max=35)])
+	username = StringField('Username', [Optional(), validators.Length(min=4, max=25)])
+	email = StringField('Email Address', [Email(), validators.Length(min=6, max=35)])
 	password = PasswordField('Password', [Optional()])
 	confirm = PasswordField('Repeat Password', [Optional(), EqualTo('password', message='Passwords must match')])
 	old_password = PasswordField('Old Password', validators=[RequiredIf('password')])

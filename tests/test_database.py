@@ -47,10 +47,10 @@ class DatabaseTestCase(unittest.TestCase):
 		assert u.username == 'john'
 		assert check_password_hash(u.password, 'a')
 		assert u.email == 'john@example.com'
-		assert u.social_id == username
-		assert registered_on is not None
-		assert confirmed == False
-		assert confirmed_on is None
+		assert u.social_id == u.username
+		assert u.registered_on is not None
+		assert u.confirmed == False
+		assert u.confirmed_on is None
 
 		u = User(username='johner', password=generate_password_hash('a'), email='susan@examplee.com')
 		db.session.add(u)
