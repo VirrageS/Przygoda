@@ -70,13 +70,13 @@ def join(adventure_id):
 
 	# check if user joined adventure
 	if participant is not None:
-		flash('You arleady have joined to this adventure')
+		flash('You arleady have joined to this adventure', 'warning')
 	else:
 		# add user to adventure participants to database
 		participant = AdventureParticipant(adventure_id=adventure_id, user_id=g.user.id)
 		db.session.add(participant)
 		db.session.commit()
-		flash('You have joined to this adventure')
+		flash('You have joined to this adventure', 'success')
 
 	return redirect(url_for('simple_page.index'))
 
@@ -126,12 +126,12 @@ def edit(adventure_id=0):
 
 	# check if adventure exists
 	if adventure is None:
-		flash('Adventure not found.')
+		flash('Adventure not found', 'error')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is creator of adventure
 	if adventure.creator_id != g.user.id:
-		flash('You cannot edit this adventure!')
+		flash('You cannot edit this adventure!', 'error')
 		return redirect(url_for('simple_page.index'))
 
 	# get form
@@ -164,7 +164,7 @@ def edit(adventure_id=0):
 		form.populate_obj(adventure)
 
 		# everything is okay
-		flash('Adventure has been successfully edited')
+		flash('Adventure has been successfully edited', 'success')
 		return redirect(url_for('simple_page.index'))
 
 	# get coordinates of existing points
@@ -213,7 +213,7 @@ def new():
 			i = i + 1
 
 		# everything is okay
-		flash('Adventure item was successfully created')
+		flash('Adventure item was successfully created', 'success')
 		return redirect(url_for('simple_page.index'))
 
 	return render_template('adventures/new.html', form=form)
@@ -231,12 +231,12 @@ def delete(adventure_id):
 
 	# check if adventure exists
 	if adventure is None:
-		flash('Adventure not found.')
+		flash('Adventure not found', 'error')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is creator of adventure
 	if adventure.creator_id != g.user.id:
-		flash('You cannot delete this adventure!')
+		flash('You cannot delete this adventure!', 'error')
 		return redirect(url_for('simple_page.index'))
 
 	# delete all adventure participants
@@ -255,5 +255,5 @@ def delete(adventure_id):
 	db.session.delete(adventure)
 	db.session.commit()
 
-	flash('Your adventure has been deleted.')
+	flash('Your adventure has been deleted', 'success')
 	return redirect(url_for('simple_page.index'))

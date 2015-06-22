@@ -11,7 +11,7 @@ from app.users.forms import RegisterForm, LoginForm, AccountForm
 from app.token import generate_confirmation_token, confirm_token
 from app.email import send_email
 
-from oauth import OAuthSignIn
+from app.oauth import OAuthSignIn
 
 from config import DATABASE_QUERY_TIMEOUT
 
@@ -47,10 +47,10 @@ def login():
 			# login user to system
 			login_user(registered_user, remember=form.remember_me.data)
 
-			flash('Logged in successfully')
+			flash('Logged in successfully', 'success')
 			return redirect(request.args.get('next') or url_for('simple_page.index'))
 
-		flash('Wrong username or password', 'error-message')
+		flash('Wrong username or password', 'error')
 
 	return render_template('users/login.html', form=form)
 
@@ -72,7 +72,7 @@ def register():
 
 		# user with username exists
 		if check_user is not None:
-			flash('User with provided username or email arleady exists')
+			flash('User with provided username or email arleady exists', 'error')
 			return render_template('users/register.html', form=form)
 
 		# create user and add to database
@@ -93,10 +93,9 @@ def register():
 
 		#login_user(user)
 
-		flash('A confirmation email has been sent via email.')
-
 		# everything okay so far
-		flash('User successfully registered')
+		flash('A confirmation email has been sent via email.', 'info')
+		flash('User successfully registered', 'success')
 		return redirect(url_for('users.login'))
 
 	return render_template('users/register.html', form=form)
@@ -105,18 +104,20 @@ def register():
 @mod.route('/logout/')
 @login_required
 def logout():
-	"""Handels logout path"""
+	"""Logout user from the system"""
 
 	# logout user from system
 	logout_user()
 
 	# everything okay so back
-	flash('Logged out successfully')
+	flash('Logged out successfully', 'success')
 	return redirect(url_for('simple_page.index'))
 
 @mod.route('/account/', methods=['GET','POST'])
 @login_required
 def account():
+	"""Shows users informations"""
+
 	# get form
 	form = AccountForm(request.form, obj=g.user)
 
@@ -124,7 +125,7 @@ def account():
 	if form.validate_on_submit():
 		if (form.old_password.data is not None) and (form.old_password.data is not '') and (not check_password_hash(g.user.password, form.old_password.data)):
 			# everything is okay
-			flash('Old password is not correct')
+			flash('Old password is not correct', 'error')
 			return redirect(url_for('users.account'))
 
 		# update user
@@ -134,7 +135,7 @@ def account():
 		db.session.commit()
 
 		# everything is okay
-		flash('You acccount has been successfully edited')
+		flash('You acccount has been successfully edited', 'success')
 		return redirect(url_for('users.account'))
 
 	return render_template('users/account.html', form=form)
@@ -156,7 +157,7 @@ def oauth_callback(provider):
 	oauth = OAuthSignIn.get_provider(provider)
 	social_id, username, email = oauth.callback()
 	if social_id is None:
-		flash('Authentication failed.')
+		flash('Authentication failed', 'error')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user exists and if no creates new
@@ -175,11 +176,12 @@ def confirm_email(token):
 	try:
 		email = confirm_token(token)
 	except:
-		flash('The confirmation link is invalid or has expired.', 'danger')
+		flash('The confirmation link is invalid or has expired', 'warning')
 
+	# check if user with decoded email exists
 	user = User.query.filter_by(email=email).first_or_404()
 	if user.confirmed:
-		flash('Account already confirmed. Please login.')
+		flash('Account already confirmed. Please login', 'info')
 	else:
 		# update user informations and add to database
 		user.confirmed = True
@@ -187,6 +189,6 @@ def confirm_email(token):
 		db.session.add(user)
 		db.session.commit()
 
-		flash('You have confirmed your account. Thanks!', 'success')
+		flash('You have confirmed your account. Thanks', 'success')
 
 	return redirect(url_for('simple_page.index'))
