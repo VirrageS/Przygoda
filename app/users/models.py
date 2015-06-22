@@ -31,7 +31,7 @@ class User(UserMixin, db.Model):
 
 	def is_active(self):
 		# todo: change to email confirmed or not
-		return True
+		return True #self.confirmed
 
 	def is_anonymous(self):
 		return False

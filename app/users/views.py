@@ -1,3 +1,4 @@
+import datetime
 from werkzeug import check_password_hash, generate_password_hash
 from flask import Blueprint, request, render_template, g, flash, redirect, url_for
 from flask.ext.login import login_user, logout_user, login_required
@@ -7,7 +8,11 @@ from app import app, db
 from app.users.models import User
 from app.users.forms import RegisterForm, LoginForm, AccountForm
 
+from app.token import generate_confirmation_token, confirm_token
+from app.email import send_email
+
 from oauth import OAuthSignIn
+
 from config import DATABASE_QUERY_TIMEOUT
 
 mod = Blueprint('users', __name__, url_prefix='/users')
@@ -60,7 +65,10 @@ def register():
 	# verify the register form
 	if form.validate_on_submit():
 		# check if user with provided name or email exists
-		check_user = User.query.filter((User.username == form.username.data) | (User.email == form.email.data)).first()
+		check_user = User.query.filter(
+			(User.username == form.username.data)
+			| (User.email == form.email.data)
+		).first()
 
 		# user with username exists
 		if check_user is not None:
@@ -68,9 +76,26 @@ def register():
 			return render_template('users/register.html', form=form)
 
 		# create user and add to database
-		user = User(form.username.data, generate_password_hash(form.password.data), form.email.data)
+		user = User(
+			username=form.username.data,
+			password=generate_password_hash(form.password.data),
+			email=form.email.data,
+			confirmed=False,
+			social_id='facebook' + form.username.data # todo: change to better unique somehing
+		)
 		db.session.add(user)
 		db.session.commit()
+
+		# sending email
+		token = generate_confirmation_token(user.email)
+		confirm_url = url_for('users.confirm_email', token=token, _external=True)
+		html = render_template('users/activate.html', confirm_url=confirm_url)
+		subject = "Please confirm your email"
+		send_email(user.email, subject, html)
+
+		#login_user(user)
+
+		flash('A confirmation email has been sent via email.', 'success')
 
 		# everything okay so far
 		flash('User successfully registered')
@@ -139,4 +164,23 @@ def oauth_callback(provider):
 		db.session.add(user)
 		db.session.commit()
 	login_user(user, True)
+	return redirect(url_for('simple_page.index'))
+
+@mod.route('/confirm/<token>')
+@login_required
+def confirm_email(token):
+	try:
+		email = confirm_token(token)
+	except:
+		flash('The confirmation link is invalid or has expired.', 'danger')
+
+	user = User.query.filter_by(email=email).first_or_404()
+	if user.confirmed:
+		flash('Account already confirmed. Please login.', 'success')
+	else:
+		user.confirmed = True
+		user.confirmed_on = datetime.datetime.now()
+		db.session.add(user)
+		db.session.commit()
+		flash('You have confirmed your account. Thanks!', 'success')
 	return redirect(url_for('simple_page.index'))
