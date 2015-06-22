@@ -33,4 +33,4 @@ class AccountForm(Form):
 	email = StringField('Email Address', [Email(), validators.Length(min=6, max=35)])
 	password = PasswordField('Password', [Optional()])
 	confirm = PasswordField('Repeat Password', [Optional(), EqualTo('password', message='Passwords must match')])
-	old_password = PasswordField('Old Password', validators=[RequiredIf('password')])
+	old_password = PasswordField('Old Password', [RequiredIf('password')])

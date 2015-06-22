@@ -79,8 +79,7 @@ def register():
 		user = User(
 			username=form.username.data,
 			password=generate_password_hash(form.password.data),
-			email=form.email.data,
-			social_id='facebook' + form.username.data # todo: change to better unique somehing
+			email=form.email.data
 		)
 		db.session.add(user)
 		db.session.commit()
@@ -94,7 +93,7 @@ def register():
 
 		#login_user(user)
 
-		flash('A confirmation email has been sent via email.', 'success')
+		flash('A confirmation email has been sent via email.')
 
 		# everything okay so far
 		flash('User successfully registered')
@@ -128,7 +127,7 @@ def account():
 			flash('Old password is not correct')
 			return redirect(url_for('users.account'))
 
-		# get edited user from the form
+		# update user
 		form.populate_obj(g.user)
 
 		# add/update user to database
@@ -144,6 +143,7 @@ def account():
 def oauth_authorize(provider):
 	if not g.user.is_anonymous():
 		return redirect(url_for('simple_page.index'))
+
 	oauth = OAuthSignIn.get_provider(provider)
 	return oauth.authorize()
 
@@ -152,16 +152,20 @@ def oauth_authorize(provider):
 def oauth_callback(provider):
 	if not g.user.is_anonymous():
 		return redirect(url_for('simple_page.index'))
+
 	oauth = OAuthSignIn.get_provider(provider)
 	social_id, username, email = oauth.callback()
 	if social_id is None:
 		flash('Authentication failed.')
 		return redirect(url_for('simple_page.index'))
+
+	# check if user exists and if no creates new
 	user = User.query.filter_by(social_id=social_id).first()
-	if not user:
+	if user is None:
 		user = User(username=username, password='', email=email, social_id=social_id)
 		db.session.add(user)
 		db.session.commit()
+
 	login_user(user, True)
 	return redirect(url_for('simple_page.index'))
 
@@ -175,11 +179,14 @@ def confirm_email(token):
 
 	user = User.query.filter_by(email=email).first_or_404()
 	if user.confirmed:
-		flash('Account already confirmed. Please login.', 'success')
+		flash('Account already confirmed. Please login.')
 	else:
+		# update user informations and add to database
 		user.confirmed = True
 		user.confirmed_on = datetime.datetime.now()
 		db.session.add(user)
 		db.session.commit()
+
 		flash('You have confirmed your account. Thanks!', 'success')
+
 	return redirect(url_for('simple_page.index'))

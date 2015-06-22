@@ -9,5 +9,6 @@ MODES = {
 	DOWNHILL: 'downhill',
 }
 
+# point constants
 PATH_FIRST_POINT = 0
 PATH_LAST_POINT = 1

@@ -143,16 +143,18 @@ def edit(adventure_id=0):
 		db.session.query(Coordinate).filter_by(adventure_id=adventure_id).delete()
 		db.session.commit()
 
-		# get coordinates
+		# add coordinates of adventure to database
 		i = 0
 		while True:
+			# get value from html element
 			marker = request.form.get('marker_' + str(i))
 			if (marker is None) or (marker is ''):
 				break
 
+			# convert value to point (double, double) and add it to database
 			raw_coordinate = ast.literal_eval(str(marker))
-			if (raw_coordinate is not None) and (is_float(raw_coordinate[0]) and is_float(raw_coordinate[1])):
-				coordinate = Coordinate(adventure_id=adventure_id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
+			if (raw_coordinate is not None) and is_float(raw_coordinate[0]) and is_float(raw_coordinate[1]):
+				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
 				db.session.add(coordinate)
 				db.session.commit()
 
@@ -166,12 +168,10 @@ def edit(adventure_id=0):
 		return redirect(url_for('simple_page.index'))
 
 	# get coordinates of existing points
-	all_coordinates = []
 	coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
-	for coordinate in coordinates:
-		all_coordinates.append((coordinate.latitude, coordinate.longitude))
+	final_coordinates = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]
 
-	return render_template('adventures/edit.html', form=form, adventure_id=adventure_id, markers=all_coordinates)
+	return render_template('adventures/edit.html', form=form, adventure_id=adventure_id, markers=final_coordinates)
 
 # New adventure
 @mod.route('/new/', methods=['GET', 'POST'])
@@ -203,9 +203,9 @@ def new():
 			if (marker is None) or (marker is ''):
 				break
 
-			# convert value to point and add it to database
+			# convert value to point (double, double) and add it to database
 			raw_coordinate = ast.literal_eval(str(marker))
-			if (raw_coordinate is not None) and (is_float(raw_coordinate[0]) and is_float(raw_coordinate[1])):
+			if (raw_coordinate is not None) and is_float(raw_coordinate[0]) and is_float(raw_coordinate[1]):
 				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
 				db.session.add(coordinate)
 				db.session.commit()
@@ -229,7 +229,7 @@ def delete(adventure_id):
 	# get adventure
 	adventure = Adventure.query.get(adventure_id)
 
-	# check if adventure has been found
+	# check if adventure exists
 	if adventure is None:
 		flash('Adventure not found.')
 		return redirect(url_for('simple_page.index'))

@@ -1,7 +1,9 @@
 from datetime import datetime
+
+from flask.ext.login import UserMixin
+
 from app import db
 from app.users import constants as USER
-from flask.ext.login import UserMixin
 
 class User(UserMixin, db.Model):
 	"""Provides class for User"""
@@ -9,21 +11,19 @@ class User(UserMixin, db.Model):
 	__tablename__ = "users"
 	id = db.Column(db.Integer, primary_key=True)
 	social_id = db.Column(db.String(128), nullable=False, unique=True)
-	username = db.Column('username', db.String(120), unique=True, index=True)
+	username = db.Column('username', db.String(128), unique=True, index=True)
 	password = db.Column('password', db.String(255))
-	email = db.Column('email', db.String(50), unique=True, index=True)
+	email = db.Column('email', db.String(64), unique=True, index=True)
 	registered_on = db.Column('registered_on', db.DateTime)
-	# confirm
 	confirmed = db.Column(db.Boolean, nullable=False, default=False)
 	confirmed_on = db.Column(db.DateTime, nullable=True)
-	# extra
-	role = db.Column('role', db.SmallInteger, default=USER.USER)
-	paid = db.Column(db.Boolean, nullable=False, default=False)
+	role = db.Column('role', db.SmallInteger, nullable=False, default=USER.USER)
+	paid = db.Column('paid', db.Boolean, nullable=False, default=False)
 
 
-	def __init__(self, username, password, email, confirmed=False, social_id=None, paid=False, confirmed_on=None):
+	def __init__(self, username, password, email, social_id=None, confirmed=False, confirmed_on=None, paid=False):
 		if social_id is None:
-			social_id = username
+			social_id = "facebook$" + username
 
 		self.social_id = social_id
 		self.username = username
@@ -46,12 +46,6 @@ class User(UserMixin, db.Model):
 
 	def get_role(self):
 		return USER.ROLE[self.role]
-
-	def get_id(self):
-		try:
-			return unicode(self.id) # python 2
-		except NameError:
-			return str(self.id) # python 3
 
 	def __repr__(self):
 		return '<User %r>' % (self.username)
