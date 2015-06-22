@@ -7,6 +7,7 @@ from app import app, db
 from app.users.models import User
 from app.users.forms import RegisterForm, LoginForm, AccountForm
 
+from oauth import OAuthSignIn
 from config import DATABASE_QUERY_TIMEOUT
 
 mod = Blueprint('users', __name__, url_prefix='/users')
@@ -114,3 +115,28 @@ def account():
 		return redirect(url_for('users.account'))
 
 	return render_template('users/account.html', form=form)
+
+@mod.route('/authorize/<provider>')
+def oauth_authorize(provider):
+	if not g.user.is_anonymous():
+		return redirect(url_for('simple_page.index'))
+	oauth = OAuthSignIn.get_provider(provider)
+	return oauth.authorize()
+
+
+@mod.route('/callback/<provider>')
+def oauth_callback(provider):
+	if not g.user.is_anonymous():
+		return redirect(url_for('simple_page.index'))
+	oauth = OAuthSignIn.get_provider(provider)
+	social_id, username, email = oauth.callback()
+	if social_id is None:
+		flash('Authentication failed.')
+		return redirect(url_for('simple_page.index'))
+	user = User.query.filter_by(social_id=social_id).first()
+	if not user:
+		user = User(username=username, password='', email=email, social_id=social_id)
+		db.session.add(user)
+		db.session.commit()
+	login_user(user, True)
+	return redirect(url_for('simple_page.index'))
