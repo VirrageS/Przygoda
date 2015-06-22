@@ -34,7 +34,7 @@ class DatabaseTestCase(unittest.TestCase):
 		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today', joined=10)
 		db.session.add(a)
 		db.session.commit()
-		assert a == ADVENTURES.AMATEURISH
+		assert a.mode == ADVENTURES.AMATEURISH
 
 		b = Adventure.query.filter_by(creator_id=2).all()
 		assert len(b) == 2
