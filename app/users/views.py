@@ -37,7 +37,7 @@ def login():
 	if form.validate_on_submit():
 		registered_user = User.query.filter_by(username=form.username.data).first()
 
-		if registered_user and check_password_hash(registered_user.password, form.password.data):
+		if (registered_user is not None) and check_password_hash(registered_user.password, form.password.data):
 			# login user to system
 			login_user(registered_user, remember=form.remember_me.data)
 

@@ -5,7 +5,7 @@ from flask.ext.sqlalchemy import get_debug_queries
 import ast # for convering string to double
 
 from app import app, db
-from app.adventures.miscellaneous import isfloat
+from app.adventures.miscellaneous import is_float
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures.forms import NewForm, EditForm
 from app.users.models import User
@@ -152,7 +152,7 @@ def edit(adventure_id=0):
 				break
 
 			raw_coordinate = ast.literal_eval(str(marker))
-			if (raw_coordinate is not None) and (isfloat(raw_coordinate[0]) and isfloat(raw_coordinate[1])):
+			if (raw_coordinate is not None) and (is_float(raw_coordinate[0]) and is_float(raw_coordinate[1])):
 				coordinate = Coordinate(adventure_id=adventure_id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
 				db.session.add(coordinate)
 				db.session.commit()
@@ -199,12 +199,14 @@ def new():
 		# add coordinates of adventure to database
 		i = 0
 		while True:
+			# get value from html element
 			marker = request.form.get('marker_' + str(i))
 			if (marker is None) or (marker is ''):
 				break
 
+			# convert value to point and add it to database
 			raw_coordinate = ast.literal_eval(str(marker))
-			if (raw_coordinate is not None) and (isfloat(raw_coordinate[0]) and isfloat(raw_coordinate[1])):
+			if (raw_coordinate is not None) and (is_float(raw_coordinate[0]) and is_float(raw_coordinate[1])):
 				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
 				db.session.add(coordinate)
 				db.session.commit()

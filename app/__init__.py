@@ -4,14 +4,12 @@ import sys
 from flask import Flask, render_template, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
-from flask.ext.googlemaps import GoogleMaps
-
 
 app = Flask(__name__)
 app.config.from_object('config')
 
+# set database
 db = SQLAlchemy(app)
-GoogleMaps(app)
 
 # if not debuging we should keep log of our app
 if not app.debug:
@@ -24,9 +22,7 @@ if not app.debug:
 	app.logger.addHandler(file_handler)
 	app.logger.info('microblog startup')
 
-########################
-# Configure Secret Key #
-########################
+# secret key
 def install_secret_key(app, filename='secret_key'):
 	"""Configure the SECRET_KEY from a file
 	in the instance directory.
@@ -64,15 +60,17 @@ def load_user(id):
 def before_request():
 	g.user = current_user
 
+# error handling
 @app.errorhandler(404)
 def not_found_error(error):
-	return render_template('404.html'), 404
+	return render_template('404.html', error=error), 404
 
 @app.errorhandler(500)
 def internal_error(error):
 	db.session.rollback()
-	return render_template('500.html'), 500
+	return render_template('500.html', error=error), 500
 
+# blueprint
 from app.users.views import mod as usersModule
 app.register_blueprint(usersModule)
 

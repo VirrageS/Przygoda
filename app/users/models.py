@@ -23,6 +23,7 @@ class User(db.Model):
 		return True
 
 	def is_active(self):
+		# todo: change to email confirmed or not
 		return True
 
 	def is_anonymous(self):

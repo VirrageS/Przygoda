@@ -1,5 +1,5 @@
 # check if value is float
-def isfloat(value):
+def is_float(value):
 	try:
 		float(value)
 		return True

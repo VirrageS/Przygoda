@@ -10,7 +10,7 @@ mod = Blueprint('simple_page', __name__, template_folder='templates')
 @mod.route("/")
 def index():
 	all_adventures = []
-	all_coordinates = []
+	all_markers = []
 
 	# get all adventures
 	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
@@ -34,14 +34,12 @@ def index():
 			)
 
 		coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
-		markers = []
-		for coordinate in coordinates:
-			markers.append((coordinate.latitude, coordinate.longitude))
+		markers = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]
 
-		if len(markers) > 0:
-			all_coordinates.append(markers)
+		if markers:
+			all_markers.append(markers)
 
-	return render_template('index.html', adventures=all_adventures, adventures_markers=all_coordinates)
+	return render_template('index.html', adventures=all_adventures, adventures_markers=all_markers)
 
 # About us
 @mod.route("/about")
