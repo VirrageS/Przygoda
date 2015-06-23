@@ -121,3 +121,17 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		response = self.logout()
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
+
+	def test_users_register_no_register_when_logged(self):
+		"""Ensure users register does not allow to register when user is logged in"""
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		self.login(username='john', password='a')
+
+		response = self.app.get('/users/register', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')

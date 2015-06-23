@@ -33,6 +33,7 @@ def after_request(response):
 def login():
 	"""Handels user login"""
 
+	# if user is logged in it does not need to be logged in again
 	if current_user.is_authenticated():
 		flash('You are logged in', 'info')
 		return redirect(url_for('simple_page.index'))
@@ -62,6 +63,11 @@ def login():
 @mod.route('/register/', methods=['GET','POST'])
 def register():
 	"""Provides registering for user"""
+
+	# if user is logged in it does not need to be registered
+	if current_user.is_authenticated():
+		flash('You are logged in', 'info')
+		return redirect(url_for('simple_page.index'))
 
 	# if register form is submitted
 	form = RegisterForm(request.form)
