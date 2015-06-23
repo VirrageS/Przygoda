@@ -135,3 +135,89 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		response = self.app.get('/users/register', follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
+
+	def test_users_register_too_short_username(self):
+		"""Ensure users register does not allow to register when username is too short"""
+
+		response = self.app.post('/users/register/', data=dict(
+	        username='a',
+			email='tomek@tomek.com',
+	        password='aaa',
+			confirm='aaa'
+	    ), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/register.html')
+
+	def test_users_register_wrong_email(self):
+		"""Ensure users register does not allow to register with wrong email address"""
+
+		response = self.app.post('/users/register/', data=dict(
+	        username='tomek',
+			email='tomektomek.com',
+	        password='aaa',
+			confirm='aaa'
+	    ), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/register.html')
+
+	def test_users_register_wrong_confirm_password(self):
+		"""Ensure users register does not allow to register with wrong confirmed password"""
+
+		response = self.app.post('/users/register/', data=dict(
+	        username='tomek',
+			email='tomek@tomek.com',
+	        password='aaa',
+			confirm='aaaa'
+	    ), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/register.html')
+
+	def test_users_register_user_exists_with_username(self):
+		"""Ensure users register does not allow to register when someone exists with username"""
+
+		u = User(username='tomek', password=generate_password_hash('a'), email='tomeked@tomek.com')
+		db.session.add(u)
+		db.session.commit()
+
+		response = self.app.post('/users/register/', data=dict(
+	        username='tomek',
+			email='tomek@tomek.com',
+	        password='aaa',
+			confirm='aaa'
+	    ), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/register.html')
+
+	def test_users_register_user_exists_with_email(self):
+		"""Ensure users register does not allow to register when someone exists with email"""
+
+		u = User(username='tomeczek', password=generate_password_hash('a'), email='tomek@tomek.com')
+		db.session.add(u)
+		db.session.commit()
+
+		response = self.app.post('/users/register/', data=dict(
+	        username='tomek',
+			email='tomek@tomek.com',
+	        password='aaa',
+			confirm='aaa'
+	    ), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/register.html')
+
+	def test_users_register_register(self):
+		"""Ensure users register actually create the user"""
+
+		response = self.app.post('/users/register/', data=dict(
+	        username='tomeker',
+			email='tomeker@tomekads.com',
+	        password='aaaaaa',
+			confirm='aaaaaa'
+	    ), follow_redirects=True)
+
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/login.html')
+
+		u = User.query.filter_by(username='tomeker').first()
+		self.assertTrue(u is not None)
+		self.assertTrue(u.email == 'tomeker@tomekads.com')
+		self.assertTrue(check_password_hash(u.password, 'aaaaaa'))

@@ -104,7 +104,7 @@ def register():
 		#login_user(user)
 
 		# everything okay so far
-		flash('A confirmation email has been sent via email.', 'info')
+		flash('A confirmation email has been sent via email', 'info')
 		flash('User successfully registered', 'success')
 		return redirect(url_for('users.login'))
 
