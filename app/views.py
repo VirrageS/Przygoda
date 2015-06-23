@@ -23,16 +23,14 @@ def index():
 
 		# check if creator still exists
 		if user is not None:
-			all_adventures.append(
-				{
-					'id': adventure.id,
-					'username': user.username,
-					'date': adventure.date,
-					'info': adventure.info,
-					'joined': len(participants),
-					'mode': ADVENTURES.MODES[int(adventure.mode)]
-				}
-			)
+			all_adventures.append({
+				'id': adventure.id,
+				'username': user.username,
+				'date': adventure.date,
+				'info': adventure.info,
+				'joined': len(participants),
+				'mode': ADVENTURES.MODES[int(adventure.mode)]
+			})
 
 		coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
 		markers = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]

@@ -154,7 +154,12 @@ def edit(adventure_id=0):
 			# convert value to point (double, double) and add it to database
 			raw_coordinate = ast.literal_eval(str(marker))
 			if (raw_coordinate is not None) and is_float(raw_coordinate[0]) and is_float(raw_coordinate[1]):
-				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
+				coordinate = Coordinate(
+					adventure_id=adventure.id,
+					path_point=i,
+					latitude=raw_coordinate[0],
+					longitude=raw_coordinate[1]
+				)
 				db.session.add(coordinate)
 				db.session.commit()
 

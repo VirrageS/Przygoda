@@ -47,7 +47,7 @@ class DatabaseTestCase(unittest.TestCase):
 		assert u.username == 'john'
 		assert check_password_hash(u.password, 'a')
 		assert u.email == 'john@example.com'
-		assert u.social_id == u.username
+		assert u.social_id == ("facebook$" + u.username)
 		assert u.registered_on is not None
 		assert u.confirmed == False
 		assert u.confirmed_on is None
