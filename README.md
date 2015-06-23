@@ -4,6 +4,7 @@ Aplikacja Przygoda jest najlepszym sposobem na znajdowanie miłośników roweró
 # Instalacja
 
 ## Clone GitHub project
+
 Klonujemy nasze repozytorium:
 
 	MacBook-Air-Janusz:Desktop VirrageS$
@@ -12,6 +13,7 @@ Klonujemy nasze repozytorium:
 	MacBook-Air-Janusz:przygoda VirrageS$
 
 ## Inicjacja wirtualnego środowiska i bibliotek
+
 Teraz instalujemy wirtualne środowisko pythona.
 
 Wybierz jedną z opcji instalacji:
@@ -29,6 +31,7 @@ Teraz czas na wszystkie biblioteki:
 	(env)MacBook-Air-Janusz:przygoda VirrageS$ pip install -r requirements.txt
 
 ## Tworzenie bazy danych
+
 Tworzymy bazę danych do naszej aplikacji. Pamiętaj: za każdym razem jak wykonujemy
 komende `db.create_all()` stara baza danych jest nadpisywana.
 
@@ -46,6 +49,7 @@ po dodaniu noweg modułu lub modyfikacji istniejącego modułu (oczywiście
 jeżeli te moduły dziedziczą po `db.Model`).
 
 ## Odpalanie aplikacji
+
 Jeżeli nie jesteśmy w wirtualnym środowisku musimy wpisać:
 
 	MacBook-Air-Janusz:przygoda VirrageS$

@@ -34,9 +34,17 @@ def adventure_show(adventure_id):
 	final_adventure = {}
 	final_participants = []
 
-	# get adventure and creator of it
+	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
+	if adventure is None:
+		flash('Adventure does not exists', 'error')
+		return redirect(url_for('simple_page.index'))
+
+	# get adventures creator and check if exists
 	user = User.query.filter_by(id=adventure.creator_id).first()
+	if user is None:
+		flash('Adventure creator does not exists', 'error')
+		return redirect(url_for('simple_page.index'))
 
 	# get joined participants
 	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
@@ -64,6 +72,12 @@ def adventure_show(adventure_id):
 def join(adventure_id):
 	# check if adventure_id is not max_int
 	if adventure_id >= 9223372036854775807:
+		return redirect(url_for('simple_page.index'))
+
+	# get adventure and check if exists
+	adventure = Adventure.query.filter_by(id=adventure_id).first()
+	if adventure is None:
+		flash('Adventure does not exists', 'error')
 		return redirect(url_for('simple_page.index'))
 
 	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=g.user.id).first()

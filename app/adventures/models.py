@@ -41,4 +41,3 @@ class AdventureParticipant(db.Model):
 	def __init__(self, adventure_id, user_id):
 		self.adventure_id = adventure_id
 		self.user_id = user_id
-
