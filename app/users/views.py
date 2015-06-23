@@ -1,7 +1,7 @@
 import datetime
 from werkzeug import check_password_hash, generate_password_hash
 from flask import Blueprint, request, render_template, g, flash, redirect, url_for
-from flask.ext.login import login_user, logout_user, login_required
+from flask.ext.login import current_user, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
 from app import app, db
@@ -32,6 +32,10 @@ def after_request(response):
 @mod.route('/login/', methods=['GET','POST'])
 def login():
 	"""Handels user login"""
+
+	if current_user.is_authenticated():
+		flash('You are logged in', 'info')
+		return redirect(url_for('simple_page.index'))
 
 	# if login form is submitted
 	form = LoginForm(request.form)
@@ -116,7 +120,7 @@ def logout():
 @mod.route('/account/', methods=['GET','POST'])
 @login_required
 def account():
-	"""Shows users informations"""
+	"""Show users informations"""
 
 	# get form
 	form = AccountForm(request.form, obj=g.user)

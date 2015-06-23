@@ -27,6 +27,8 @@ def after_request(response):
 # Show adventure with id
 @mod.route('/<int:adventure_id>')
 def adventure_show(adventure_id):
+	"""Show adventure"""
+
 	# check if adventure_id is not max_int
 	if adventure_id >= 9223372036854775807:
 		return redirect(url_for('simple_page.index'))
@@ -70,6 +72,8 @@ def adventure_show(adventure_id):
 @mod.route('/join/<int:adventure_id>')
 @login_required
 def join(adventure_id):
+	"""Allow to join to existing adventure"""
+
 	# check if adventure_id is not max_int
 	if adventure_id >= 9223372036854775807:
 		return redirect(url_for('simple_page.index'))
@@ -98,6 +102,8 @@ def join(adventure_id):
 @mod.route('/my/')
 @login_required
 def my_adventures():
+	"""Show logged user adventures"""
+
 	final_adventures = []
 	final_joined_adventures = []
 
@@ -131,6 +137,8 @@ def my_adventures():
 @mod.route('/edit/<int:adventure_id>', methods=['GET', 'POST'])
 @login_required
 def edit(adventure_id=0):
+	"""Allows to edit adventure"""
+
 	# check if adventure_id is not max_int
 	if adventure_id >= 9223372036854775807:
 		return redirect(url_for('simple_page.index'))
@@ -196,6 +204,8 @@ def edit(adventure_id=0):
 @mod.route('/new/', methods=['GET', 'POST'])
 @login_required
 def new():
+	"""Allows to create a new adventure"""
+
 	# if new form has been submitted
 	form = NewForm(request.form)
 
@@ -241,12 +251,14 @@ def new():
 @mod.route('/delete/<int:adventure_id>')
 @login_required
 def delete(adventure_id):
+	"""Allows to delete existing adventure"""
+
 	# check if adventure_id is not max_int
 	if adventure_id >= 9223372036854775807:
 		return redirect(url_for('simple_page.index'))
 
 	# get adventure
-	adventure = Adventure.query.get(adventure_id)
+	adventure = Adventure.query.filter_by(id=adventure_id).first()
 
 	# check if adventure exists
 	if adventure is None:

@@ -15,7 +15,7 @@ from app.users.models import User
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 
-class RoutesTestCase(TestCase, unittest.TestCase):
+class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 	def setUp(self):
 		app.config['TESTING'] = True
 		app.config['WTF_CSRF_ENABLED'] = False
@@ -114,7 +114,6 @@ class RoutesTestCase(TestCase, unittest.TestCase):
 		self.login(username='john', password='a')
 
 		response = self.app.get('/adventures/join/3458304958390433485734895734085734', follow_redirects=True)
-
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
@@ -130,31 +129,6 @@ class RoutesTestCase(TestCase, unittest.TestCase):
 		self.login(username='john', password='a')
 
 		response = self.app.get('/adventures/join/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
-
-	def test_adventures_join_adventure_join(self):
-		"""Ensure that join adventure create adventure participant"""
-
-		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
-
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
-
-		# login user to system
-		self.login(username='john', password='a')
-
-		response = self.app.get('/adventures/join/1', follow_redirects=True)
-
-		# check if user has been added to adventure
-		participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
-		self.assertTrue(participant is not None)
-
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
@@ -185,3 +159,131 @@ class RoutesTestCase(TestCase, unittest.TestCase):
 		participants = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).all()
 		self.assertTrue(participants is not None)
 		self.assertTrue(len(participants) == 1)
+
+	def test_adventures_join_adventure_join(self):
+		"""Ensure that join adventure create adventure participant"""
+
+		# add adventure to database
+		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		db.session.add(a)
+		db.session.commit()
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/join/1', follow_redirects=True)
+
+		# check if user has been added to adventure
+		participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
+		self.assertTrue(participant is not None)
+
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
+	def test_adventures_delete_adventure_requires_login(self):
+		"""Ensure that delete adventure requires login"""
+
+		response = self.app.get('/adventures/delete/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/login.html')
+
+	def test_adventures_delete_adventure_big_number(self):
+		"""Ensure that delete adventure requires small adventure_id"""
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/delete/128345792384572394857234598982347582', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
+	def test_adventures_delete_adventure_no_adventure(self):
+		"""Ensure that delete adventure requires adventure to exists"""
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/delete/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
+	def test_adventures_delete_adventure_no_creator(self):
+		"""Ensure that delete adventure requires creator to be logged"""
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		# add adventure to database
+		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		db.session.add(a)
+		db.session.commit()
+
+		response = self.app.get('/adventures/delete/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
+	def test_adventures_delete_adventure_delete(self):
+		"""Ensure that delete adventure delete all the stuff"""
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		# add adventure to database
+		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		db.session.add(a)
+		db.session.commit()
+
+		# add adventure participants to database
+		ap = AdventureParticipant(adventure_id=1, user_id=2)
+		db.session.add(ap)
+		db.session.commit()
+
+		ap = AdventureParticipant(adventure_id=1, user_id=3)
+		db.session.add(ap)
+		db.session.commit()
+
+		# add some coordinates to database
+		c = Coordinate(adventure_id=1, path_point=1, latitude=50.24324242, longitude=50.24324242)
+		db.session.add(c)
+		db.session.commit()
+
+		c = Coordinate(adventure_id=1, path_point=2, latitude=50.24324242, longitude=50.24324242)
+		db.session.add(c)
+		db.session.commit()
+
+		response = self.app.get('/adventures/delete/1', follow_redirects=True)
+
+		a = Adventure.query.filter_by(id=1).first()
+		ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
+		c = Coordinate.query.filter_by(adventure_id=1).first()
+		self.assertTrue(a is None)
+		self.assertTrue(ap is None)
+		self.assertTrue(c is None)
+
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
