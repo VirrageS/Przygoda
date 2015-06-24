@@ -33,12 +33,12 @@ def after_request(response):
 def login():
 	"""Handels user login"""
 
-	# if user is logged in it does not need to be logged in again
+	# user is logged so it does not need to be logged in again
 	if current_user.is_authenticated():
 		flash('You are logged in', 'info')
 		return redirect(url_for('simple_page.index'))
 
-	# if login form is submitted
+	# get form
 	form = LoginForm(request.form)
 
 	if request.method == 'GET':
@@ -60,13 +60,13 @@ def login():
 	return render_template('users/login.html', form=form)
 
 # Register
-@mod.route('/register/', methods=['GET','POST'])
+@mod.route('/register/', methods=['GET', 'POST'])
 def register():
 	"""Provides registering for user"""
 
 	# if user is logged in it does not need to be registered
 	if current_user.is_authenticated():
-		flash('You are logged in', 'info')
+		flash('You are arleady logged in', 'info')
 		return redirect(url_for('simple_page.index'))
 
 	# if register form is submitted
@@ -74,17 +74,6 @@ def register():
 
 	# verify the register form
 	if form.validate_on_submit():
-		# check if user with provided name or email exists
-		check_user = User.query.filter(
-			(User.username == form.username.data) |
-			(User.email == form.email.data)
-		).first()
-
-		# user with username exists
-		if check_user is not None:
-			flash('User with provided username or email arleady exists', 'error')
-			return render_template('users/register.html', form=form)
-
 		# create user and add to database
 		user = User(
 			username=form.username.data,
@@ -133,11 +122,6 @@ def account():
 
 	# verify the register form
 	if form.validate_on_submit():
-		if (form.old_password.data is not None) and (form.old_password.data is not '') and (not check_password_hash(g.user.password, form.old_password.data)):
-			# everything is okay
-			flash('Old password is not correct', 'error')
-			return redirect(url_for('users.account'))
-
 		# update user
 		form.populate_obj(g.user)
 
@@ -192,13 +176,13 @@ def confirm_email(token):
 	user = User.query.filter_by(email=email).first_or_404()
 	if user.confirmed:
 		flash('Account already confirmed. Please login', 'info')
-	else:
-		# update user informations and add to database
-		user.confirmed = True
-		user.confirmed_on = datetime.datetime.now()
-		db.session.add(user)
-		db.session.commit()
+		return redirect(url_for('simple_page.index'))
 
-		flash('You have confirmed your account. Thanks', 'success')
+	# update user informations and add to database
+	user.confirmed = True
+	user.confirmed_on = datetime.datetime.now()
+	db.session.add(user)
+	db.session.commit()
 
+	flash('You have confirmed your account. Thanks', 'success')
 	return redirect(url_for('simple_page.index'))

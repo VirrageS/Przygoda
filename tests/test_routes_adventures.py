@@ -95,14 +95,14 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('adventures/show.html')
 
-	def test_adventures_join_requires_login(self):
+	def test_adventures_join_route_requires_login(self):
 		"""Ensure that join adventure requires login"""
 
 		response = self.app.get('/adventures/join/1', follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
 
-	def test_adventures_join_big_number(self):
+	def test_adventures_join_route_big_number(self):
 		"""Ensure that join adventure requires small adventure_id"""
 
 		# add user to database
@@ -117,7 +117,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
-	def test_adventures_join_adventure_no_adventure(self):
+	def test_adventures_join_route_no_adventure(self):
 		"""Ensure that join adventure require existing adventure"""
 
 		# add user to database
@@ -132,7 +132,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
-	def test_adventures_join_adventure_joined(self):
+	def test_adventures_join_route_user_already_joined(self):
 		"""Ensure that join adventure does not allow to join again"""
 
 		# add adventure to database
@@ -160,7 +160,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(participants is not None)
 		self.assertTrue(len(participants) == 1)
 
-	def test_adventures_join_adventure_join(self):
+	def test_adventures_join_rout_join(self):
 		"""Ensure that join adventure create adventure participant"""
 
 		# add adventure to database
@@ -185,14 +185,14 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
-	def test_adventures_delete_adventure_requires_login(self):
+	def test_adventures_delete_route_requires_login(self):
 		"""Ensure that delete adventure requires login"""
 
 		response = self.app.get('/adventures/delete/1', follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
 
-	def test_adventures_delete_adventure_big_number(self):
+	def test_adventures_delete_route_big_number(self):
 		"""Ensure that delete adventure requires small adventure_id"""
 
 		# add user to database
@@ -207,7 +207,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
-	def test_adventures_delete_adventure_no_adventure(self):
+	def test_adventures_delete_route_no_adventure(self):
 		"""Ensure that delete adventure requires adventure to exists"""
 
 		# add user to database
@@ -222,7 +222,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
-	def test_adventures_delete_adventure_no_creator(self):
+	def test_adventures_delete_route_no_creator(self):
 		"""Ensure that delete adventure requires creator to be logged"""
 
 		# add user to database
@@ -242,7 +242,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
-	def test_adventures_delete_adventure_delete(self):
+	def test_adventures_delete_route_delete(self):
 		"""Ensure that delete adventure delete all the stuff"""
 
 		# add user to database

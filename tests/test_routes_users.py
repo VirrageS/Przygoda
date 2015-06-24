@@ -15,7 +15,7 @@ from app.users.models import User
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 
-class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
+class RoutesUsersTestCase(TestCase, unittest.TestCase):
 	def setUp(self):
 		app.config['TESTING'] = True
 		app.config['WTF_CSRF_ENABLED'] = False
@@ -45,7 +45,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 	def logout(self):
 	    return self.app.get('/users/logout/', follow_redirects=True)
 
-	def test_users_login_wrong_username(self):
+	def test_users_login_route_wrong_username(self):
 		"""Ensure users login does not accept wrong username"""
 
 		# add user to database
@@ -57,7 +57,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
 
-	def test_users_login_wrong_password(self):
+	def test_users_login_route_wrong_password(self):
 		"""Ensure users login does not accept wrong password"""
 
 		# add user to database
@@ -69,7 +69,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
 
-	def test_users_login_login(self):
+	def test_users_login_route_login(self):
 		"""Ensure users login actually login the user"""
 
 		# add user to database
@@ -81,7 +81,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
-	def test_users_login_no_login_again(self):
+	def test_users_login_route_no_login_again(self):
 		"""Ensure users login does not allow to login again"""
 
 		# add user to database
@@ -97,14 +97,14 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
-	def test_users_logout_requires_login(self):
+	def test_users_logout_route_requires_login(self):
 		"""Ensure users logout requires login"""
 
 		response = self.logout()
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
 
-	def test_users_logout_logout(self):
+	def test_users_logout_route_logout(self):
 		"""Ensure users logout actually logout the user"""
 
 		# add user to database
@@ -122,7 +122,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
 
-	def test_users_register_no_register_when_logged(self):
+	def test_users_register_route_no_register_when_logged(self):
 		"""Ensure users register does not allow to register when user is logged in"""
 
 		# add user to database
@@ -136,7 +136,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
-	def test_users_register_too_short_username(self):
+	def test_users_register_route_too_short_username(self):
 		"""Ensure users register does not allow to register when username is too short"""
 
 		response = self.app.post('/users/register/', data=dict(
@@ -148,7 +148,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
-	def test_users_register_wrong_email(self):
+	def test_users_register_route_wrong_email(self):
 		"""Ensure users register does not allow to register with wrong email address"""
 
 		response = self.app.post('/users/register/', data=dict(
@@ -160,7 +160,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
-	def test_users_register_wrong_confirm_password(self):
+	def test_users_register_route_wrong_confirm_password(self):
 		"""Ensure users register does not allow to register with wrong confirmed password"""
 
 		response = self.app.post('/users/register/', data=dict(
@@ -172,7 +172,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
-	def test_users_register_user_exists_with_username(self):
+	def test_users_register_route_user_exists_with_username(self):
 		"""Ensure users register does not allow to register when someone exists with username"""
 
 		u = User(username='tomek', password=generate_password_hash('a'), email='tomeked@tomek.com')
@@ -188,7 +188,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
-	def test_users_register_user_exists_with_email(self):
+	def test_users_register_route_user_exists_with_email(self):
 		"""Ensure users register does not allow to register when someone exists with email"""
 
 		u = User(username='tomeczek', password=generate_password_hash('a'), email='tomek@tomek.com')
@@ -204,7 +204,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
-	def test_users_register_register(self):
+	def test_users_register_route_register(self):
 		"""Ensure users register actually create the user"""
 
 		response = self.app.post('/users/register/', data=dict(
