@@ -1,10 +1,14 @@
 from flask.ext.wtf import Form
-from wtforms import BooleanField, StringField, PasswordField, validators
+from wtforms import BooleanField, StringField, PasswordField
 from wtforms.validators import Required, EqualTo, Email, Optional, Length
 
 from werkzeug import check_password_hash, generate_password_hash
 from flask.ext.login import current_user
 from app.users.models import User
+import re
+
+def validate_username(username):
+	return username == re.sub('[^a-zA-Z0-9_\.]', '', username)
 
 class RequiredIf(Required):
 	# a validator which makes a field required if
@@ -35,11 +39,11 @@ class RegisterForm(Form):
 	def validate(self):
 		if not Form.validate(self):
 			return False
-		# if self.nickname.data == self.original_nickname:
-		#	 return True
-		# if self.nickname.data != User.make_valid_nickname(self.nickname.data):
-		#	 self.nickname.errors.append(gettext('This nickname has invalid characters. Please use letters, numbers, dots and underscores only.'))
-		#	 return False
+
+		# check if username has valid characters
+		if not validate_username(self.username.data):
+			self.username.errors.append('Username contains illegal characters')
+			return False
 
 		# check username
 		user = User.query.filter_by(username=self.username.data).first()
@@ -64,6 +68,11 @@ class AccountForm(Form):
 
 	def validate(self):
 		if not Form.validate(self):
+			return False
+
+		# check if username has valid characters
+		if not validate_username(self.username.data):
+			self.username.errors.append('Username contains illegal characters')
 			return False
 
 		# check username

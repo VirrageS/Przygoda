@@ -125,7 +125,7 @@ def account():
 		# update user
 		form.populate_obj(g.user)
 
-		# add/update user to database
+		# update user in database
 		db.session.commit()
 
 		# everything is okay

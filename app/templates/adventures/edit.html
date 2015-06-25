@@ -88,7 +88,7 @@
 			var marker = new google.maps.Marker({
 				position: markerPosition,
 				draggable: true,
-				title: '#' + (path.getLength() - 1),
+				title: '#' + (path.getLength() - 1).toString(),
 				map: map,
 				animation: google.maps.Animation.DROP,
 				number: path.getLength() - 1
@@ -108,28 +108,20 @@
 
 			// add listener for right click which handels marker's deleting
 			google.maps.event.addListener(marker, 'rightclick', function() {
-				// updateMarkerStatus(marker.position, marker.number);
+				// remove marker from map and path
 				path.removeAt(this.number);
 				this.setMap(null);
 
 				// delete marker from markers array
 				var index = markers.indexOf(this);
-				if (index > -1) {
-					markers.splice(index, 1);
-				}
+				markers.splice(index, 1);
 
-				for (var i = 0; i < path.getLength(); i++) {
-					// set new marker numbers
-					for (var j = 0; j < markers.length; j++) {
-						if (markers[j].getPosition() === path.getAt(i)) {
-							// update marker number and status
-							markers[j].number = i;
-							markers[j].setTitle('#' + i);
-							// alert(markers[j].number === i);
-
-							// TODO: bug - it stops without any reason
-							// updateMarkerStatus(marker[j].number, marker[j].getPosition());
-						}
+				for (var i = 0; i < markers.length; i++) {
+					if (markers[i].getPosition() === path.getAt(i)) {
+						// update marker number and status
+						markers[i].number = i;
+						markers[i].setTitle('#' + (i).toString());
+						updateMarkerStatus(markers[i].number, markers[i].getPosition());
 					}
 				}
 			});

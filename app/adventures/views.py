@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template, g, flash, redirect, url_for
-from flask.ext.login import login_required
+from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
 
 import ast # for convering string to double
@@ -84,14 +84,14 @@ def join(adventure_id):
 		flash('Adventure does not exists', 'error')
 		return redirect(url_for('simple_page.index'))
 
-	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=g.user.id).first()
+	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
 
 	# check if user joined adventure
 	if participant is not None:
 		flash('You arleady have joined to this adventure', 'warning')
 	else:
 		# add user to adventure participants to database
-		participant = AdventureParticipant(adventure_id=adventure_id, user_id=g.user.id)
+		participant = AdventureParticipant(adventure_id=adventure_id, user_id=current_user.id)
 		db.session.add(participant)
 		db.session.commit()
 		flash('You have joined to this adventure', 'success')
@@ -102,13 +102,13 @@ def join(adventure_id):
 @mod.route('/my/')
 @login_required
 def my_adventures():
-	"""Show logged user adventures"""
+	"""Show logged user's adventures"""
 
 	final_adventures = []
 	final_joined_adventures = []
 
 	# get all adventures which created user
-	adventures = Adventure.query.filter_by(creator_id=g.user.id).order_by(Adventure.date.asc()).all()
+	adventures = Adventure.query.filter_by(creator_id=current_user.id).order_by(Adventure.date.asc()).all()
 	for adventure in adventures:
 		# get joined participants
 		joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
@@ -122,13 +122,13 @@ def my_adventures():
 			})
 
 	# get all adventures to which user joined
-	joined_adventures = AdventureParticipant.query.filter_by(user_id=g.user.id).all()
+	joined_adventures = AdventureParticipant.query.filter_by(user_id=current_user.id).all()
 	for joined_adventure in joined_adventures:
 		# get adventure
 		adventure = Adventure.query.filter_by(id=joined_adventure.adventure_id).first()
 
 		# check if user is not creator (we do not want duplicates)
-		if (adventure is not None) and (adventure.creator_id != g.user.id):
+		if (adventure is not None) and (adventure.creator_id != current_user.id):
 			final_joined_adventures.append(adventure)
 
 	return render_template('adventures/my.html', adventures=final_adventures, joined_adventures=final_joined_adventures)
@@ -152,7 +152,7 @@ def edit(adventure_id=0):
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is creator of adventure
-	if adventure.creator_id != g.user.id:
+	if adventure.creator_id != current_user.id:
 		flash('You cannot edit this adventure!', 'error')
 		return redirect(url_for('simple_page.index'))
 
@@ -190,6 +190,9 @@ def edit(adventure_id=0):
 		# get edited adventure from the form
 		form.populate_obj(adventure)
 
+		# update adventure in database
+		db.session.commit()
+
 		# everything is okay
 		flash('Adventure has been successfully edited', 'success')
 		return redirect(url_for('simple_page.index'))
@@ -215,12 +218,12 @@ def new():
 	# verify the new form
 	if form.validate_on_submit():
 		# add adventure to database
-		adventure = Adventure(creator_id=g.user.id, date=form.date.data, mode=form.mode.data, info=form.info.data)
+		adventure = Adventure(creator_id=current_user.id, date=form.date.data, mode=form.mode.data, info=form.info.data)
 		db.session.add(adventure)
 		db.session.commit()
 
 		# add participant of adventure to database
-		participant = AdventureParticipant(adventure_id=adventure.id, user_id=g.user.id)
+		participant = AdventureParticipant(adventure_id=adventure.id, user_id=current_user.id)
 		db.session.add(participant)
 		db.session.commit()
 
@@ -239,7 +242,7 @@ def new():
 				db.session.add(coordinate)
 				db.session.commit()
 
-			i = i + 1
+			i = i + 1 # check for next marker
 
 		# everything is okay
 		flash('Adventure item was successfully created', 'success')
@@ -266,7 +269,7 @@ def delete(adventure_id):
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is creator of adventure
-	if adventure.creator_id != g.user.id:
+	if adventure.creator_id != current_user.id:
 		flash('You cannot delete this adventure!', 'error')
 		return redirect(url_for('simple_page.index'))
 
