@@ -14,7 +14,7 @@ class User(UserMixin, db.Model):
 	username = db.Column('username', db.String(128), unique=True, index=True)
 	password = db.Column('password', db.String(255))
 	email = db.Column('email', db.String(64), unique=True, index=True)
-	registered_on = db.Column('registered_on', db.DateTime)
+	registered_on = db.Column('registered_on', db.DateTime, nullable=False)
 	confirmed = db.Column(db.Boolean, nullable=False, default=False)
 	confirmed_on = db.Column(db.DateTime, nullable=True)
 	role = db.Column('role', db.SmallInteger, nullable=False, default=USER.USER)

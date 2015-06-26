@@ -1,6 +1,6 @@
 import datetime
 from werkzeug import check_password_hash, generate_password_hash
-from flask import Blueprint, request, render_template, g, flash, redirect, url_for
+from flask import Blueprint, request, render_template, flash, redirect, url_for
 from flask.ext.login import current_user, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
@@ -118,12 +118,12 @@ def account():
 	"""Show users informations"""
 
 	# get form
-	form = AccountForm(request.form, obj=g.user)
+	form = AccountForm(request.form, obj=current_user)
 
 	# verify the register form
 	if form.validate_on_submit():
 		# update user
-		form.populate_obj(g.user)
+		form.populate_obj(current_user)
 
 		# update user in database
 		db.session.commit()
@@ -136,7 +136,7 @@ def account():
 
 @mod.route('/authorize/<provider>')
 def oauth_authorize(provider):
-	if not g.user.is_anonymous():
+	if not current_user.is_anonymous():
 		return redirect(url_for('simple_page.index'))
 
 	oauth = OAuthSignIn.get_provider(provider)
@@ -145,7 +145,7 @@ def oauth_authorize(provider):
 
 @mod.route('/callback/<provider>')
 def oauth_callback(provider):
-	if not g.user.is_anonymous():
+	if not current_user.is_anonymous():
 		return redirect(url_for('simple_page.index'))
 
 	oauth = OAuthSignIn.get_provider(provider)
