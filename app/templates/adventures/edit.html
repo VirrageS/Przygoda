@@ -78,6 +78,27 @@
 			</div>
 		</div>
 
+		<br><br>
+		<div class="panel panel-default">
+		  <!-- Default panel contents -->
+		  <div class="panel-heading">Uczestnicy</div>
+		  <ul class="list-group">
+			{% if (participants is defined) and participants %}
+				{% for participant in participants %}
+					<li class="list-group-item">
+						<span class="glyphicon glyphicon-ok" style="color:#00FF00; padding-right: 15px;"></span>
+						{{ participant.username }}
+					</li>
+				{% endfor %}
+			{% else %}
+				<li class="list-group-item">
+					<span class="glyphicon glyphicon-remove" style="color:#FF0000; padding-right: 15px;"></span>
+					Nikt jeszcze nie dołączył do przygody
+				</li>
+			{% endif %}
+		  </ul>
+		</div>
+
 		<div class="control-group">
 			<div class="controls">
 				<button type="submit" class="btn btn-success">Zapisz zmiany w przygodzie</button>

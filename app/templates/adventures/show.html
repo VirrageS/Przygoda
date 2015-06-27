@@ -13,9 +13,9 @@
 			<td>
 				[joined: {{ adventure.joined }}]
 				[participants:
-					{% for participant in participants %}
-						{{ participant.username }},
-					{% endfor %}
+					{% for participant in participants -%}
+						{{ participant.username }}
+					{%- endfor %}
 				]
 			</td>
 		</tr>

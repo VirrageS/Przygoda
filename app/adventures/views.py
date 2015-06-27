@@ -159,6 +159,15 @@ def edit(adventure_id=0):
 	# get form
 	form = EditForm(request.form, obj=adventure)
 
+	# get joined participants
+	final_participants = []
+	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+	for participant in participants:
+		user = User.query.filter_by(id=participant.user_id).first()
+
+		if (user is not None) and (user.id != current_user.id):
+			final_participants.append(user)
+
 	# verify the edit form
 	if form.validate_on_submit():
 		# delete existing coordinates for the adventure_id
@@ -201,7 +210,13 @@ def edit(adventure_id=0):
 	coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
 	final_coordinates = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]
 
-	return render_template('adventures/edit.html', form=form, adventure_id=adventure_id, markers=final_coordinates)
+	return render_template(
+		'adventures/edit.html',
+		form=form,
+		adventure_id=adventure_id,
+		markers=final_coordinates,
+		participants=final_participants
+	)
 
 # New adventure
 @mod.route('/new/', methods=['GET', 'POST'])
