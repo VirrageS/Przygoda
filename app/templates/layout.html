@@ -1,65 +1,80 @@
 <!doctype html>
-<title>Przygoda.pl</title>
-<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-<meta charset="utf-8">
-<style>
-	body {
-		padding-top: 60px;
-		padding-bottom: 100px;
-	}
-</style>
-<link href="/static/css/bootstrap.css" rel="stylesheet">
-<link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
-<link href="/static/css/bootstrap-theme.css" rel="stylesheet">
-<script src="/static/js/jquery.js"></script>
-<script src="/static/js/bootstrap.js"></script>
-<script src="/static/js/nmp.js"></script>
+<head>
+	<title>Przygoda.pl</title>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+	<meta charset="utf-8">
+	<style>
+		body {
+			padding-top: 60px;
+			padding-bottom: 100px;
+		}
+	</style>
+	<link href="/static/css/bootstrap.css" rel="stylesheet">
+	<link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="/static/css/bootstrap-theme.css" rel="stylesheet">
+	<link href="/static/css/bootstrap-social.css" rel="stylesheet">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<script src="/static/js/jquery.js"></script>
+	<script src="/static/js/bootstrap.js"></script>
+	<script src="/static/js/nmp.js"></script>
+</head>
+<body>
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+	var js, fjs = d.getElementsByTagName(s)[0];
+	if (d.getElementById(id)) return;
+	js = d.createElement(s); js.id = id;
+	js.src = "//connect.facebook.net/pl_PL/sdk.js#xfbml=1&version=v2.3&appId=1591505724433841";
+	fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
 
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-	<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed">
-			        <span class="sr-only">Otwórz nawigację</span>
-			        <span class="icon-bar"></span>
-			        <span class="icon-bar"></span>
-			        <span class="icon-bar"></span>
-			    </button>
-			</div>
-			<a class="navbar-brand" href="/">Przygoda.pl</a>
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			     <ul class="nav navbar-nav navbar-right">
-					{% if g.user.is_authenticated() %}
-				        <li><a href="{{ url_for('users.account') }}">Witaj {{ g.user.username }}</a></li>
-				        <li><a href="{{ url_for('users.logout') }}">Wyloguj</a></li>
-				        <li><a href="{{ url_for('adventures.new') }}">Dodaj Przygodę</a></li>
-				        <li><a href="{{ url_for('adventures.my_adventures') }}">Moje przygody</a></li>
-					{% else %}
-						<li><a href="{{ url_for('users.login') }}">Logowanie</a></li>
-						<li><a href="{{ url_for('users.register') }}">Rejestracja</a></li>
-					{% endif %}
-			    </ul>
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed">
+				        <span class="sr-only">Otwórz nawigację</span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				    </button>
+				</div>
+				<a class="navbar-brand" href="/"><i class="fa fa-bicycle"></i> Przygoda.pl</a>
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				     <ul class="nav navbar-nav navbar-right">
+						{% if g.user.is_authenticated() %}
+					        <li><a href="{{ url_for('users.account') }}">Witaj {{ g.user.username }}</a></li>
+					        <li><a href="{{ url_for('users.logout') }}">Wyloguj</a></li>
+					        <li><a href="{{ url_for('adventures.new') }}">Dodaj Przygodę</a></li>
+					        <li><a href="{{ url_for('adventures.my_adventures') }}">Moje przygody</a></li>
+						{% else %}
+							<li><a href="{{ url_for('users.login') }}">Logowanie</a></li>
+							<li><a href="{{ url_for('users.register') }}">Rejestracja</a></li>
+						{% endif %}
+				    </ul>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 
-<div id="main" class="container">
-	{% include "flash.html" %}
+	<div id="main" class="container">
+		{% include "flash.html" %}
 
-	{% block body %}
-	{% endblock %}
-	<hr>
+		{% block body %}
+		{% endblock %}
 
-	<div id="footer">
-    	<div class="container">
-			<span class="navbar-text">&copy;2015 Przygoda.pl. All rights reserved.</span>
-			<br><br>
-			<span class="navbar-text"><a href="/about">O nas</a></span>
-			<span class="navbar-text"><a href="/activationtools">Dla firm</a></span>
-			<span class="navbar-text"><a href="/features">Funkcje</a></span>
-			<span class="navbar-text"><a href="/store">Sklep</a></span>
-			<span class="navbar-text"><a href="/terms">Regulamin i prywatność</a></span>
-			<span class="navbar-text"><a href="/help" target="_self">Pomoc</a></span>
+		<hr>
+
+		<div id="footer">
+	    	<div class="container">
+				<span class="navbar-text">&copy;2015 Przygoda.pl. All rights reserved.</span>
+				<br><br>
+				<span class="navbar-text"><a href="/about">O nas</a></span>
+				<span class="navbar-text"><a href="/activationtools">Dla firm</a></span>
+				<span class="navbar-text"><a href="/features">Funkcje</a></span>
+				<span class="navbar-text"><a href="/store">Sklep</a></span>
+				<span class="navbar-text"><a href="/terms">Regulamin i prywatność</a></span>
+				<span class="navbar-text"><a href="/help" target="_self">Pomoc</a></span>
+			</div>
 		</div>
 	</div>
-</div>
+</body>

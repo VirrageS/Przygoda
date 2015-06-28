@@ -27,16 +27,6 @@
 	</style>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script type="text/javascript" src="/static/js/map.js"></script>
-	<!-- <script type="text/javascript">
-		setTimeout(function() {
-			{% for marker in markers %}
-				var pos = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
-				addMarker(pos);
-			{% endfor %}
-		}, 1);
-
-		// window.onload = addInitialMarkers();
-	</script> -->
 
 	<div id="map-canvas"></div>
 
@@ -46,37 +36,32 @@
 
 		<div id="markers"></div>
 
-		<div class="control-group">
-			<div class="controls">
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 				{{ render_field(form.date, placeholder="Data przygody", autofocus="") }}
 			</div>
-			<div class="control-group error">
-				<small class="control-group error help-block">{{ form.date.errors[0] }}</small>
+			<div class="form-group has-error">
+				<small class="form-group has-error help-block">{{ form.date.errors[0] }}</small>
 			</div>
 		</div>
 
-		<div class="control-group">
-			<div class="controls">
-				{{ render_field(form.mode) }}
-			</div>
-			<div class="control-group error">
-				<small class="control-group error help-block">{{ form.mode.errors[0] }}</small>
+		<div class="form-group">
+			{{ render_field(form.mode) }}
+			<div class="form-group has-error">
+				<small class="form-group has-error help-block">{{ form.mode.errors[0] }}</small>
 			</div>
 		</div>
 
-		<div class="control-group">
-			<div class="controls">
-				{{ render_field(form.info, placeholder="Informacje o przygodzie") }}
-			</div>
-			<div class="control-group error">
-				<small class="control-group error help-block">{{ form.info.errors[0] }}</small>
+		<div class="form-group">
+			{{ render_field(form.info, placeholder="Informacje o przygodzie") }}
+			<div class="form-group has-error">
+				<small class="form-group has-error help-block">{{ form.info.errors[0] }}</small>
 			</div>
 		</div>
 
-		<div class="control-group">
-			<div class="controls">
-				<button type="submit" class="btn btn-success">Stwórz nową przygodę</button>
-			</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-success">Stwórz nową przygodę</button>
 		</div>
 	</form>
 {% endblock %}

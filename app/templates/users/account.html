@@ -19,55 +19,58 @@
 	<form action="" method="post" name="register">
 		{{ form.hidden_tag() }}
 
-		<div class="control-group">
-			<div class="controls">
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-user"></i></div>
 				{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
 			</div>
-			<div class="control-group error">
-				<small class="control-group error help-block">{{ form.username.errors[0] }}</small>
+			<div class="form-group has-error">
+				<small class="form-group has-error help-block">{{ form.username.errors[0] }}</small>
 			</div>
 		</div>
 
-		<div class="control-group">
-			<div class="controls">
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-at"></i></div>
 				{{ render_field(form.email, placeholder="Email") }}
 			</div>
-			<div class="control-group error">
-				<small class="control-group error help-block">{{ form.email.errors[0] }}</small>
+			<div class="form-group has-error">
+				<small class="form-group has-error help-block">{{ form.email.errors[0] }}</small>
 			</div>
 		</div>
 
-		<div class="control-group">
-			<div class="controls">
-				{{ render_field(form.password, placeholder="Nowe hasło") }}
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-lock"></i></div>
+				{{ render_field(form.password, placeholder="Hasło") }}
 			</div>
-			<div class="control-group error">
-				<small class="control-group error help-block">{{ form.password.errors[0] }}</small>
+			<div class="form-group has-error">
+				<small class="form-group has-error help-block">{{ form.password.errors[0] }}</small>
 			</div>
 		</div>
 
-		<div class="control-group">
-			<div class="controls">
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-lock"></i></div>
 				{{ render_field(form.confirm, placeholder="Powtórz hasło") }}
 			</div>
-			<div class="control-group error">
-				<small class="control-group error help-block">{{ form.confirm.errors[0] }}</small>
+			<div class="form-group has-error">
+				<small class="form-group has-error help-block">{{ form.confirm.errors[0] }}</small>
 			</div>
 		</div>
 
-		<div class="control-group">
-			<div class="controls">
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-lock"></i></div>
 				{{ render_field(form.old_password, placeholder="Stare hasło") }}
 			</div>
-			<div class="control-group error">
-				<small class="control-group error help-block">{{ form.old_password.errors[0] }}</small>
+			<div class="form-group has-error">
+				<small class="form-group has-error help-block">{{ form.old_password.errors[0] }}</small>
 			</div>
 		</div>
 
-		<div class="control-group">
-			<div class="controls">
-				<button type="submit" class="btn btn-success">Zaktualizuj</button>
-			</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-success">Zaktualizuj</button>
 		</div>
 	</form>
 {% endblock %}

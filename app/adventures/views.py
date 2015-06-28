@@ -113,6 +113,7 @@ def leave(adventure_id):
 		flash('Adventure does not exists', 'error')
 		return redirect(url_for('simple_page.index'))
 
+	# check if user is the creator of the adventure
 	if adventure.creator_id == current_user.id:
 		flash('You cannot leave this adventure', 'warning')
 		return redirect(url_for('simple_page.index'))
@@ -126,7 +127,7 @@ def leave(adventure_id):
 		# delete user from adventure participants from database
 		db.session.delete(participant)
 		db.session.commit()
-		flash('You have left adventure', 'success')
+		flash('You have left the adventure', 'success')
 
 	return redirect(url_for('simple_page.index'))
 
