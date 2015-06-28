@@ -90,7 +90,15 @@
 				<td>{{ adventure.joined }}</td>
 				<td>{{ adventure.mode }}</td>
 				{% if g.user.is_authenticated() %}
-					<td><a href="/adventures/join/{{ adventure.id }}">Dołącz</a>
+					<td>
+						{% if adventure.action == -1 %}
+							No action
+						{% elif adventure.action == 0 %}
+							<a href="/adventures/join/{{ adventure.id }}">Dołącz</a>
+						{% else %}
+							<a href="/adventures/leave/{{ adventure.id }}">Wypisz się</a>
+						{% endif %}
+					</td>
 				{% endif %}
 			</tr>
 		{% endfor %}

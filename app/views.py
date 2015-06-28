@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 
+from flask.ext.login import current_user
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 from app.users.models import User
@@ -21,6 +22,17 @@ def index():
 		# get joined participants
 		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
 
+		action = -1
+		if current_user.is_authenticated():
+			participant = AdventureParticipant.query.filter_by(adventure_id=adventure.id, user_id=current_user.id).first()
+			if participant is None:
+				action = 0
+			else:
+				action = 1
+
+			if adventure.creator_id == current_user.id:
+				action = -1
+
 		# check if creator still exists
 		if user is not None:
 			all_adventures.append({
@@ -29,7 +41,8 @@ def index():
 				'date': adventure.date,
 				'info': adventure.info,
 				'joined': len(participants),
-				'mode': ADVENTURES.MODES[int(adventure.mode)]
+				'mode': ADVENTURES.MODES[int(adventure.mode)],
+				'action': action
 			})
 
 		coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()

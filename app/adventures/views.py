@@ -98,6 +98,38 @@ def join(adventure_id):
 
 	return redirect(url_for('simple_page.index'))
 
+@mod.route('/leave/<int:adventure_id>')
+@login_required
+def leave(adventure_id):
+	"""Allow to leave the adventure"""
+
+	# check if adventure_id is not max_int
+	if adventure_id >= 9223372036854775807:
+		return redirect(url_for('simple_page.index'))
+
+	# get adventure and check if exists
+	adventure = Adventure.query.filter_by(id=adventure_id).first()
+	if adventure is None:
+		flash('Adventure does not exists', 'error')
+		return redirect(url_for('simple_page.index'))
+
+	if adventure.creator_id == current_user.id:
+		flash('You cannot leave this adventure', 'warning')
+		return redirect(url_for('simple_page.index'))
+
+	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
+
+	# check if user joined adventure
+	if participant is None:
+		flash('You have not joined to this adventure', 'warning')
+	else:
+		# delete user from adventure participants from database
+		db.session.delete(participant)
+		db.session.commit()
+		flash('You have left adventure', 'success')
+
+	return redirect(url_for('simple_page.index'))
+
 # Check all created and joined adventures
 @mod.route('/my/')
 @login_required
