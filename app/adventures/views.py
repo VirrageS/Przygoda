@@ -187,7 +187,7 @@ def edit(adventure_id=0):
 		return redirect(url_for('simple_page.index'))
 
 	# get adventure
-	adventure = Adventure.query.get(adventure_id)
+	adventure = Adventure.query.filter_by(id=adventure_id).first()
 
 	# check if adventure exists
 	if adventure is None:

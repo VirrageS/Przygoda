@@ -294,9 +294,79 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 	def test_adventures_edit_route_requires_login(self):
 		"""Ensure adventures edit route requires a logged in user"""
 
-		response = self.app.get('/adventures/edit', follow_redirects=True)
+		response = self.app.get('/adventures/edit/1', follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
+
+	def test_adventures_edit_route_big_number(self):
+		"""Ensure that edit adventure requires small adventure_id"""
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/edit/128345792384572394857234598982347582', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
+	def test_adventures_edit_route_no_adventure(self):
+		"""Ensure that edit adventure requires existing adventure"""
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/edit/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+	
+	def test_adventures_edit_route_no_creator(self):
+		"""Ensure that edit adventure requires creator of the adventure"""
+
+		# add adventure to database
+		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		db.session.add(a)
+		db.session.commit()
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/edit/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
+	def test_adventures_edit_route_edit(self):
+		"""Ensure that edit adventure redirect user to editing page"""
+
+		# add adventure to database
+		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		db.session.add(a)
+		db.session.commit()
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/edit/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('adventures/edit.html')
 
 	def test_adventures_delete_route_requires_login(self):
 		"""Ensure that delete adventure requires login"""
