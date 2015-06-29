@@ -45,6 +45,15 @@
 
 	<div id="map-canvas"></div>
 
+	<script type="text/javascript">
+		$(function () {
+			$('#datetimepicker').datetimepicker({
+				locale: 'pl'
+			});
+		});
+	</script>
+
+
 	<br>
 	<form action="" method="post" name="edit">
 		{{ form.hidden_tag() }}
@@ -54,7 +63,7 @@
 		<div class="form-group">
 			<div class="input-group">
 				<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				{{ render_field(form.date, placeholder="Data przygody", autofocus="") }}
+				{{ render_field(form.date, placeholder="Data przygody", id="datetimepicker") }}
 			</div>
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.date.errors[0] }}</small>

@@ -28,6 +28,14 @@
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script type="text/javascript" src="/static/js/map.js"></script>
 
+	<script type="text/javascript">
+		$(function () {
+			$('#datetimepicker').datetimepicker({
+				locale: 'pl'
+			});
+		});
+	</script>
+
 	<div id="map-canvas"></div>
 
 	<br>
@@ -37,9 +45,9 @@
 		<div id="markers"></div>
 
 		<div class="form-group">
-			<div class="input-group">
+			<div class="input-group date">
 				<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				{{ render_field(form.date, placeholder="Data przygody", autofocus="") }}
+				{{ render_field(form.date, placeholder="Data przygody", id="datetimepicker") }}
 			</div>
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.date.errors[0] }}</small>
