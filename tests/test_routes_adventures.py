@@ -263,10 +263,6 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		db.session.add(a)
 		db.session.commit()
 
-		ap = AdventureParticipant(user_id=1, adventure_id=1)
-		db.session.add(ap)
-		db.session.commit()
-
 		# add user to database
 		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
 		db.session.add(u)
@@ -275,12 +271,32 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		# login user to system
 		self.login(username='john', password='a')
 
+		# add user to adventure participants
+		ap = AdventureParticipant(user_id=1, adventure_id=1)
+		db.session.add(ap)
+		db.session.commit()
+
 		response = self.app.get('/adventures/leave/1', follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
+		# check if user was removed from adventure participants
 		ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
 		self.assertTrue(ap is None)
+
+	def test_adventures_new_route_requires_login(self):
+		"""Ensure adventures new route requires a logged in user"""
+
+		response = self.app.get('/adventures/new', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/login.html')
+
+	def test_adventures_edit_route_requires_login(self):
+		"""Ensure adventures edit route requires a logged in user"""
+
+		response = self.app.get('/adventures/edit', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/login.html')
 
 	def test_adventures_delete_route_requires_login(self):
 		"""Ensure that delete adventure requires login"""
@@ -384,10 +400,3 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
-
-	def test_adventures_new_route_requires_login(self):
-		"""Ensure adventures new route requires a logged in user"""
-
-		response = self.app.get('/adventures/new', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('users/login.html')
