@@ -35,6 +35,7 @@ def adventure_show(adventure_id):
 
 	final_adventure = {}
 	final_participants = []
+	final_coordinates = []
 
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
@@ -66,7 +67,16 @@ def adventure_show(adventure_id):
 			'joined': len(participants)
 		}
 
-	return render_template('adventures/show.html', adventure=final_adventure, participants=final_participants)
+	# get coordinates of existing points
+	coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
+	final_coordinates = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]
+
+	return render_template(
+		'adventures/show.html',
+		adventure=final_adventure,
+		participants=final_participants,
+		markers=final_coordinates
+	)
 
 # Join to adventure with id
 @mod.route('/join/<int:adventure_id>')

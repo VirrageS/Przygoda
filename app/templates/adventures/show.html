@@ -2,7 +2,65 @@
 {% extends "layout.html" %}
 
 {% block body %}
+	<style>
+		#map-canvas {
+			height: 400px;
+			width: 400px;
+			margin: 0px;
+			padding: 0px
+		}
+	</style>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
+	<script>
+		function initialize() {
+			var mapOptions = {
+				zoom: 13,
+				center: new google.maps.LatLng(52.229937, 21.011380),
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
+
+			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+			var polyOptions = {
+				strokeColor: '#000000',
+				strokeOpacity: 0.7,
+				strokeWeight: 3,
+				// editable: true
+			};
+
+			var pathCoordinates = []
+			{% for marker in markers %}
+				var pos = new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }});
+				pathCoordinates.push(pos);
+
+				var marker = new google.maps.Marker({
+					position: pos,
+					draggable: false,
+					title: '#',
+					map: map,
+					// animation: google.maps.Animation.DROP
+				});
+			{% endfor %}
+
+			var path = new google.maps.Polyline({
+				path: pathCoordinates,
+				geodesic: true,
+				strokeColor: '#FF0000',
+				strokeOpacity: 1.0,
+				strokeWeight: 2
+			});
+
+			path.setMap(map);
+		}
+
+		google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
+
 	<h2>Przygoda #{{ adventure.id }}</h2>
+
+	<br><br>
+
+	<div id="map-canvas"></div>
 
 	<br>
 	<div class="panel panel-info">
@@ -21,7 +79,6 @@
 			{% if (participants is defined) and participants %}
 				{% for participant in participants %}
 					<li class="list-group-item">
-						<span class="glyphicon glyphicon-ok" style="color:#00FF00; padding-right: 15px;"></span>
 						{{ participant.username }}
 					</li>
 				{% endfor %}
