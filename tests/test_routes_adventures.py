@@ -45,13 +45,6 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 	def logout(self):
 	    return self.app.get('/users/logout/', follow_redirects=True)
 
-	def test_adventures_new_route_requires_login(self):
-		"""Ensure adventures new route requires a logged in user"""
-
-		response = self.app.get('/adventures/new', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('users/login.html')
-
 	def test_adventures_show_route_big_number(self):
 		"""Ensure that adventures_id is not to big"""
 
@@ -160,7 +153,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(participants is not None)
 		self.assertTrue(len(participants) == 1)
 
-	def test_adventures_join_rout_join(self):
+	def test_adventures_join_route_join(self):
 		"""Ensure that join adventure create adventure participant"""
 
 		# add adventure to database
@@ -184,6 +177,110 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
+
+	def test_adventures_leave_route_requires_login(self):
+		"""Ensure that leave adventures requires login"""
+
+		response = self.app.get('/adventures/leave/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/login.html')
+
+	def test_adventures_leave_route_big_number(self):
+		"""Ensure that leave adventure requires small adventure_id"""
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/leave/1324981234124381734891234', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
+	def test_adventures_leave_route_no_adventure(self):
+		"""Ensure that leave adventure require existing adventure"""
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/leave/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
+	def test_adventures_leave_route_creator(self):
+		"""Ensure that leave adventure do not allow leaving for creator of the adventure"""
+
+		# add adventure to database
+		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		db.session.add(a)
+		db.session.commit()
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/leave/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
+	def test_adventures_leave_route_no_joined(self):
+		"""Ensure that leave adventure do not allow leaving for someone who does not joined to adventure"""
+
+		# add adventure to database
+		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		db.session.add(a)
+		db.session.commit()
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/leave/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
+	def test_adventures_leave_route_leave(self):
+		"""Ensure that leave adventure actually allows to leave the adventure"""
+
+		# add adventure to database
+		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		db.session.add(a)
+		db.session.commit()
+
+		ap = AdventureParticipant(user_id=1, adventure_id=1)
+		db.session.add(ap)
+		db.session.commit()
+
+		# add user to database
+		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(u)
+		db.session.commit()
+
+		# login user to system
+		self.login(username='john', password='a')
+
+		response = self.app.get('/adventures/leave/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
+		ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
+		self.assertTrue(ap is None)
 
 	def test_adventures_delete_route_requires_login(self):
 		"""Ensure that delete adventure requires login"""
@@ -287,3 +384,10 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
+
+	def test_adventures_new_route_requires_login(self):
+		"""Ensure adventures new route requires a logged in user"""
+
+		response = self.app.get('/adventures/new', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/login.html')
