@@ -28,19 +28,23 @@
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script type="text/javascript" src="/static/js/map.js"></script>
 	<script type="text/javascript">
-		// setTimeout(function() {
+		setTimeout(function() {
+			{% for marker in markers %}
+				var pos = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
+				markers.push(pos);
+			{% endfor %}
+
+			showRoute();
+		}, 1);
+
+		// window.onload = function() {
 		// 	{% for marker in markers %}
 		// 		var pos = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
 		// 		addMarker(pos);
 		// 	{% endfor %}
-		// }, 1);
-
-		window.onload = function() {
-			{% for marker in markers %}
-				var pos = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
-				addMarker(pos);
-			{% endfor %}
-		}
+		//
+		// 	showRoute();
+		// }
 	</script>
 
 	<div id="map-canvas"></div>
@@ -85,7 +89,7 @@
 		</div>
 
 		<br><br>
-		<div class="panel panel-default">
+		<div class="panel panel-info">
 		  <!-- Default panel contents -->
 		  <div class="panel-heading">Uczestnicy</div>
 		  <ul class="list-group">

@@ -12,45 +12,91 @@
 	</style>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script>
+		var rendererOptions = {
+    		suppressBicyclingLayer: true,
+			suppressMarkers : true
+		};
+		var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
+		var directionsService = new google.maps.DirectionsService();
+
+		var map;
+
 		function initialize() {
-			var mapOptions = {
-				zoom: 13,
-				center: new google.maps.LatLng(52.229937, 21.011380),
-				mapTypeId: google.maps.MapTypeId.ROADMAP
-			};
+		    var mapOptions = {
+		        zoom: 13,
+		        center: new google.maps.LatLng(52.229937, 21.011380),
+		        mapTypeId: google.maps.MapTypeId.ROADMAP
+		    };
 
-			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		    directionsDisplay.setMap(map);
 
-			var polyOptions = {
-				strokeColor: '#000000',
-				strokeOpacity: 0.7,
-				strokeWeight: 3,
-				// editable: true
-			};
+		    google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+				// show total distance
+				computeTotalDistance(directionsDisplay.getDirections());
+		    });
 
-			var pathCoordinates = []
-			{% for marker in markers %}
-				var pos = new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }});
-				pathCoordinates.push(pos);
+			// show route on map
+		    showRoute();
+		}
 
-				var marker = new google.maps.Marker({
-					position: pos,
-					draggable: false,
-					title: '#',
-					map: map,
-					// animation: google.maps.Animation.DROP
-				});
-			{% endfor %}
+		function showRoute() {
+			var waypoints = [];
+			{%- for marker in markers %}
+				{% if loop.first -%}
+					var origin = new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }});
+				{%- elif loop.last -%}
+					var destination = new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }});
+				{%- else -%}
+					waypoints.push({location: new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }}), stopover: true});
+				{%- endif %}
+			{%- endfor %}
 
-			var path = new google.maps.Polyline({
-				path: pathCoordinates,
-				geodesic: true,
-				strokeColor: '#FF0000',
-				strokeOpacity: 1.0,
-				strokeWeight: 2
+			var request = {
+		        origin: origin,
+		        destination: destination,
+		        waypoints: waypoints,
+				optimizeWaypoints: false,
+		        travelMode: google.maps.TravelMode.BICYCLING // BICYCLING
+		    };
+
+			directionsService.route(request, function(response, status) {
+		        if (status == google.maps.DirectionsStatus.OK) {
+		            directionsDisplay.setDirections(response);
+
+					// add start and end marker to map with description
+					addMarker(origin, 'Start', 'http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+					addMarker(destination, 'Koniec', 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+		        }
+		    });
+		}
+
+		function addMarker(markerPosition, title, icon) {
+			var marker = new google.maps.Marker({
+				position: markerPosition,
+				map: map,
+				title: title,
+				icon: icon
 			});
 
-			path.setMap(map);
+			google.maps.event.addListener(marker, 'click', function() {
+				infowindow.open(map,marker);
+			});
+
+			var infowindow = new google.maps.InfoWindow({
+		    	content: title
+			});
+		}
+
+		function computeTotalDistance(result) {
+		    var total = 0;
+		    var myroute = result.routes[0];
+		    for (var i = 0; i < myroute.legs.length; i++) {
+		        total += myroute.legs[i].distance.value;
+		    }
+
+		    total = total / 1000.0;
+		    document.getElementById('total-distance').innerHTML = total + ' km';
 		}
 
 		google.maps.event.addDomListener(window, 'load', initialize);
@@ -67,9 +113,10 @@
 	<!-- Default panel contents -->
 		<div class="panel-heading">Informacje</div>
 		<ul class="list-group">
-			<li class="list-group-item">Creator: {{ adventure.username }}</li>
-			<li class="list-group-item">Date: {{ adventure.date }}</li>
-			<li class="list-group-item">Info: {{ adventure.info }}</li>
+			<li class="list-group-item">Długość trasy: <b><div id="total-distance" style="display: inline;">0 km</div></b></li>
+			<li class="list-group-item">Założyciel Przygody: <b>{{ adventure.username }}</b></li>
+			<li class="list-group-item">Data: <b>{{ adventure.date }}</b></li>
+			<li class="list-group-item">Informacje: <b>{{ adventure.info }}</b></li>
 		</ul>
 	</div>
 	<div class="panel panel-info">

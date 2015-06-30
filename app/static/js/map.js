@@ -1,5 +1,14 @@
-var poly;
+var rendererOptions = {
+    draggable: true,
+    preserveViewport: true,
+    suppressBicyclingLayer: true,
+    // suppressMarkers : true
+};
+var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
+var directionsService = new google.maps.DirectionsService();
+
 var map;
+
 var markers = [];
 
 function initialize() {
@@ -10,21 +19,43 @@ function initialize() {
     };
 
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    directionsDisplay.setMap(map);
 
-    var polyOptions = {
-        strokeColor: '#000000',
-        strokeOpacity: 0.7,
-        strokeWeight: 3,
-        // editable: true
-    };
+    google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+        // compute total distance
+        computeTotalDistance(directionsDisplay.getDirections());
 
-    poly = new google.maps.Polyline(polyOptions);
-    poly.setMap(map);
+        // get legs from route
+        var legs = directionsDisplay.getDirections().routes[0].legs;
+
+        console.log(legs);
+
+        // update all points
+        for (var i = 0; i < legs.length; i++) {
+            markers[i + 1] = legs[i].end_location;
+            updateMarkerStatus(i + 1, legs[i].end_location);
+        }
+
+        // update origin
+        markers[0] = legs[0].start_location;
+        updateMarkerStatus(0, legs[0].start_location);
+    });
 
     // add a listener for the click event
     google.maps.event.addListener(map, 'click', function(event) {
         addMarker(event.latLng);
     });
+}
+
+function computeTotalDistance(result) {
+    var total = 0;
+    var myroute = result.routes[0];
+    for (var i = 0; i < myroute.legs.length; i++) {
+        total += myroute.legs[i].distance.value;
+    }
+
+    total = total / 1000.0;
+    document.getElementById('total-distance').innerHTML = total + ' km';
 }
 
 // updates marker input value which will be passed
@@ -45,50 +76,56 @@ function updateMarkerStatus(number, position) {
 }
 
 function addMarker(markerPosition) {
-    var path = poly.getPath();
-
-    // add new waypoint on polyline
-    path.push(markerPosition);
-
-    // add a new marker at the new plotted point on the polyline.
-    var marker = new google.maps.Marker({
-        position: markerPosition,
-        draggable: true,
-        title: '#' + (path.getLength() - 1),
-        map: map,
-        animation: google.maps.Animation.DROP,
-        number: path.getLength() - 1
-    });
-
-    // add new marker to markers array
-    markers.push(marker);
+    // add new position to markers array
+    markers.push(markerPosition);
 
     // update status after add
-    updateMarkerStatus(marker.number, marker.getPosition());
+    updateMarkerStatus(markers.length-1, markerPosition);
 
-    // add listener for dragend which handels updating polyline
-    google.maps.event.addListener(marker, 'dragend', function() {
-        path.setAt(this.number, this.getPosition());
-        updateMarkerStatus(this.number, this.getPosition());
-    });
+    // show new route
+    showRoute();
 
     // add listener for right click which handels marker's deleting
-    google.maps.event.addListener(marker, 'rightclick', function() {
-        // remove marker from map and path
-        path.removeAt(this.number);
-        this.setMap(null);
+    // google.maps.event.addListener(marker, 'rightclick', function() {
+    //     // remove marker from map and path
+    //     path.removeAt(this.number);
+    //     this.setMap(null);
+    //
+    //     // delete marker from markers array
+    //     var index = markers.indexOf(this);
+    //     markers.splice(index, 1);
+    //
+    //     for (var i = 0; i < markers.length; i++) {
+    //         if (markers[i].getPosition() === path.getAt(i)) {
+    //             // update marker number and status
+    //             markers[i].number = i;
+    //             markers[i].setTitle('#' + (i).toString());
+    //             updateMarkerStatus(markers[i].number, markers[i].getPosition());
+    //         }
+    //     }
+    // });
+}
 
-        // delete marker from markers array
-        var index = markers.indexOf(this);
-        markers.splice(index, 1);
+function showRoute() {
+    var waypoints = [];
+    var origin = markers[0];
+    var destination = markers[markers.length-1];
 
-        for (var i = 0; i < markers.length; i++) {
-            if (markers[i].getPosition() === path.getAt(i)) {
-                // update marker number and status
-                markers[i].number = i;
-                markers[i].setTitle('#' + (i).toString());
-                updateMarkerStatus(markers[i].number, markers[i].getPosition());
-            }
+    for (var i = 1; i < markers.length - 2; i++) {
+        waypoints.push({location: markers[i], stopover: true});
+    }
+
+    var request = {
+        origin: origin,
+        destination: destination,
+        waypoints: waypoints,
+        optimizeWaypoints: false,
+        travelMode: google.maps.TravelMode.BICYCLING // BICYCLING, DRIVING
+    };
+
+    directionsService.route(request, function(response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
         }
     });
 }
