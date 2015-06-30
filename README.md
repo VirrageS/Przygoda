@@ -71,7 +71,7 @@ i powinniśmy zostać przekierowani do naszej aplikacji.
 Testowanie odbywa się automatycznie po `git push` przez Travis CI (na górze widać
 aktualny status). Manualnie możemy to zrobić:
 
-	(env)MacBook-Air-Janusz:przygoda VirrageS$ python setup.py test
+	(env)MacBook-Air-Janusz:przygoda VirrageS$ python -m unittest discover
 
 
 ## Ogólne
