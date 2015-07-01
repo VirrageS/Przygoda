@@ -416,7 +416,7 @@ def search():
 					'mode': ADVENTURES.MODES[int(adventure.mode)],
 				})
 
-		flash(u'Wyszukiwanie powiodło się', 'success')
+		flash(u'Wyszukiwanie powiodlo sie', 'success')
 
 	return render_template(
 		'adventures/search.html',
