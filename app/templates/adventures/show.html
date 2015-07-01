@@ -2,14 +2,6 @@
 {% extends "layout.html" %}
 
 {% block body %}
-	<style>
-		#map-canvas {
-			height: 400px;
-			width: 400px;
-			margin: 0px;
-			padding: 0px
-		}
-	</style>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script>
 		var rendererOptions = {
@@ -103,14 +95,10 @@
 	</script>
 
 	<h2>Przygoda #{{ adventure.id }}</h2>
-
 	<br><br>
-
 	<div id="map-canvas"></div>
-
 	<br>
 	<div class="panel panel-info">
-	<!-- Default panel contents -->
 		<div class="panel-heading">Informacje</div>
 		<ul class="list-group">
 			<li class="list-group-item">Długość trasy: <b><div id="total-distance" style="display: inline;">0 km</div></b></li>
@@ -120,7 +108,6 @@
 		</ul>
 	</div>
 	<div class="panel panel-info">
-	<!-- Default panel contents -->
 		<div class="panel-heading">Uczestnicy</div>
 		<ul class="list-group">
 			{% if (participants is defined) and participants %}

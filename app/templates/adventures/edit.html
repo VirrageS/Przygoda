@@ -17,14 +17,6 @@
 
 	<h2>Edycja przygody</h2><br>
 
-	<style>
-		#map-canvas {
-			height: 400px;
-			width: 400px;
-			margin: 0px;
-			padding: 0px
-		}
-	</style>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script type="text/javascript" src="/static/js/map.js"></script>
 	<script type="text/javascript">
@@ -35,6 +27,10 @@
 			{% endfor %}
 
 			showRoute();
+
+			for (var i = 0; i < markers.length; i++) {
+				updateMarkerStatus(i, markers[i]);
+			}
 		}, 1);
 
 		// window.onload = function() {

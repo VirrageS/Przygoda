@@ -15,16 +15,6 @@
 		</div>
 	{% endmacro %}
 
-	<h2>Szukaj Przygody</h2><br>
-
-	<style>
-		#map-canvas {
-			height: 400px;
-			width: 400px;
-			margin: 0px;
-			padding: 0px
-		}
-	</style>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script>
 		var map;
@@ -72,8 +62,9 @@
 		google.maps.event.addDomListener(window, 'load', initialize);
 	</script>
 
+	<h2>Szukaj Przygody</h2>
+	<br>
 	<div id="map-canvas"></div>
-
 	<br>
 	<form action="" method="post" name="edit">
 		{{ form.hidden_tag() }}
