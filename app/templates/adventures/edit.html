@@ -15,8 +15,6 @@
 		</div>
 	{% endmacro %}
 
-	<h2>Edycja przygody</h2><br>
-
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script type="text/javascript" src="/static/js/map.js"></script>
 	<script type="text/javascript">
@@ -42,9 +40,6 @@
 		// 	showRoute();
 		// }
 	</script>
-
-	<div id="map-canvas"></div>
-
 	<script type="text/javascript">
 		$(function () {
 			$('#datetimepicker').datetimepicker({
@@ -53,7 +48,9 @@
 		});
 	</script>
 
-
+	<h2>Edycja przygody</h2>
+	<br>
+	<div id="map-canvas"></div>
 	<br>
 	<form action="" method="post" name="edit">
 		{{ form.hidden_tag() }}

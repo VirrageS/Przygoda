@@ -4,7 +4,6 @@
 {% block body %}
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script>
-
 		var map;
 
 		function initialize() {
@@ -26,7 +25,13 @@
 					map: map,
 					suppressBicyclingLayer: true,
 					suppressMarkers: true,
-					routeIndex: {{ outer_loop.index }}
+					preserveViewport: true,
+					routeIndex: {{ outer_loop.index }},
+					polylineOptions: {
+				    	strokeColor: '#'+Math.floor(Math.random()*16777215).toString(16),
+						strokeWeight: 5,
+						strokeOpacity: 0.9
+				    }
 				};
 
 				var directionsDisplay{{ outer_loop.index }} = new google.maps.DirectionsRenderer(rendererOptions{{ loop.index }});
@@ -72,11 +77,17 @@
 				position: markerPosition,
 				map: map,
 				title: title,
-				icon: icon
+				icon: icon,
+				shadow: new google.maps.MarkerImage(
+					"http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+        			new google.maps.Size(40, 37),
+        			new google.maps.Point(0, 0),
+        			new google.maps.Point(12, 35)
+				)
 			});
 
 			google.maps.event.addListener(marker, 'click', function() {
-				infowindow.open(map,marker);
+				infowindow.open(map, marker);
 			});
 
 			var infowindow = new google.maps.InfoWindow({
@@ -114,14 +125,14 @@
 					{% endif %}
 				</td>
 				<td>{{ adventure.username }}</td>
-				<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
+				<td>{{ adventure.date.strftime('%d.%m.%Y (%H:%M)') }}</td>
 				<td>{{ adventure.info }}</td>
 				<td>{{ adventure.joined }}</td>
 				<td>{{ adventure.mode }}</td>
 				{% if g.user.is_authenticated() %}
 					<td>
 						{% if adventure.action == -1 %}
-							No action
+							Nie ma akcji
 						{% elif adventure.action == 0 %}
 							<a href="/adventures/join/{{ adventure.id }}">Dołącz</a>
 						{% else %}

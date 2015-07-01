@@ -2,6 +2,15 @@ var rendererOptions = {
     draggable: true,
     preserveViewport: true,
     suppressBicyclingLayer: true,
+
+    polylineOptions: {
+        strokeColor: '#6CA4FB',
+        strokeWeight: 6,
+        strokeOpacity: 0.95,
+        clickable: false,
+        draggable: false,
+        editable: false
+    }
     // suppressMarkers : true
 };
 var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);

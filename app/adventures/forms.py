@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import DateField, TextAreaField, HiddenField, SelectField, SelectMultipleField
+from wtforms import DateTimeField, TextAreaField, HiddenField, SelectField, SelectMultipleField
 from wtforms.validators import Required
 
 from app.adventures import constants as ADVENTURES
@@ -9,7 +9,7 @@ from app.adventures import constants as ADVENTURES
 
 class NewForm(Form):
 	#validators=[DateRange(min=datetime.date().utcnow())]
-	date = DateField(u'Data', format='%d.%m.%Y %H:%M')
+	date = DateTimeField(u'Date', format='%d.%m.%Y %H:%M')
 	mode = SelectField(
 		u'Mode',
 		choices=[(str(value), name) for value, name in ADVENTURES.MODES.items()]
