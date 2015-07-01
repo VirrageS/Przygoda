@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+{% block body %}
+
+	{% macro render_field(field, placeholder=None) %}
+		{% if field.errors %}
+		<div>
+		{% elif field.flags.error %}
+		<div>
+		{% else %}
+		<div>
+		{% endif %}
+
+		{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+		{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
+		</div>
+	{% endmacro %}
+
+	<h2>Szukaj Przygody</h2><br>
+
+	<style>
+		#map-canvas {
+			height: 400px;
+			width: 400px;
+			margin: 0px;
+			padding: 0px
+		}
+	</style>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
+	<script>
+		var map;
+
+		function initialize() {
+		    var mapOptions = {
+		        zoom: 13,
+		        center: new google.maps.LatLng(52.229937, 21.011380),
+		        mapTypeId: google.maps.MapTypeId.ROADMAP
+		    };
+
+		    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+			var sw = new google.maps.LatLng(52.219937, 20.991380); // bottom left corner
+			var ne = new google.maps.LatLng(52.239937, 21.031380); // top right corner
+
+			var bounds = new google.maps.LatLngBounds(sw, ne);
+			updateBounds(sw, ne);
+
+			// Define a rectangle and set its editable property to true.
+			var rectangle = new google.maps.Rectangle({
+				bounds: bounds,
+				editable: true,
+				draggable: true
+			});
+
+			rectangle.setMap(map);
+
+			google.maps.event.addListener(rectangle, 'bounds_changed', function(event) {
+				var sw = rectangle.getBounds().getSouthWest();
+				var ne = rectangle.getBounds().getNorthEast();
+
+				updateBounds(sw, ne);
+			});
+		}
+
+		function updateBounds(sw, ne) {
+			var bl_corner = document.getElementById('bl_corner');
+			var tr_corner = document.getElementById('tr_corner');
+
+			bl_corner.value = sw;
+			tr_corner.value = ne;
+		}
+
+		google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
+
+	<div id="map-canvas"></div>
+
+	<br>
+	<form action="" method="post" name="edit">
+		{{ form.hidden_tag() }}
+
+		<input type="hidden" name="bl_corner" id="bl_corner">
+		<input type="hidden" name="tr_corner" id="tr_corner">
+
+		<div class="form-group">
+			{{ render_field(form.modes) }}
+			<div class="form-group has-error">
+				<small class="form-group has-error help-block">{{ form.modes.errors[0] }}</small>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<button type="submit" class="btn btn-success">Szukaj Przygody</button>
+		</div>
+	</form>
+
+
+	<br><br>
+	{% if (adventures is defined) and adventures %}
+		<h2>Znalezione Przygody</h2>
+
+		<table class="table table-hover">
+			<tr>
+				<th>#</th>
+				<th>Założyciel</th>
+				<th>Data przygody</th>
+				<th>Informacje</th>
+				<th>Dołączyło</th>
+				<th>Typ</th>
+			</tr>
+			{% for adventure in adventures %}
+				<tr>
+					<td>
+						{% if g.user.is_authenticated() %}
+							<a href="/adventures/{{ adventure.id }}">
+						{% endif %}
+							{{ adventure.id }}
+						{% if g.user.is_authenticated() %}
+							</a>
+						{% endif %}
+					</td>
+					<td>{{ adventure.username }}</td>
+					<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
+					<td>{{ adventure.info }}</td>
+					<td>{{ adventure.joined }}</td>
+					<td>{{ adventure.mode }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
+{% endblock %}

@@ -5,9 +5,10 @@ from flask.ext.sqlalchemy import get_debug_queries
 import ast # for convering string to double
 
 from app import app, db
+from app.adventures import constants as ADVENTURES
 from app.adventures.miscellaneous import is_float
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
-from app.adventures.forms import NewForm, EditForm
+from app.adventures.forms import NewForm, EditForm, SearchForm
 from app.users.models import User
 
 from config import DATABASE_QUERY_TIMEOUT
@@ -349,3 +350,76 @@ def delete(adventure_id):
 
 	flash('Your adventure has been deleted', 'success')
 	return redirect(url_for('simple_page.index'))
+
+@mod.route('/search/', methods=['GET', 'POST'])
+def search():
+	"""Allows to search adventures"""
+
+	final_adventures = []
+
+	form = SearchForm(request.form)
+
+	if form.validate_on_submit():
+		# get start position from html element
+		start_pos = request.form.get('bl_corner')
+		if (start_pos is None) or (start_pos is ''):
+			flash('Something gone wrong start_pos', 'error')
+			return redirect(url_for('adventures.search'))
+
+		# convert value to point (double, double)
+		start_pos = ast.literal_eval(str(start_pos))
+		if (start_pos is None) or (not is_float(start_pos[0])) or (not is_float(start_pos[1])):
+			flash('Something gone wrong start_pos convert', 'error')
+			return redirect(url_for('adventures.search'))
+
+		# get end position from html element
+		end_pos = request.form.get('tr_corner')
+		if (end_pos is None) or (end_pos is ''):
+			flash('Something gone wrong end_pos', 'error')
+			return redirect(url_for('adventures.search'))
+
+		# convert value to point (double, double)
+		end_pos = ast.literal_eval(str(end_pos))
+		if (end_pos is None) or (not is_float(end_pos[0])) or (not is_float(end_pos[1])):
+			flash('Something gone wrong end_pos convert', 'error')
+			return redirect(url_for('adventures.search'))
+
+		# get adventures from area
+		# a = Adventure.query.filter_by(mode=form.modes.data)
+		coordinates = Coordinate.query.filter(
+			Coordinate.latitude >= start_pos[0], Coordinate.latitude <= end_pos[0],
+			Coordinate.longitude >= start_pos[1], Coordinate.longitude <= end_pos[1]
+		).group_by(Coordinate.adventure_id).all()
+
+		for coordinate in coordinates:
+			adventure = Adventure.query.filter_by(id=coordinate.adventure_id).first()
+
+			check = False
+			for mode in form.modes.data:
+				if int(adventure.mode) == int(mode):
+					check = True
+					break
+
+			if check:
+				# get creator of the event
+				user = User.query.filter_by(id=adventure.creator_id).first()
+
+				# get joined participants
+				participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+
+				final_adventures.append({
+					'id': adventure.id,
+					'username': user.username,
+					'date': adventure.date,
+					'info': adventure.info,
+					'joined': len(participants),
+					'mode': ADVENTURES.MODES[int(adventure.mode)],
+				})
+
+		flash(u'Wyszukiwanie powiodło się', 'success')
+
+	return render_template(
+		'adventures/search.html',
+		form=form,
+		adventures=final_adventures
+	)
