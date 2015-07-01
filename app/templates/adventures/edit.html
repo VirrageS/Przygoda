@@ -48,7 +48,7 @@
 		});
 	</script>
 
-	<h2>Edycja przygody</h2>
+	<h2>Edycja Przygody</h2>
 	<br>
 	<div id="map-canvas"></div>
 	<br>
@@ -60,7 +60,7 @@
 		<div class="form-group">
 			<div class="input-group">
 				<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				{{ render_field(form.date, placeholder="Data przygody", id="datetimepicker") }}
+				{{ render_field(form.date, placeholder="Data Przygody", id="datetimepicker") }}
 			</div>
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.date.errors[0] }}</small>
@@ -75,7 +75,7 @@
 		</div>
 
 		<div class="form-group">
-			{{ render_field(form.info, placeholder="Informacje o przygodzie") }}
+			{{ render_field(form.info, placeholder="Informacje o Przygodzie") }}
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.info.errors[0] }}</small>
 			</div>
@@ -83,28 +83,26 @@
 
 		<br><br>
 		<div class="panel panel-info">
-		  <!-- Default panel contents -->
-		  <div class="panel-heading">Uczestnicy</div>
-		  <ul class="list-group">
-			{% if (participants is defined) and participants %}
-				{% for participant in participants %}
+			<div class="panel-heading">Uczestnicy</div>
+			<ul class="list-group">
+				{% if (participants is defined) and participants %}
+					{% for participant in participants %}
+						<li class="list-group-item">
+							<span class="glyphicon glyphicon-ok" style="color:#00FF00; padding-right: 15px;"></span>
+							{{ participant.username }}
+						</li>
+					{% endfor %}
+				{% else %}
 					<li class="list-group-item">
-						<span class="glyphicon glyphicon-ok" style="color:#00FF00; padding-right: 15px;"></span>
-						{{ participant.username }}
+						<span class="glyphicon glyphicon-remove" style="color:#FF0000; padding-right: 15px;"></span>
+						Nikt jeszcze nie dołączył do Przygody
 					</li>
-				{% endfor %}
-			{% else %}
-				<li class="list-group-item">
-					<span class="glyphicon glyphicon-remove" style="color:#FF0000; padding-right: 15px;"></span>
-					Nikt jeszcze nie dołączył do przygody
-				</li>
-			{% endif %}
-		  </ul>
+				{% endif %}
+			</ul>
 		</div>
 
 		<div class="form-group">
-				<button type="submit" class="btn btn-success">Zapisz zmiany w przygodzie</button>
-			</div>
+			<button type="submit" class="btn btn-success">Zapisz zmiany w Przygodzie</button>
 		</div>
 	</form>
 {% endblock %}

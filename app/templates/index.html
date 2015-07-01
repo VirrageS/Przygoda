@@ -21,6 +21,7 @@
 			{% for adventure_markers in adventures_markers %}
 				{% set outer_loop = loop %}
 
+				// TODO: change this ugly outer_loop.index bullshit
 				var rendererOptions{{ outer_loop.index }} = {
 					map: map,
 					suppressBicyclingLayer: true,

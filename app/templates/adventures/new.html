@@ -15,8 +15,6 @@
 		</div>
 	{% endmacro %}
 
-	<h2>Stwórz przygodę</h2><br>
-
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script type="text/javascript" src="/static/js/map.js"></script>
 
@@ -28,11 +26,12 @@
 		});
 	</script>
 
+	<h2>Stwórz Przygodę</h2>
+	<br>
 	<div id="map-canvas"></div>
-
-	<br><br>Aktualna długość trasy: <div id="total-distance" style="display: inline;">0 km</div>
-	<br>
-	<br>
+	<br><br>
+	Aktualna długość trasy: <b><div id="total-distance" style="display: inline;">0 km</div></b>
+	<br><br>
 	<form action="" method="post" name="new">
 		{{ form.hidden_tag() }}
 
@@ -41,7 +40,7 @@
 		<div class="form-group">
 			<div class="input-group date">
 				<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				{{ render_field(form.date, placeholder="Data przygody", id="datetimepicker") }}
+				{{ render_field(form.date, placeholder="Data Przygody", id="datetimepicker") }}
 			</div>
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.date.errors[0] }}</small>
@@ -56,14 +55,14 @@
 		</div>
 
 		<div class="form-group">
-			{{ render_field(form.info, placeholder="Informacje o przygodzie") }}
+			{{ render_field(form.info, placeholder="Informacje o Przygodzie") }}
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.info.errors[0] }}</small>
 			</div>
 		</div>
 
 		<div class="form-group">
-			<button type="submit" class="btn btn-success">Stwórz nową przygodę</button>
+			<button type="submit" class="btn btn-success">Stwórz nową Przygodę</button>
 		</div>
 	</form>
 {% endblock %}

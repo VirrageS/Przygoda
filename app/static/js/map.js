@@ -37,8 +37,6 @@ function initialize() {
         // get legs from route
         var legs = directionsDisplay.getDirections().routes[0].legs;
 
-        console.log(legs);
-
         // update all points
         for (var i = 0; i < legs.length; i++) {
             markers[i + 1] = legs[i].end_location;
@@ -56,6 +54,7 @@ function initialize() {
     });
 }
 
+// compute total distance of path
 function computeTotalDistance(result) {
     var total = 0;
     var myroute = result.routes[0];

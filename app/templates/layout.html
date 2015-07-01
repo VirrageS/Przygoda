@@ -51,7 +51,7 @@
 					        <li><a href="{{ url_for('users.account') }}">Witaj {{ g.user.username }}</a></li>
 					        <li><a href="{{ url_for('users.logout') }}">Wyloguj</a></li>
 					        <li><a href="{{ url_for('adventures.new') }}">Dodaj Przygodę</a></li>
-					        <li><a href="{{ url_for('adventures.my_adventures') }}">Moje przygody</a></li>
+					        <li><a href="{{ url_for('adventures.my_adventures') }}">Moje Przygody</a></li>
 						{% else %}
 							<li><a href="{{ url_for('users.login') }}">Logowanie</a></li>
 							<li><a href="{{ url_for('users.register') }}">Rejestracja</a></li>
