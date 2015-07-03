@@ -15,6 +15,11 @@
 		</div>
 	{% endmacro %}
 
+	{% macro render_multiplechoice_field(field, placeholder=None) %}
+		{% set css_class = 'form-group ' + kwargs.pop('class', '') %}
+		{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
+	{% endmacro %}
+
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script>
 		var map;
@@ -28,8 +33,14 @@
 
 		    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-			var sw = new google.maps.LatLng(52.219937, 20.991380); // bottom left corner
-			var ne = new google.maps.LatLng(52.239937, 21.031380); // top right corner
+			// get bounds from last search or get default
+			{% if (coordinates is defined) and coordinates %}
+				var sw = new google.maps.LatLng({{ coordinates[0][0] }}, {{ coordinates[0][1] }});
+				var ne = new google.maps.LatLng({{ coordinates[1][0] }}, {{ coordinates[1][1] }});
+			{% else %}
+				var sw = new google.maps.LatLng(52.219937, 20.991380); // bottom left corner
+				var ne = new google.maps.LatLng(52.239937, 21.031380); // top right corner
+			{% endif %}
 
 			var bounds = new google.maps.LatLngBounds(sw, ne);
 			updateBounds(sw, ne);
@@ -72,8 +83,10 @@
 		<input type="hidden" name="bl_corner" id="bl_corner">
 		<input type="hidden" name="tr_corner" id="tr_corner">
 
+		<!-- TODO: change to checkboxes or smth better  -->
 		<div class="form-group">
-			{{ render_field(form.modes) }}
+			Wybierz typ:
+			{{ render_multiplechoice_field(form.modes) }}
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.modes.errors[0] }}</small>
 			</div>

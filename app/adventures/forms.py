@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import DateTimeField, TextAreaField, HiddenField, SelectField, SelectMultipleField
+from wtforms import DateTimeField, TextAreaField, HiddenField, SelectField, SelectMultipleField, widgets
 from wtforms.validators import Required
 
 from app.adventures import constants as ADVENTURES
@@ -23,5 +23,7 @@ class EditForm(NewForm):
 class SearchForm(Form):
 	modes = SelectMultipleField(
 		u'Modes',
-		choices=[(str(value), name) for value, name in ADVENTURES.MODES.items()]
+		choices=[(str(value), name) for value, name in ADVENTURES.MODES.items()],
+		option_widget=widgets.CheckboxInput(),
+        widget=widgets.ListWidget(prefix_label=False)
 	)

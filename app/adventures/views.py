@@ -356,6 +356,7 @@ def search():
 	"""Allows to search adventures"""
 
 	final_adventures = []
+	final_coordinates = ()
 
 	form = SearchForm(request.form)
 
@@ -416,10 +417,12 @@ def search():
 					'mode': ADVENTURES.MODES[int(adventure.mode)],
 				})
 
-		flash(u'Wyszukiwanie powiodlo sie', 'success')
+		final_coordinates = (start_pos, end_pos)
+		# flash(u'Wyszukiwanie powiodlo sie', 'success')
 
 	return render_template(
 		'adventures/search.html',
 		form=form,
-		adventures=final_adventures
+		adventures=final_adventures,
+		coordinates=final_coordinates
 	)
