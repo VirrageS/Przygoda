@@ -55,7 +55,7 @@ def login():
 			flash('Logged in successfully', 'success')
 			return redirect(request.args.get('next') or url_for('simple_page.index'))
 
-		flash('Wrong username or password', 'error')
+		flash('Wrong username or password', 'danger')
 
 	return render_template('users/login.html', form=form)
 
@@ -151,7 +151,7 @@ def oauth_callback(provider):
 	oauth = OAuthSignIn.get_provider(provider)
 	social_id, username, email = oauth.callback()
 	if social_id is None:
-		flash('Authentication failed', 'error')
+		flash('Authentication failed', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user exists and if no creates new
@@ -161,9 +161,24 @@ def oauth_callback(provider):
 		db.session.add(user)
 		db.session.commit()
 
-	login_user(user, True)
+	login_user(user, remember=True)
 	return redirect(url_for('simple_page.index'))
 
+# Send confirmation email
+@mod.route('/confirmation/')
+@login_required
+def resend_confirmation_email():
+	# resending email
+	token = generate_confirmation_token(current_user.email)
+	confirm_url = url_for('users.confirm_email', token=token, _external=True)
+	html = render_template('users/activate.html', confirm_url=confirm_url)
+	subject = "Please confirm your email"
+	send_email(current_user.email, subject, html)
+
+	flash('Email potwierdzajacy zostal wyslany', 'success')
+	return redirect(url_for('simple_page.index'))
+
+# Confirm email
 @mod.route('/confirm/<token>')
 @login_required
 def confirm_email(token):
@@ -175,7 +190,7 @@ def confirm_email(token):
 	# check if user with decoded email exists
 	user = User.query.filter_by(email=email).first_or_404()
 	if user.confirmed:
-		flash('Account already confirmed. Please login', 'info')
+		flash('Account already confirmed', 'info')
 		return redirect(url_for('simple_page.index'))
 
 	# update user informations and add to database

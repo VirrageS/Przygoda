@@ -5,6 +5,7 @@ from flask.ext.sqlalchemy import get_debug_queries
 import ast # for convering string to double
 
 from app import app, db
+from app.miscellaneous import confirmed_email_required
 from app.adventures import constants as ADVENTURES
 from app.adventures.miscellaneous import is_float
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
@@ -41,13 +42,13 @@ def adventure_show(adventure_id):
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	if adventure is None:
-		flash('Adventure does not exists', 'error')
+		flash('Adventure does not exists', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# get adventures creator and check if exists
 	user = User.query.filter_by(id=adventure.creator_id).first()
 	if user is None:
-		flash('Adventure creator does not exists', 'error')
+		flash('Adventure creator does not exists', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# get joined participants
@@ -92,7 +93,7 @@ def join(adventure_id):
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	if adventure is None:
-		flash('Adventure does not exists', 'error')
+		flash('Adventure does not exists', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
@@ -121,7 +122,7 @@ def leave(adventure_id):
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	if adventure is None:
-		flash('Adventure does not exists', 'error')
+		flash('Adventure does not exists', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is the creator of the adventure
@@ -180,6 +181,7 @@ def my_adventures():
 # Edit adventure
 @mod.route('/edit/<int:adventure_id>', methods=['GET', 'POST'])
 @login_required
+@confirmed_email_required
 def edit(adventure_id=0):
 	"""Allows to edit adventure"""
 
@@ -192,12 +194,12 @@ def edit(adventure_id=0):
 
 	# check if adventure exists
 	if adventure is None:
-		flash('Adventure not found', 'error')
+		flash('Adventure not found', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is creator of adventure
 	if adventure.creator_id != current_user.id:
-		flash('You cannot edit this adventure!', 'error')
+		flash('You cannot edit this adventure!', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# get form
@@ -265,6 +267,7 @@ def edit(adventure_id=0):
 # New adventure
 @mod.route('/new/', methods=['GET', 'POST'])
 @login_required
+@confirmed_email_required
 def new():
 	"""Allows to create a new adventure"""
 
@@ -312,6 +315,7 @@ def new():
 # Delete adventure
 @mod.route('/delete/<int:adventure_id>')
 @login_required
+@confirmed_email_required
 def delete(adventure_id):
 	"""Allows to delete existing adventure"""
 
@@ -324,12 +328,12 @@ def delete(adventure_id):
 
 	# check if adventure exists
 	if adventure is None:
-		flash('Adventure not found', 'error')
+		flash('Adventure not found', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is creator of adventure
 	if adventure.creator_id != current_user.id:
-		flash('You cannot delete this adventure!', 'error')
+		flash('You cannot delete this adventure!', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# delete all adventure participants
@@ -364,25 +368,25 @@ def search():
 		# get start position from html element
 		start_pos = request.form.get('bl_corner')
 		if (start_pos is None) or (start_pos is ''):
-			flash('Something gone wrong start_pos', 'error')
+			flash('Something gone wrong start_pos', 'danger')
 			return redirect(url_for('adventures.search'))
 
 		# convert value to point (double, double)
 		start_pos = ast.literal_eval(str(start_pos))
 		if (start_pos is None) or (not is_float(start_pos[0])) or (not is_float(start_pos[1])):
-			flash('Something gone wrong start_pos convert', 'error')
+			flash('Something gone wrong start_pos convert', 'danger')
 			return redirect(url_for('adventures.search'))
 
 		# get end position from html element
 		end_pos = request.form.get('tr_corner')
 		if (end_pos is None) or (end_pos is ''):
-			flash('Something gone wrong end_pos', 'error')
+			flash('Something gone wrong end_pos', 'danger')
 			return redirect(url_for('adventures.search'))
 
 		# convert value to point (double, double)
 		end_pos = ast.literal_eval(str(end_pos))
 		if (end_pos is None) or (not is_float(end_pos[0])) or (not is_float(end_pos[1])):
-			flash('Something gone wrong end_pos convert', 'error')
+			flash('Something gone wrong end_pos convert', 'danger')
 			return redirect(url_for('adventures.search'))
 
 		# get adventures from area
