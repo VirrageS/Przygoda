@@ -30,6 +30,16 @@ class LoginForm(Form):
 	password = PasswordField('Password', [Required()])
 	remember_me = BooleanField('Remember me', [])
 
+	# def validate(self):
+	# 	if not Form.validate(self):
+	# 		return False
+	#
+	# 	# check username and password
+	# 	user = User.query.filter_by(username=self.username.data).first()
+	# 	if (user is None) or (not check_password_hash(user.password, self.password.data)):
+	# 		self.username.errors.append(u'Nie prawidłowe hasło lub nazwa użytkownika')
+	# 		return False
+
 class RegisterForm(Form):
 	username = StringField('Username', [Length(min=4, max=25)])
 	email = StringField('Email Address', [Email(), Length(min=6, max=35)])

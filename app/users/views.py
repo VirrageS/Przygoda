@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import datetime
 from werkzeug import check_password_hash, generate_password_hash
 from flask import Blueprint, request, render_template, flash, redirect, url_for
@@ -35,7 +37,7 @@ def login():
 
 	# user is logged so it does not need to be logged in again
 	if current_user.is_authenticated():
-		flash('You are logged in', 'info')
+		flash('Już jesteś zalogowany', 'info')
 		return redirect(url_for('simple_page.index'))
 
 	# get form
@@ -52,10 +54,10 @@ def login():
 			# login user to system
 			login_user(registered_user, remember=form.remember_me.data)
 
-			flash('Logged in successfully', 'success')
+			flash(u'Zalogowałeś sie poprawnie. Witaj w Przygodzie.', 'success')
 			return redirect(request.args.get('next') or url_for('simple_page.index'))
 
-		flash('Wrong username or password', 'danger')
+		flash(u'Nieprawidłowe hasło lub nazwa użytkownika', 'danger')
 
 	return render_template('users/login.html', form=form)
 
@@ -93,8 +95,8 @@ def register():
 		#login_user(user)
 
 		# everything okay so far
-		flash('A confirmation email has been sent via email', 'info')
-		flash('User successfully registered', 'success')
+		flash('Email potwierdzający został wysłany', 'info')
+		flash('Użytkownik został zarejestrowany poprawnie. Witaj w Przygodzie.', 'success')
 		return redirect(url_for('users.login'))
 
 	return render_template('users/register.html', form=form)
@@ -109,7 +111,7 @@ def logout():
 	logout_user()
 
 	# everything okay so back
-	flash('Logged out successfully', 'success')
+	flash('Wylogowałeś sie z Przygody', 'success')
 	return redirect(url_for('simple_page.index'))
 
 @mod.route('/account/', methods=['GET','POST'])
@@ -122,6 +124,15 @@ def account():
 
 	# verify the register form
 	if form.validate_on_submit():
+		if current_user.email is not form.email.data:
+			# resending email
+			token = generate_confirmation_token(current_user.email)
+			confirm_url = url_for('users.confirm_email', token=token, _external=True)
+			html = render_template('users/activate.html', confirm_url=confirm_url)
+			subject = u"Potwierdź swój email - Przygoda"
+			send_email(current_user.email, subject, html)
+			flash(u'Email potwierdzający został wysłany', 'info')
+
 		# update user
 		form.populate_obj(current_user)
 
@@ -129,7 +140,7 @@ def account():
 		db.session.commit()
 
 		# everything is okay
-		flash('You acccount has been successfully edited', 'success')
+		flash('Your acccount has been successfully edited', 'success')
 		return redirect(url_for('users.account'))
 
 	return render_template('users/account.html', form=form)
@@ -175,7 +186,7 @@ def resend_confirmation_email():
 	subject = "Please confirm your email"
 	send_email(current_user.email, subject, html)
 
-	flash('Email potwierdzajacy zostal wyslany', 'success')
+	flash(u'Email potwierdzający został wysłany', 'info')
 	return redirect(url_for('simple_page.index'))
 
 # Confirm email
