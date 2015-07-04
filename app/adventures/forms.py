@@ -24,6 +24,6 @@ class SearchForm(Form):
 	modes = SelectMultipleField(
 		u'Modes',
 		choices=[(str(value), name) for value, name in ADVENTURES.MODES.items()],
-		option_widget=widgets.CheckboxInput(),
-        widget=widgets.ListWidget(prefix_label=False)
+		# option_widget=widgets.CheckboxInput(),
+        # widget=widgets.ListWidget(prefix_label=False)
 	)

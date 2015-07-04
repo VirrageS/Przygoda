@@ -181,7 +181,7 @@ def my_adventures():
 # Edit adventure
 @mod.route('/edit/<int:adventure_id>', methods=['GET', 'POST'])
 @login_required
-@confirmed_email_required
+# @confirmed_email_required
 def edit(adventure_id=0):
 	"""Allows to edit adventure"""
 
@@ -267,7 +267,7 @@ def edit(adventure_id=0):
 # New adventure
 @mod.route('/new/', methods=['GET', 'POST'])
 @login_required
-@confirmed_email_required
+# @confirmed_email_required
 def new():
 	"""Allows to create a new adventure"""
 
@@ -315,7 +315,7 @@ def new():
 # Delete adventure
 @mod.route('/delete/<int:adventure_id>')
 @login_required
-@confirmed_email_required
+# @confirmed_email_required
 def delete(adventure_id):
 	"""Allows to delete existing adventure"""
 
