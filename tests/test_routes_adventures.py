@@ -63,7 +63,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		"""Ensure that show adventure require existing creator"""
 
 		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -75,7 +75,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		"""Ensure that show adventure redirect us to the right place"""
 
 		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -129,7 +129,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		"""Ensure that join adventure does not allow to join again"""
 
 		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -157,7 +157,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		"""Ensure that join adventure create adventure participant"""
 
 		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -219,7 +219,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		"""Ensure that leave adventure do not allow leaving for creator of the adventure"""
 
 		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -239,7 +239,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		"""Ensure that leave adventure do not allow leaving for someone who does not joined to adventure"""
 
 		# add adventure to database
-		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -259,7 +259,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		"""Ensure that leave adventure actually allows to leave the adventure"""
 
 		# add adventure to database
-		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -332,7 +332,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		"""Ensure that edit adventure requires creator of the adventure"""
 
 		# add adventure to database
-		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -352,7 +352,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		"""Ensure that edit adventure redirect user to editing page"""
 
 		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -417,7 +417,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.login(username='john', password='a')
 
 		# add adventure to database
-		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -437,7 +437,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.login(username='john', password='a')
 
 		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 

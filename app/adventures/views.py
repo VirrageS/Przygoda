@@ -5,6 +5,7 @@ from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
 
 import ast # for convering string to double
+from datetime import datetime, date # for current date
 
 from app import app, db
 from app.miscellaneous import confirmed_email_required
@@ -263,7 +264,8 @@ def edit(adventure_id=0):
 		form=form,
 		adventure_id=adventure_id,
 		markers=final_coordinates,
-		participants=final_participants
+		participants=final_participants,
+		date=datetime.now().strftime("%m/%d/%Y %H:%M")
 	)
 
 # New adventure
@@ -275,9 +277,6 @@ def new():
 
 	# if new form has been submitted
 	form = NewForm(request.form)
-
-	if request.method == 'GET':
-		return render_template('adventures/new.html', form=form)
 
 	# verify the new form
 	if form.validate_on_submit():
@@ -312,7 +311,11 @@ def new():
 		flash('Adventure item was successfully created', 'success')
 		return redirect(url_for('simple_page.index'))
 
-	return render_template('adventures/new.html', form=form)
+	return render_template(
+		'adventures/new.html',
+		form=form,
+		date=datetime.now().strftime("%m/%d/%Y %H:%M")
+	)
 
 # Delete adventure
 @mod.route('/delete/<int:adventure_id>')

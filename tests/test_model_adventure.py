@@ -13,20 +13,20 @@ class AdventureTestCase(unittest.TestCase):
 		self.app = app.test_client()
 
 	def test_adventure_creator_id(self):
-		a = Adventure(creator_id=1, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today')
+		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.AMATEURISH, info='Some info today')
 		assert a.creator_id == 1
 
 	def test_adventure_date(self):
-		date = datetime.utcnow()
+		date = datetime.now()
 		a = Adventure(creator_id=1, date=date, mode=ADVENTURES.AMATEURISH, info='Some info today')
 		assert a.date == date
 
 	def test_adventure_mode(self):
-		a = Adventure(creator_id=3, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today')
+		a = Adventure(creator_id=3, date=datetime.now(), mode=ADVENTURES.AMATEURISH, info='Some info today')
 		assert a.mode == ADVENTURES.AMATEURISH
 
 	def test_adventure_info(self):
-		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today')
+		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.AMATEURISH, info='Some info today')
 		assert a.info == 'Some info today'
 
 class CoordinateTestCase(unittest.TestCase):

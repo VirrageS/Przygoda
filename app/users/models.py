@@ -29,7 +29,7 @@ class User(UserMixin, db.Model):
 		self.username = username
 		self.password = password
 		self.email = email
-		self.registered_on = datetime.utcnow()
+		self.registered_on = datetime.now()
 		self.confirmed = confirmed
 		self.confirmed_on = confirmed_on
 		self.paid = paid

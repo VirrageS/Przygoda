@@ -23,14 +23,14 @@ class DatabaseTestCase(unittest.TestCase):
 		db.drop_all()
 
 	def test_add_adventure_to_database(self):
-		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 		a = Adventure.query.filter_by(creator_id=2).first()
 		assert a.mode == ADVENTURES.RECREATIONAL
 		assert a.info == 'Some info today'
 
-		a = Adventure(creator_id=2, date=datetime.utcnow(), mode=ADVENTURES.AMATEURISH, info='Some info today')
+		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.AMATEURISH, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 		assert a.mode == ADVENTURES.AMATEURISH
