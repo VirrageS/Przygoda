@@ -4,8 +4,6 @@
 {% block body %}
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 
-
-	<!-- <div id="map-canvas"></div> -->
 	<div class="page-content">
 		<div class="row no-gutter">
 			{% for adventure in adventures %}
@@ -35,7 +33,10 @@
 
 							<div class="object-meta-sub bottom">
 								<span class="left">
-									<span class="read-time"><i class="fa fa-clock-o"></i> {{ adventure.date.strftime('%d.%m.%Y %H:%M') }}</span>
+									<span class="read-time">
+										<i class="fa fa-user"></i> {{ adventure.joined }}<br>
+										<i class="fa fa-clock-o"></i> {{ adventure.date.strftime('%d.%m.%Y %H:%M') }}
+									</span>
 								</span>
 
 								<span class="right">
