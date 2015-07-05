@@ -109,3 +109,26 @@ class AccountForm(Form):
 
 		self.password.data = generate_password_hash(self.password.data)
 		return True
+
+class LostForm(Form):
+	email = StringField('Email Address', [Email(), Length(min=6, max=35)])
+
+	def validate(self):
+		if not Form.validate(self):
+			return False
+
+		# email check
+		user = User.query.filter_by(email=self.email.data.lower()).first()
+		if user is None:
+			self.email.errors.append('This email is not correct.')
+			return False
+
+		if not user.confirmed:
+			self.email.error.append('User with this email is not confirmed. Sorry.')
+			return False
+
+		return True
+
+class ChangePasswordForm(Form):
+	password = PasswordField('Password', [Optional()])
+	confirm = PasswordField('Repeat Password', [Optional(), EqualTo('password', message='Passwords must match')])

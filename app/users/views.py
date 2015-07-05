@@ -8,9 +8,9 @@ from flask.ext.sqlalchemy import get_debug_queries
 
 from app import app, db
 from app.users.models import User
-from app.users.forms import RegisterForm, LoginForm, AccountForm
+from app.users.forms import RegisterForm, LoginForm, AccountForm, LostForm, ChangePasswordForm
 
-from app.token import generate_confirmation_token, confirm_token
+from app.token import generate_confirmation_token, confirm_token, generate_lost_password_token
 from app.email import send_email
 
 from app.oauth import OAuthSignIn
@@ -145,6 +145,27 @@ def account():
 
 	return render_template('users/account.html', form=form)
 
+# Lost password
+@mod.route('/lost/', methods=['GET','POST'])
+def lost():
+	"""Allow for user to get lost password"""
+
+	# get form
+	form = LostForm(request.form)
+
+	# verify the register form
+	if form.validate_on_submit():
+		token = generate_lost_password_token(form.email.data)
+		confirm_url = url_for('users.change_password', token=token, _external=True)
+		html = render_template('users/lost_email.html', confirm_url=confirm_url)
+		subject = u"Przygoda - Prośba o hasło"
+		send_email(form.email.data, subject, html)
+		flash(u'Email z dalszymi instrukcjami został wysłany', 'info')
+
+		return redirect(url_for('simple_page.index'))
+
+	return render_template('users/lost.html', form=form)
+
 @mod.route('/authorize/<provider>')
 def oauth_authorize(provider):
 	if not current_user.is_anonymous():
@@ -212,3 +233,30 @@ def confirm_email(token):
 
 	flash('You have confirmed your account. Thanks', 'success')
 	return redirect(url_for('simple_page.index'))
+
+# Change lost password
+@mod.route('/lost/password/<token>', methods=['GET','POST'])
+def change_password(token):
+	try:
+		email = confirm_token(token)
+	except:
+		flash('The confirmation link is invalid or has expired', 'warning')
+
+	# check if user with decoded email exists
+	user = User.query.filter_by(email=email).first_or_404()
+
+	form = ChangePasswordForm(request.form, obj=user)
+
+	if form.validate_on_submit():
+		# update user
+		form.password.data = generate_password_hash(form.password.data)
+		form.populate_obj(user)
+
+		# update user in database
+		db.session.commit()
+
+		# everything is okay
+		flash('Your password has been successfully changed', 'success')
+		return redirect(url_for('users.login'))
+
+	return render_template('users/change_password.html', form=form)

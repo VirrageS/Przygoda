@@ -1,0 +1,39 @@
+<!-- extend base layout -->
+{% extends "layout.html" %}
+
+{% block body %}
+	{% macro render_field(field, placeholder=None) %}
+		{% if field.errors %}
+		<div>
+		{% elif field.flags.error %}
+		<div>
+		{% else %}
+		<div>
+		{% endif %}
+
+		{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+		{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
+		</div>
+	{% endmacro %}
+
+	<h2>Odzyskaj hasło</h2>
+	<br>
+
+	<form action="" method="post" name="lost">
+		{{ form.hidden_tag() }}
+
+        <div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-at"></i></div>
+				{{ render_field(form.email, placeholder="Email") }}
+			</div>
+			<div class="form-group has-error">
+				<small class="form-group has-error help-block">{{ form.email.errors[0] }}</small>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<button type="submit" class="btn btn-success">Odzyskaj hasło</button>
+		</div>
+	</form>
+{% endblock %}
