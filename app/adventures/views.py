@@ -31,7 +31,7 @@ def after_request(response):
 
 # Show adventure with id
 @mod.route('/<int:adventure_id>')
-def adventure_show(adventure_id):
+def show(adventure_id):
 	"""Show adventure"""
 
 	# check if adventure_id is not max_int
@@ -45,6 +45,11 @@ def adventure_show(adventure_id):
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	if adventure is None:
+		flash('Adventure does not exists', 'danger')
+		return redirect(url_for('simple_page.index'))
+
+	# check if adventure is active
+	if not adventure.is_active():
 		flash('Adventure does not exists', 'danger')
 		return redirect(url_for('simple_page.index'))
 
@@ -71,6 +76,11 @@ def adventure_show(adventure_id):
 			'info': adventure.info,
 			'joined': len(participants)
 		}
+
+	# update adventure views
+	adventure.views += 1
+	db.session.add(adventure)
+	db.session.commit()
 
 	# get coordinates of existing points
 	coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
@@ -157,6 +167,10 @@ def my_adventures():
 
 	# get all adventures which created user
 	adventures = Adventure.query.filter_by(creator_id=current_user.id).order_by(Adventure.date.asc()).all()
+
+	# get all active adventures
+	adventures = filter(lambda x: x.is_active(), adventures)
+
 	for adventure in adventures:
 		# get joined participants
 		joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
@@ -174,6 +188,10 @@ def my_adventures():
 	for joined_adventure in joined_adventures:
 		# get adventure
 		adventure = Adventure.query.filter_by(id=joined_adventure.adventure_id).first()
+
+		# check if adventure is active
+		if not adventure.is_active():
+			continue
 
 		# check if user is not creator (we do not want duplicates)
 		if (adventure is not None) and (adventure.creator_id != current_user.id):
@@ -395,14 +413,18 @@ def search():
 			return redirect(url_for('adventures.search'))
 
 		# get adventures from area
-		# a = Adventure.query.filter_by(mode=form.modes.data)
 		coordinates = Coordinate.query.filter(
 			Coordinate.latitude >= start_pos[0], Coordinate.latitude <= end_pos[0],
 			Coordinate.longitude >= start_pos[1], Coordinate.longitude <= end_pos[1]
 		).group_by(Coordinate.adventure_id).all()
 
 		for coordinate in coordinates:
+			# get adventure with coordinates id
 			adventure = Adventure.query.filter_by(id=coordinate.adventure_id).first()
+
+			# check if adventure is active
+			if not adventure.is_active():
+				continue
 
 			check = False
 			for mode in form.modes.data:
@@ -426,7 +448,12 @@ def search():
 					'mode': ADVENTURES.MODES[int(adventure.mode)],
 				})
 
+		# updated search coordinates
 		final_coordinates = (start_pos, end_pos)
+
+		# sort adventures by date
+		final_adventures = sorted(final_adventures, key=(lambda a: a['date']))
+
 		# flash(u'Wyszukiwanie powiodlo sie', 'success')
 
 	return render_template(

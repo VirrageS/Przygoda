@@ -1,6 +1,8 @@
 from app import db
 from app.adventures import constants as ADVENTURES
 
+from datetime import datetime
+
 class Adventure(db.Model):
 	__tablename__ = 'adventures'
 	id = db.Column(db.Integer, primary_key=True)
@@ -8,15 +10,21 @@ class Adventure(db.Model):
 	date = db.Column('date', db.DateTime)
 	mode = db.Column('mode', db.SmallInteger)
 	info = db.Column('info', db.String)
+	views = db.Column('views', db.BigInteger)
 
 	def __init__(self, creator_id, date, mode, info):
 		self.creator_id = creator_id
 		self.date = date
 		self.mode = mode
 		self.info = info
+		self.views = 0
 
 	def get_mode(self):
 		return ADVENTURES.MODES[self.mode]
+
+	def is_active(self):
+		"""Checks if adventure is active"""
+		return self.date >= datetime.now()
 
 class Coordinate(db.Model):
 	__tablename__ = 'coordinates'

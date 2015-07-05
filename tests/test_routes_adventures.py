@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from config import base_dir
 from werkzeug import check_password_hash, generate_password_hash
 
@@ -59,11 +59,23 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
 
+	def test_adventures_show_route_no_active(self):
+		"""Ensure that show adventure require to be active"""
+
+		# add adventure to database
+		a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=-9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		db.session.add(a)
+		db.session.commit()
+
+		response = self.app.get('/adventures/1', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('index.html')
+
 	def test_adventures_show_route_no_creator(self):
 		"""Ensure that show adventure require existing creator"""
 
 		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -75,7 +87,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		"""Ensure that show adventure redirect us to the right place"""
 
 		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
 		db.session.commit()
 
@@ -327,7 +339,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 		response = self.app.get('/adventures/edit/1', follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('index.html')
-	
+
 	def test_adventures_edit_route_no_creator(self):
 		"""Ensure that edit adventure requires creator of the adventure"""
 

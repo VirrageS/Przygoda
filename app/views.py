@@ -15,6 +15,10 @@ def index():
 
 	# get all adventures
 	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
+
+	# get all active adventures
+	adventures = filter(lambda a: a.is_active(), adventures)
+
 	for adventure in adventures:
 		# get creator of the event
 		user = User.query.filter_by(id=adventure.creator_id).first()
