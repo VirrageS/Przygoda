@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask.ext.wtf import Form
 from wtforms import BooleanField, StringField, PasswordField
 from wtforms.validators import Required, EqualTo, Email, Optional, Length
@@ -5,7 +7,8 @@ from wtforms.validators import Required, EqualTo, Email, Optional, Length
 from werkzeug import check_password_hash, generate_password_hash
 from flask.ext.login import current_user
 from app.users.models import User
-import re
+
+import re # for checking username
 
 def validate_username(username):
 	return username == re.sub('[^a-zA-Z0-9_\.]', '', username)
