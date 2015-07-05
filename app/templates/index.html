@@ -3,145 +3,61 @@
 
 {% block body %}
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
-	<script>
-		var map;
 
-		function initialize() {
-		    var mapOptions = {
-		        zoom: 13,
-		        center: new google.maps.LatLng(52.229937, 21.011380),
-		        mapTypeId: google.maps.MapTypeId.ROADMAP
-		    };
 
-		    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+	<!-- <div id="map-canvas"></div> -->
+	<div class="page-content">
+		<div class="row no-gutter">
+			{% for adventure in adventures %}
+				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
+					<div class="object post">
+						<div class="object-header image" style="background-image:url(
+						'https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=600x400&maptype=roadmap&path=color:0x0000ff|weight:5
+						{%- for marker in adventure.markers -%}
+							|{{ marker[0] }},{{ marker[1] }}
+						{%- endfor -%}
+						');">
+							<a href="/adventures/{{ adventure.id }}" class="permacover"></a>
+							<span class="object-header-meta">
+								<a href="/adventures/{{ adventure.id }}">
+									<span class="username">{{ adventure.username }}</span>
+								</a>
+							</span><!-- /.object-author -->
+						</div><!-- /.object-header -->
 
-			var directionsService = new google.maps.DirectionsService();
 
-			// show route on map
-			{% for adventure_markers in adventures_markers %}
-				{% set outer_loop = loop %}
+						<div class="object-meta">
+							<span class="title"><a href="/adventures/{{ adventure.id }}">{{ adventure.mode }}</a></span>
 
-				// TODO: change this ugly outer_loop.index bullshit
-				var rendererOptions{{ outer_loop.index }} = {
-					map: map,
-					suppressBicyclingLayer: true,
-					suppressMarkers: true,
-					preserveViewport: true,
-					routeIndex: {{ outer_loop.index }},
-					polylineOptions: {
-				    	strokeColor: '#'+Math.floor(Math.random()*16777215).toString(16),
-						strokeWeight: 5,
-						strokeOpacity: 0.9
-				    }
-				};
+							<div class="object-excerpt">
+								<p>{{ adventure.info }}</p>
+							</div><!-- /.object-excerpt -->
 
-				var directionsDisplay{{ outer_loop.index }} = new google.maps.DirectionsRenderer(rendererOptions{{ loop.index }});
+							<div class="object-meta-sub bottom">
+								<span class="left">
+									<span class="read-time"><i class="fa fa-clock-o"></i> {{ adventure.date.strftime('%d.%m.%Y %H:%M') }}</span>
+								</span>
 
-				var waypoints = [];
-
-				{%- for marker in adventure_markers %}
-					{% if loop.first -%}
-						var origin{{ outer_loop.index }} = new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }});
-					{%- elif loop.last -%}
-						var destination{{ outer_loop.index }} = new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }});
-					{%- else -%}
-						waypoints.push({location: new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }}), stopover: true});
-					{%- endif %}
-				{%- endfor %}
-
-				var request = {
-			        origin: origin{{ outer_loop.index }},
-			        destination: destination{{ outer_loop.index }},
-			        waypoints: waypoints,
-					optimizeWaypoints: false,
-			        travelMode: google.maps.TravelMode.BICYCLING // BICYCLING
-			    };
-
-				directionsService.route(request, function(response, status) {
-			        if (status == google.maps.DirectionsStatus.OK) {
-			            directionsDisplay{{ outer_loop.index }}.setDirections(response);
-
-						// console.log({{ loop.index }});
-
-						// add start and end marker to map with description
-						addMarker(origin{{ outer_loop.index }}, 'Start #' + {{ outer_loop.index }}, 'http://maps.google.com/mapfiles/ms/icons/red-dot.png');
-						addMarker(destination{{ outer_loop.index }}, 'Koniec #' + {{ outer_loop.index }}, 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
-			        } else {
-						console.log(status);
-					}
-			    });
+								<span class="right">
+									<span class="action">
+										{% if g.user.is_authenticated() %}
+											{% if adventure.action == -1 %}
+												<i class="fa fa-gear"></i> Nie ma akcji
+											{% elif adventure.action == 0 %}
+												<a href="/adventures/join/{{ adventure.id }}"><i class="fa fa-gear"></i> Dołącz</a>
+											{% else %}
+												<a href="/adventures/leave/{{ adventure.id }}"><i class="fa fa-gear"></i> Wypisz się</a>
+											{% endif %}
+										{% else %}
+											<i class="fa fa-gear"></i> Nie ma akcji
+										{% endif %}
+									</span>
+								</span>
+							</div><!-- /.object-sub-meta -->
+						</div><!-- /.oject-meta -->
+					</div>
+				</div>
 			{% endfor %}
-		}
-
-		function addMarker(markerPosition, title, icon) {
-			var marker = new google.maps.Marker({
-				position: markerPosition,
-				map: map,
-				title: title,
-				icon: icon,
-				shadow: new google.maps.MarkerImage(
-					"http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
-        			new google.maps.Size(40, 37),
-        			new google.maps.Point(0, 0),
-        			new google.maps.Point(12, 35)
-				)
-			});
-
-			google.maps.event.addListener(marker, 'click', function() {
-				infowindow.open(map, marker);
-			});
-
-			var infowindow = new google.maps.InfoWindow({
-		    	content: title
-			});
-		}
-
-		google.maps.event.addDomListener(window, 'load', initialize);
-	</script>
-
-	<div id="map-canvas"></div>
-
-	<h2>Przygody</h2>
-	<table class="table table-hover">
-		<tr>
-			<th>#</th>
-			<th>Założyciel</th>
-			<th>Data przygody</th>
-			<th>Informacje</th>
-			<th>Dołączyło</th>
-			<th>Typ</th>
-			{% if g.user.is_authenticated() %}
-			<th>Akcja</th>
-			{% endif %}
-		</tr>
-		{% for adventure in adventures %}
-			<tr>
-				<td>
-					{% if g.user.is_authenticated() %}
-						<a href="/adventures/{{ adventure.id }}">
-					{% endif %}
-						{{ adventure.id }}
-					{% if g.user.is_authenticated() %}
-						</a>
-					{% endif %}
-				</td>
-				<td>{{ adventure.username }}</td>
-				<td>{{ adventure.date.strftime('%d.%m.%Y (%H:%M)') }}</td>
-				<td>{{ adventure.info }}</td>
-				<td>{{ adventure.joined }}</td>
-				<td>{{ adventure.mode }}</td>
-				{% if g.user.is_authenticated() %}
-					<td>
-						{% if adventure.action == -1 %}
-							Nie ma akcji
-						{% elif adventure.action == 0 %}
-							<a href="/adventures/join/{{ adventure.id }}">Dołącz</a>
-						{% else %}
-							<a href="/adventures/leave/{{ adventure.id }}">Wypisz się</a>
-						{% endif %}
-					</td>
-				{% endif %}
-			</tr>
-		{% endfor %}
-	</table>
+		</div>
+	</div>
 {% endblock %}

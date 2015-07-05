@@ -16,7 +16,7 @@
 	{% endmacro %}
 
 	{% macro render_multiplechoice_field(field, placeholder=None) %}
-		{% set css_class = 'selectpicker ' + kwargs.pop('class', '') %}
+		{% set css_class = 'form-control selectpicker ' + kwargs.pop('class', '') %}
 		{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
 	{% endmacro %}
 

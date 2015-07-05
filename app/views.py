@@ -33,6 +33,12 @@ def index():
 			if adventure.creator_id == current_user.id:
 				action = -1
 
+		coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
+		markers = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]
+
+		if markers:
+			all_markers.append(markers)
+
 		# check if creator still exists
 		if user is not None:
 			all_adventures.append({
@@ -42,14 +48,11 @@ def index():
 				'info': adventure.info,
 				'joined': len(participants),
 				'mode': ADVENTURES.MODES[int(adventure.mode)],
-				'action': action
+				'action': action,
+				'markers': markers
 			})
 
-		coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
-		markers = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]
 
-		if markers:
-			all_markers.append(markers)
 
 	return render_template('index.html', adventures=all_adventures, adventures_markers=all_markers)
 

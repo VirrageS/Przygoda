@@ -48,6 +48,16 @@
 		});
 	</script>
 
+	<script>
+		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+	    	$('.selectpicker').selectpicker('mobile');
+		} else {
+			$('.selectpicker').selectpicker({
+				size: 4
+			});
+		}
+	</script>
+
 	<h2>Edycja Przygody</h2>
 	<br>
 	<div id="map-canvas"></div>
@@ -68,7 +78,7 @@
 		</div>
 
 		<div class="form-group">
-			{{ render_field(form.mode) }}
+			{{ render_field(form.mode, class='selectpicker', title='Wybierz typ Przygody', **{'data-selected-text-format' : 'count>2', 'data-style' : 'btn-info'}) }}
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.mode.errors[0] }}</small>
 			</div>
