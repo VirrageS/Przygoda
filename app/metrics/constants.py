@@ -1,0 +1,14 @@
+# metrics types
+ADVENTURES_COUNT_ACTIVE = 0
+ADVENTURES_COUNT_INACTIVE = 1
+ADVENTURES_COUNT_ALL = 2
+USERS_COUNT_ALL = 3
+USERS_PER_ADVENTURE = 4
+
+# METRICS = {}
+
+# MODES = {
+# 	RECREATIONAL: 'rekreacyjny',
+# 	AMATEURISH: 'amatorski',
+# 	DOWNHILL: 'downhill',
+# }

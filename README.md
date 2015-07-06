@@ -16,9 +16,14 @@ Klonujemy nasze repozytorium:
 
 Teraz instalujemy wirtualne środowisko pythona.
 
+Jeżeli nie masz `pip` to użyj komend:
+
+	MacBook-Air-Janusz:przygoda VirrageS$ apt-get update
+	MacBook-Air-Janusz:przygoda VirrageS$ sudo apt-get install python3-pip
+
 Wybierz jedną z opcji instalacji:
 
-	MacBook-Air-Janusz:przygoda VirrageS$ sudo pip install virtualenv
+	MacBook-Air-Janusz:przygoda VirrageS$ sudo pip3 install virtualenv
 
 lub:
 
@@ -28,7 +33,7 @@ Teraz czas na wszystkie biblioteki:
 
 	MacBook-Air-Janusz:przygoda VirrageS$ virtualenv env
 	MacBook-Air-Janusz:przygoda VirrageS$ source env/bin/activate
-	(env)MacBook-Air-Janusz:przygoda VirrageS$ pip install -r requirements.txt
+	(env)MacBook-Air-Janusz:przygoda VirrageS$ pip3 install -r requirements.txt
 
 ## Tworzenie bazy danych
 
@@ -39,7 +44,7 @@ Aby utworzyć bazę danych wpisujemy:
 
 	MacBook-Air-Janusz:przygoda VirrageS$
 	MacBook-Air-Janusz:przygoda VirrageS$ source env/bin/activate
-	(env)MacBook-Air-Janusz:przygoda VirrageS$ python shell.py
+	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 shell.py
 	>>> from app import db
 	>>> db.create_all()
 	>>> exit()
@@ -56,9 +61,9 @@ Jeżeli nie jesteśmy w wirtualnym środowisku musimy wpisać:
 	MacBook-Air-Janusz:przygoda VirrageS$ source env/bin/activate
 	(env)MacBook-Air-Janusz:przygoda VirrageS$
 
-Teraz odpalamy naszą aplikację dzięki `python run.py`.
+Teraz odpalamy naszą aplikację dzięki `python3 run.py`.
 
-	(env)MacBook-Air-Janusz:przygoda VirrageS$ python run.py
+	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 run.py
 	 * Running on http://127.0.0.1:5000/
 	 * Restarting with reloader
 
@@ -71,7 +76,7 @@ i powinniśmy zostać przekierowani do naszej aplikacji.
 Testowanie odbywa się automatycznie po `git push` przez Travis CI (na górze widać
 aktualny status). Manualnie możemy to zrobić:
 
-	(env)MacBook-Air-Janusz:przygoda VirrageS$ python -m unittest discover
+	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 -m unittest discover
 
 
 ## Ogólne

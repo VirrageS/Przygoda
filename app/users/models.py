@@ -21,7 +21,7 @@ class User(UserMixin, db.Model):
 	paid = db.Column('paid', db.Boolean, nullable=False, default=False)
 
 
-	def __init__(self, username, password, email, social_id=None, confirmed=False, confirmed_on=None, paid=False):
+	def __init__(self, username, password, email, social_id=None):
 		if social_id is None:
 			social_id = "facebook$" + username
 
@@ -30,9 +30,9 @@ class User(UserMixin, db.Model):
 		self.password = password
 		self.email = email
 		self.registered_on = datetime.now()
-		self.confirmed = confirmed
-		self.confirmed_on = confirmed_on
-		self.paid = paid
+		self.confirmed = False
+		self.confirmed_on = None
+		self.paid = False
 
 	def is_authenticated(self):
 		return True

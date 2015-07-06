@@ -1,5 +1,4 @@
 import os
-import sys
 
 from flask import Flask, render_template, g
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -15,6 +14,11 @@ db = SQLAlchemy(app)
 
 # set mail
 mail = Mail(app)
+
+# metrics
+from app.metrics.miscellaneous import Metrics
+metrics = Metrics(db)
+metrics.update_metrics(interval=30)
 
 # if not debuging we should keep log of our app
 if not app.debug:
