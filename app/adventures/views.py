@@ -438,6 +438,7 @@ def search():
 				# get joined participants
 				participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
 
+				# add to all adventures
 				final_adventures.append({
 					'id': adventure.id,
 					'username': user.username,
@@ -446,6 +447,10 @@ def search():
 					'joined': len(participants),
 					'mode': ADVENTURES.MODES[int(adventure.mode)],
 				})
+
+				# update adventure search times
+				adventure.search += 1
+				db.session.commit()
 
 		# updated search coordinates
 		final_coordinates = (start_pos, end_pos)

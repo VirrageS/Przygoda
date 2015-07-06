@@ -52,6 +52,8 @@ if not app.debug:
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'users.login' # path to login (handel 'required_login')
+login_manager.login_message = 'Please log in to access this page'
+login_manager.login_message_category = 'warning'
 
 from app.users.models import User
 @login_manager.user_loader

@@ -1,6 +1,5 @@
 from app.metrics import constants as METRICS
 
-from flask import flash
 from app.adventures.models import Adventure, AdventureParticipant
 from app.users.models import User
 from app.metrics.models import Metric
@@ -10,8 +9,9 @@ from datetime import datetime
 import sys
 from time import sleep
 from apscheduler.scheduler import Scheduler
+
 sched = Scheduler()
-sched.start()        # start the scheduler
+sched.start() # start the scheduler
 
 def get_active_adventures():
 	adventures = Adventure.query.all()
@@ -67,4 +67,4 @@ class Metrics(object):
 		self.db.session.commit()
 
 	def update_metrics(self, interval=3600*24):
-		job = sched.add_interval_job(self.update_all, seconds=30, args=[])
+		sched.add_interval_job(self.update_all, seconds=30, args=[])
