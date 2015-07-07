@@ -15,14 +15,12 @@ from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures.forms import NewForm, EditForm, SearchForm
 from app.users.models import User
 
-from config import DATABASE_QUERY_TIMEOUT
-
 mod = Blueprint('adventures', __name__, url_prefix='/adventures')
 
 @mod.after_request
 def after_request(response):
 	for query in get_debug_queries():
-		if query.duration >= DATABASE_QUERY_TIMEOUT:
+		if query.duration >= app.config['DATABASE_QUERY_TIMEOUT']:
 			app.logger.warning(
 				"SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" %
 				(query.statement, query.parameters, query.duration, query.context)

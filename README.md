@@ -92,7 +92,7 @@ Dodajemy mu wszystkie potrzebne przywileje tak aby także był administratorem
 
 	gpasswd -a virrages sudo
 
-# SSH ciągl dalszy
+## SSH ciągl dalszy
 
 Na naszej lokalnej maszynie tworzymy nowy klucz ssh
 
@@ -216,7 +216,7 @@ server {
 }
 ```
 
-Przenosimy konfigurację z dostępnych także do aktywnych stron
+Przenosimy konfigurację z dostępnych do aktywnych stron
 
 	sudo ln -s /etc/nginx/sites-available/przygoda /etc/nginx/sites-enabled
 

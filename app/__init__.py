@@ -7,7 +7,7 @@ from flask.ext.mail import Mail
 
 # set app
 app = Flask(__name__)
-app.config.from_object('config')
+app.config.from_object('config.DevelopmentConfig')
 
 # set database
 db = SQLAlchemy(app)
@@ -21,7 +21,7 @@ metrics = Metrics(db)
 metrics.update_metrics(interval=30)
 
 # if not debuging we should keep log of our app
-if not app.debug:
+if not app.config['DEBUG']:
 	import logging
 	from logging.handlers import RotatingFileHandler
 	file_handler = RotatingFileHandler('tmp/przygoda.log', 'a', 1 * 1024 * 1024, 10)
@@ -45,7 +45,7 @@ def install_secret_key(app, filename='secret_key'):
 		print('head -c 24 /dev/urandom > {filename}'.format(filename=filename))
 		sys.exit(1)
 
-if not app.debug:
+if not app.config['DEBUG']:
 	install_secret_key(app)
 
 # login setup

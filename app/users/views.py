@@ -15,15 +15,13 @@ from app.email import send_email
 
 from app.oauth import OAuthSignIn
 
-from config import DATABASE_QUERY_TIMEOUT
-
 mod = Blueprint('users', __name__, url_prefix='/users')
 
 # check for slow quieries
 @mod.after_request
 def after_request(response):
 	for query in get_debug_queries():
-		if query.duration >= DATABASE_QUERY_TIMEOUT:
+		if query.duration >= app.config['DATABASE_QUERY_TIMEOUT']:
 			app.logger.warning(
 				"SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" %
 				(query.statement, query.parameters, query.duration, query.context)
