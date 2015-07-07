@@ -77,11 +77,60 @@ aktualny status). Manualnie możemy to zrobić:
 
 ## SSH
 
+	local$ ssh root@SERVER_IP_ADDRESS
+
+Poprosi nas o aktualnego użytkownika i hasło (to co dostaliśmy w emailu) a następnie będziemy musieli zmienić hasło.
+Jak już to zrobimy przechodzimy dalej.
+
 ## Użytkownik
+
+Teraz przyszła kolej na stworzenie użytkownika. Tworzymy go za pomocą
+
+	adduser virrages
+
+Dodajemy mu wszystkie potrzebne przywileje tak aby także był administratorem
+
+	gpasswd -a virrages sudo
+
+# SSH ciągl dalszy
+
+Na naszej lokalnej maszynie tworzymy nowy klucz ssh
+
+	local$ ssh-keygen
+
+Klikamy cały czas `enter` aż będzie wszystko w porządku.
+Następnie kopiujemy nasze ssh do naszego serwera.
+
+	local$ ssh-copy-id virrages@104.131.76.86
+
 
 ## Security
 
-## Koniec
+Musimy dezaktywować roota ze względów bezpieczeństwa
+Otwieramy
+
+	nano /etc/ssh/sshd_config
+
+i zmieniamy linijkę
+
+	PermitRootLogin yes
+
+na
+
+	PermitRootLogin no
+
+## Testujemy połączenie
+
+Teraz restartujemy nasze SSH
+
+	service ssh restart
+
+Otwieramy nową kartę w terminalu i wpisujemy
+
+	ssh virrages@104.131.76.86
+
+Powinniśmy od razu zostać przekierowani i przy komendzie `sudo` powinno nas zapytać o hasło.
+Koniec tej części.
 
 ## Aplikacja
 
@@ -121,7 +170,7 @@ Tworzymy skrypt, który będzie ciągle próbował utrzymać stabliność
 
 i umieszczamy w nim
 
-```text
+```
 description "Gunicorn application server running przygoda"
 
 start on runlevel [2345]
@@ -153,7 +202,7 @@ Tworzymy nową konfigurację strony
 
 i umieszczamy w niej:
 
-```text
+```
 server {
     listen 80;
     server_name 104.131.76.86;
