@@ -12,6 +12,15 @@ def confirmed_email_required(f):
 		return f(*args, **kwargs)
 	return wrapper
 
+def not_login_required(f):
+	@wraps(f)
+	def wrapper(*args, **kwargs):
+		if current_user.is_authenticated():
+			return redirect(url_for('simple_page.index'))
+
+		return f(*args, **kwargs)
+	return wrapper
+
 def ssl_required(f):
 	@wraps(f)
 	def wrapper(*args, **kwargs):

@@ -124,7 +124,7 @@ class LostForm(Form):
 			return False
 
 		if not user.confirmed:
-			self.email.error.append('User with this email is not confirmed. Sorry.')
+			self.email.errors.append('User with this email is not confirmed. Sorry.')
 			return False
 
 		return True

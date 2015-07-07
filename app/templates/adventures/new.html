@@ -22,7 +22,7 @@
 		$(function () {
 			$('#datetimepicker').datetimepicker({
 				locale: 'pl',
-				minDate: '{{ date|tojson|safe }}'
+				minDate: {{ date|tojson|safe }}
 			});
 		});
 	</script>
