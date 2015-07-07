@@ -12,11 +12,11 @@
 		</tr>
 		{% for adventure in adventures %}
 			<tr>
-				<td>{{ adventure.id }}</td>
-				<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
-				<td>{{ adventure.info }}</td>
-				<td>{{ adventure.joined }}</td>
-				<td><a href="/adventures/edit/{{ adventure.id }}">Edytuj</a> | <a href="/adventures/delete/{{ adventure.id }}">Usuń</a></td>
+				<td>{{ adventure.id|safe }}</td>
+				<td>{{ adventure.date.strftime('%d %m %Y')|safe }}</td>
+				<td>{{ adventure.info|safe }}</td>
+				<td>{{ adventure.joined|safe }}</td>
+				<td><a href="/adventures/edit/{{ adventure.id|safe }}">Edytuj</a> | <a href="/adventures/delete/{{ adventure.id|safe }}">Usuń</a></td>
 			</tr>
 		{% endfor %}
 	</table>
@@ -31,9 +31,9 @@
 		</tr>
 		{% for adventure in joined_adventures %}
 			<tr>
-				<td><a href="/adventures/{{ adventure.id }}">{{ adventure.id }}</a></td>
-				<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
-				<td>{{ adventure.info }}</td>
+				<td><a href="/adventures/{{ adventure.id|safe }}">{{ adventure.id|safe }}</a></td>
+				<td>{{ adventure.date.strftime('%d %m %Y')|safe }}</td>
+				<td>{{ adventure.info|safe }}</td>
 			</tr>
 		{% endfor %}
 	</table>

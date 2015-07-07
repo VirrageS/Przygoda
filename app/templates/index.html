@@ -12,30 +12,30 @@
 						<div class="object-header image" style="background-image:url(
 						'https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=600x400&maptype=roadmap&path=color:0x0000ff|weight:5
 						{%- for marker in adventure.markers -%}
-							|{{ marker[0] }},{{ marker[1] }}
+							|{{ marker[0]|tojson|safe }},{{ marker[1]|tojson|safe }}
 						{%- endfor -%}
 						');">
-							<a href="/adventures/{{ adventure.id }}" class="permacover"></a>
+							<a href="/adventures/{{ adventure.id|safe }}" class="permacover"></a>
 							<span class="object-header-meta">
-								<a href="/adventures/{{ adventure.id }}">
-									<span class="username">{{ adventure.username }}</span>
+								<a href="/adventures/{{ adventure.id|safe }}">
+									<span class="username">{{ adventure.username|safe }}</span>
 								</a>
 							</span><!-- /.object-author -->
 						</div><!-- /.object-header -->
 
 
 						<div class="object-meta">
-							<span class="title"><a href="/adventures/{{ adventure.id }}">{{ adventure.mode }}</a></span>
+							<span class="title"><a href="/adventures/{{ adventure.id|safe }}">{{ adventure.mode|safe }}</a></span>
 
 							<div class="object-excerpt">
-								<p>{{ adventure.info }}</p>
+								<p>{{ adventure.info|safe }}</p>
 							</div><!-- /.object-excerpt -->
 
 							<div class="object-meta-sub bottom">
 								<span class="left">
 									<span class="read-time">
-										<i class="fa fa-user"></i> {{ adventure.joined }}<br>
-										<i class="fa fa-clock-o"></i> {{ adventure.date.strftime('%d.%m.%Y %H:%M') }}
+										<i class="fa fa-user"></i> {{ adventure.joined|safe }}<br>
+										<i class="fa fa-clock-o"></i> {{ adventure.date.strftime('%d.%m.%Y %H:%M')|safe }}
 									</span>
 								</span>
 
@@ -45,9 +45,9 @@
 											{% if adventure.action == -1 %}
 												<i class="fa fa-gear"></i> Nie ma akcji
 											{% elif adventure.action == 0 %}
-												<a href="/adventures/join/{{ adventure.id }}"><i class="fa fa-gear"></i> Dołącz</a>
+												<a href="/adventures/join/{{ adventure.id|safe }}"><i class="fa fa-gear"></i> Dołącz</a>
 											{% else %}
-												<a href="/adventures/leave/{{ adventure.id }}"><i class="fa fa-gear"></i> Wypisz się</a>
+												<a href="/adventures/leave/{{ adventure.i|safe }}"><i class="fa fa-gear"></i> Wypisz się</a>
 											{% endif %}
 										{% else %}
 											<i class="fa fa-gear"></i> Nie ma akcji

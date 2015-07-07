@@ -19,7 +19,7 @@
 	{% macro render_checkbox_field(field, text=None) -%}
 		<div class="checkbox">
 			<label>
-				{{ field(type='checkbox', **kwargs) }} {{ text }}
+				{{ field(type='checkbox', **kwargs) }} {{ text|safe }}
 			</label>
 		</div>
 	{%- endmacro %}

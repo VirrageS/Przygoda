@@ -35,8 +35,8 @@
 
 			// get bounds from last search or get default
 			{% if (coordinates is defined) and coordinates %}
-				var sw = new google.maps.LatLng({{ coordinates[0][0] }}, {{ coordinates[0][1] }});
-				var ne = new google.maps.LatLng({{ coordinates[1][0] }}, {{ coordinates[1][1] }});
+				var sw = new google.maps.LatLng({{ coordinates[0][0]|tojson|safe }}, {{ coordinates[0][1]|tojson|safe }});
+				var ne = new google.maps.LatLng({{ coordinates[1][0]|tojson|safe  }}, {{ coordinates[1][1]|tojson|safe }});
 			{% else %}
 				var sw = new google.maps.LatLng(52.219937, 20.991380); // bottom left corner
 				var ne = new google.maps.LatLng(52.239937, 21.031380); // top right corner
@@ -122,18 +122,18 @@
 				<tr>
 					<td>
 						{% if g.user.is_authenticated() %}
-							<a href="/adventures/{{ adventure.id }}">
+							<a href="/adventures/{{ adventure.id|safe }}">
 						{% endif %}
-							{{ adventure.id }}
+							{{ adventure.id|safe }}
 						{% if g.user.is_authenticated() %}
 							</a>
 						{% endif %}
 					</td>
-					<td>{{ adventure.username }}</td>
-					<td>{{ adventure.date.strftime('%d %m %Y') }}</td>
-					<td>{{ adventure.info }}</td>
-					<td>{{ adventure.joined }}</td>
-					<td>{{ adventure.mode }}</td>
+					<td>{{ adventure.username|safe }}</td>
+					<td>{{ adventure.date.strftime('%d %m %Y')|safe }}</td>
+					<td>{{ adventure.info|safe }}</td>
+					<td>{{ adventure.joined|safe }}</td>
+					<td>{{ adventure.mode|safe }}</td>
 				</tr>
 			{% endfor %}
 		</table>

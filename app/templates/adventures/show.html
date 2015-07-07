@@ -36,11 +36,11 @@
 			var waypoints = [];
 			{%- for marker in markers %}
 				{% if loop.first -%}
-					var origin = new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }});
+					var origin = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
 				{%- elif loop.last -%}
-					var destination = new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }});
+					var destination = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
 				{%- else -%}
-					waypoints.push({location: new google.maps.LatLng({{ marker[0] }}, {{ marker[1] }}), stopover: true});
+					waypoints.push({location: new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }}), stopover: true});
 				{%- endif %}
 			{%- endfor %}
 
@@ -94,7 +94,7 @@
 		google.maps.event.addDomListener(window, 'load', initialize);
 	</script>
 
-	<h2>Przygoda #{{ adventure.id }}</h2>
+	<h2>Przygoda #{{ adventure.id|safe }}</h2>
 	<br><br>
 	<div id="map-canvas"></div>
 	<br>
@@ -102,9 +102,9 @@
 		<div class="panel-heading">Informacje</div>
 		<ul class="list-group">
 			<li class="list-group-item">Długość trasy: <b><div id="total-distance" style="display: inline;">0 km</div></b></li>
-			<li class="list-group-item">Założyciel Przygody: <b>{{ adventure.username }}</b></li>
-			<li class="list-group-item">Data: <b>{{ adventure.date }}</b></li>
-			<li class="list-group-item">Informacje: <b>{{ adventure.info }}</b></li>
+			<li class="list-group-item">Założyciel Przygody: <b>{{ adventure.username|safe }}</b></li>
+			<li class="list-group-item">Data: <b>{{ adventure.date|safe }}</b></li>
+			<li class="list-group-item">Informacje: <b>{{ adventure.info|safe }}</b></li>
 		</ul>
 	</div>
 	<div class="panel panel-info">
@@ -113,7 +113,7 @@
 			{% if (participants is defined) and participants %}
 				{% for participant in participants %}
 					<li class="list-group-item">
-						{{ participant.username }}
+						{{ participant.username|safe }}
 					</li>
 				{% endfor %}
 			{% else %}

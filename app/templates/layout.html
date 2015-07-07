@@ -60,7 +60,7 @@
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				     <ul class="nav navbar-nav navbar-right">
 						{% if g.user.is_authenticated() %}
-					        <li><a href="{{ url_for('users.account') }}">Witaj {{ g.user.username }}</a></li>
+					        <li><a href="{{ url_for('users.account') }}">Witaj {{ g.user.username|safe }}</a></li>
 					        <li><a href="{{ url_for('users.logout') }}">Wyloguj</a></li>
 					        <li><a href="{{ url_for('adventures.new') }}">Dodaj Przygodę</a></li>
 					        <li><a href="{{ url_for('adventures.my_adventures') }}">Moje Przygody</a></li>

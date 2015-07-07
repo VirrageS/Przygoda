@@ -44,7 +44,7 @@
 		$(function () {
 			$('#datetimepicker').datetimepicker({
 				locale: 'pl',
-				minDate: '{{ date }}'
+				minDate: '{{ date|tojson|safe }}'
 			});
 		});
 	</script>
@@ -100,7 +100,7 @@
 					{% for participant in participants %}
 						<li class="list-group-item">
 							<span class="glyphicon glyphicon-ok" style="color:#00FF00; padding-right: 15px;"></span>
-							{{ participant.username }}
+							{{ participant.username|safe }}
 						</li>
 					{% endfor %}
 				{% else %}

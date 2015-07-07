@@ -19,15 +19,11 @@ Teraz instalujemy wirtualne środowisko pythona.
 Jeżeli nie masz `pip` to użyj komend:
 
 	MacBook-Air-Janusz:przygoda VirrageS$ apt-get update
-	MacBook-Air-Janusz:przygoda VirrageS$ sudo apt-get install python3-pip
+	MacBook-Air-Janusz:przygoda VirrageS$ sudo apt-get install python3-pip python3-dev
 
-Wybierz jedną z opcji instalacji:
+I zainstaluj `pip3`:
 
 	MacBook-Air-Janusz:przygoda VirrageS$ sudo pip3 install virtualenv
-
-lub:
-
-	MacBook-Air-Janusz:przygoda VirrageS$ sudo easy_install virtualenv
 
 Teraz czas na wszystkie biblioteki:
 
@@ -45,7 +41,6 @@ Aby utworzyć bazę danych wpisujemy:
 	MacBook-Air-Janusz:przygoda VirrageS$
 	MacBook-Air-Janusz:przygoda VirrageS$ source env/bin/activate
 	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 shell.py
-	>>> from app import db
 	>>> db.create_all()
 	>>> exit()
 
@@ -78,31 +73,108 @@ aktualny status). Manualnie możemy to zrobić:
 
 	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 -m unittest discover
 
+# Server
 
-## Ogólne
+## SSH
 
-Testy umieszczamy folderze `tests`. Trzeba pamiętać aby dodać test do `__init__.py`
-tak żeby mógł być przetestowany. Testy powinny mieć porządne nazwy funkcji i najlepiej
-dokumentację.
+## Użytkownik
 
-## Przykład:
+## Security
 
-```python
-class UserTestCase(unittest.TestCase):
-	def setUp(self):
-		app.config['TESTING'] = True
-		app.config['WTF_CSRF_ENABLED'] = False
-		self.app = app.test_client()
+## Koniec
 
-	def test_user_username(self):
-		u = User(username='john', password='a', email='john@example.com')
-		assert u.username == 'john'
+## Aplikacja
 
-	def test_user_password(self):
-		u = User(username='john', password='a', email='john@example.com')
-		assert u.password == 'a'
+Na początku ściągamy wszystkie potrzebne nam biblioteki i narzędzia
 
-	def test_user_email(self):
-		u = User(username='john', password='a', email='john@example.com')
-		assert u.email == 'john@example.com'
+	sudo apt-get update
+	sudo apt-get install python3-pip python3-dev nginx
+
+Następnie instalujemy virtualne środowisko
+
+	sudo pip3 install virtualenv
+
+Teraz musimy ściągnąć nasz projekt
+
+	git clone https://github.com/VirrageS/przygoda
+	cd ~/przygoda
+
+Instalujemy w nim virtualne środowisko i aktywujemy je
+
+	virtualenv env
+	source env/bin/activate
+
+Instalujemy wszystko czego potrzebujemy
+
+	pip3 install gunicorn flask
+	pip3 install -r requirements.txt
+
+Dezaktywujemy virtualne środowisko i przechodzimy do dalszej części
+
+	deactivate
+
+## Gunicorn
+
+Tworzymy skrypt, który będzie ciągle próbował utrzymać stabliność
+
+	sudo nano /etc/init/przygoda.conf
+
+i umieszczamy w nim
+
+```text
+description "Gunicorn application server running przygoda"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+setuid virrages
+setgid www-data
+
+env PATH=/home/virrages/przygoda/env/bin
+chdir /home/virrages/przygoda
+exec gunicorn --workers 3 --bind unix:przygoda.sock -m 007 run:app
 ```
+
+Teraz startujemy nasz skrypt, który powinnien zostać poprawnie odpalony
+
+	sudo start przygoda
+
+## Nginx
+
+Na początku usuwamy default'owe strony, których nie będziemy potrzebować ani używać
+
+	sudo rm -rf /etc/nginx/sites-enabled/default
+	sudo rm -rf /etc/nginx/sites-available/default
+
+Tworzymy nową konfigurację strony
+
+	sudo nano /etc/nginx/sites-available/przygoda
+
+i umieszczamy w niej:
+
+```text
+server {
+    listen 80;
+    server_name 104.131.76.86;
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/virrages/przygoda/przygoda.sock;
+        proxy_connect_timeout 300s;
+        proxy_read_timeout 300s;
+    }
+}
+```
+
+Przenosimy konfigurację z dostępnych także do aktywnych stron
+
+	sudo ln -s /etc/nginx/sites-available/przygoda /etc/nginx/sites-enabled
+
+Sprawdzamy czy nasza konfiguracja nginx'a jest poprawna
+
+	sudo nginx -t
+
+Teraz restartujemy nginx'a i powinno już wszystko działać
+
+	sudo service nginx restart
