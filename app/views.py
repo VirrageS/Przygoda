@@ -58,7 +58,7 @@ def index():
 
 
 
-	return render_template('index.html', adventures=all_adventures, adventures_markers=all_markers)
+	return render_template('all.html', adventures=all_adventures, adventures_markers=all_markers)
 
 # About us
 @mod.route("/about")

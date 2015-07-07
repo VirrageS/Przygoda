@@ -15,467 +15,467 @@ from app.users.models import User
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 
+
 class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
-	def setUp(self):
-		app.config.from_object('config.TestingConfig')
-		self.app = app.test_client()
-		db.create_all()
+    def setUp(self):
+        app.config.from_object('config.TestingConfig')
+        self.app = app.test_client()
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def create_app(self):
+        app = Flask(__name__)
+        app.config['TESTING'] = True
+
+        # Default port is 5000
+        app.config['LIVESERVER_PORT'] = 8943
+        return app
+
+    def login(self, username, password):
+        return self.app.post('/users/login/', data=dict(
+            username=username,
+            password=password
+        ), follow_redirects=True)
+
+    def logout(self):
+        return self.app.get('/users/logout/', follow_redirects=True)
+
+    def test_adventures_show_route_big_number(self):
+        """Ensure that adventures_id is not to big"""
+
+        response = self.app.get('/adventures/320392480213849032841024803284103248712', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
+
+    def test_adventures_show_route_no_adventure(self):
+        """Ensure that show adventure require existing adventure"""
+
+        response = self.app.get('/adventures/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
+
+    def test_adventures_show_route_no_active(self):
+        """Ensure that show adventure require to be active"""
+
+        # add adventure to database
+        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=-9), mode=ADVENTURES.RECREATIONAL,
+                      info='Some info today')
+        db.session.add(a)
+        db.session.commit()
 
-	def tearDown(self):
-		db.session.remove()
-		db.drop_all()
+        response = self.app.get('/adventures/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
+
+    def test_adventures_show_route_no_creator(self):
+        """Ensure that show adventure require existing creator"""
+
+        # add adventure to database
+        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL,
+                      info='Some info today')
+        db.session.add(a)
+        db.session.commit()
+
+        response = self.app.get('/adventures/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
+
+    def test_adventures_show_route(self):
+        """Ensure that show adventure redirect us to the right place"""
 
-	def create_app(self):
-		app = Flask(__name__)
-		app.config['TESTING'] = True
+        # add adventure to database
+        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL,
+                      info='Some info today')
+        db.session.add(a)
+        db.session.commit()
 
-		# Default port is 5000
-		app.config['LIVESERVER_PORT'] = 8943
-		return app
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-	def login(self, username, password):
-	    return self.app.post('/users/login/', data=dict(
-	        username=username,
-	        password=password
-	    ), follow_redirects=True)
+        response = self.app.get('/adventures/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('adventures/show.html')
 
-	def logout(self):
-	    return self.app.get('/users/logout/', follow_redirects=True)
-
-	def test_adventures_show_route_big_number(self):
-		"""Ensure that adventures_id is not to big"""
+    def test_adventures_join_route_requires_login(self):
+        """Ensure that join adventure requires login"""
 
-		response = self.app.get('/adventures/320392480213849032841024803284103248712', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        response = self.app.get('/adventures/join/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('users/login.html')
 
-	def test_adventures_show_route_no_adventure(self):
-		"""Ensure that show adventure require existing adventure"""
+    def test_adventures_join_route_big_number(self):
+        """Ensure that join adventure requires small adventure_id"""
 
-		response = self.app.get('/adventures/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-	def test_adventures_show_route_no_active(self):
-		"""Ensure that show adventure require to be active"""
+        # login user to system
+        self.login(username='john', password='a')
 
-		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=-9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
+        response = self.app.get('/adventures/join/3458304958390433485734895734085734', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-		response = self.app.get('/adventures/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+    def test_adventures_join_route_no_adventure(self):
+        """Ensure that join adventure require existing adventure"""
 
-	def test_adventures_show_route_no_creator(self):
-		"""Ensure that show adventure require existing creator"""
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
+        # login user to system
+        self.login(username='john', password='a')
 
-		response = self.app.get('/adventures/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        response = self.app.get('/adventures/join/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-	def test_adventures_show_route(self):
-		"""Ensure that show adventure redirect us to the right place"""
+    def test_adventures_join_route_user_already_joined(self):
+        """Ensure that join adventure does not allow to join again"""
 
-		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
+        # add adventure to database
+        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		response = self.app.get('/adventures/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('adventures/show.html')
+        # login user to system
+        self.login(username='john', password='a')
 
-	def test_adventures_join_route_requires_login(self):
-		"""Ensure that join adventure requires login"""
+        # check if user has been added to adventure
+        participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
+        self.assertTrue(participant is not None)
 
-		response = self.app.get('/adventures/join/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('users/login.html')
+        participants = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).all()
+        self.assertTrue(participants is not None)
+        self.assertTrue(len(participants) == 1)
 
-	def test_adventures_join_route_big_number(self):
-		"""Ensure that join adventure requires small adventure_id"""
+    def test_adventures_join_route_join(self):
+        """Ensure that join adventure create adventure participant"""
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        # add adventure to database
+        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
 
-		# login user to system
-		self.login(username='john', password='a')
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		response = self.app.get('/adventures/join/3458304958390433485734895734085734', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        # login user to system
+        self.login(username='john', password='a')
 
-	def test_adventures_join_route_no_adventure(self):
-		"""Ensure that join adventure require existing adventure"""
+        response = self.app.get('/adventures/join/1', follow_redirects=True)
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        # check if user has been added to adventure
+        participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
+        self.assertTrue(participant is not None)
 
-		# login user to system
-		self.login(username='john', password='a')
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-		response = self.app.get('/adventures/join/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+    def test_adventures_leave_route_requires_login(self):
+        """Ensure that leave adventures requires login"""
 
-	def test_adventures_join_route_user_already_joined(self):
-		"""Ensure that join adventure does not allow to join again"""
+        response = self.app.get('/adventures/leave/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('users/login.html')
 
-		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
+    def test_adventures_leave_route_big_number(self):
+        """Ensure that leave adventure requires small adventure_id"""
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		# login user to system
-		self.login(username='john', password='a')
+        # login user to system
+        self.login(username='john', password='a')
 
-		response = self.app.get('/adventures/join/1', follow_redirects=True)
+        response = self.app.get('/adventures/leave/1324981234124381734891234', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-		# check if user has been added to adventure
-		participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
-		self.assertTrue(participant is not None)
+    def test_adventures_leave_route_no_adventure(self):
+        """Ensure that leave adventure require existing adventure"""
 
-		response = self.app.get('/adventures/join/1', follow_redirects=True)
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		participants = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).all()
-		self.assertTrue(participants is not None)
-		self.assertTrue(len(participants) == 1)
+        # login user to system
+        self.login(username='john', password='a')
 
-	def test_adventures_join_route_join(self):
-		"""Ensure that join adventure create adventure participant"""
+        response = self.app.get('/adventures/leave/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
+    def test_adventures_leave_route_creator(self):
+        """Ensure that leave adventure do not allow leaving for creator of the adventure"""
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        # add adventure to database
+        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
 
-		# login user to system
-		self.login(username='john', password='a')
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		response = self.app.get('/adventures/join/1', follow_redirects=True)
+        # login user to system
+        self.login(username='john', password='a')
 
-		# check if user has been added to adventure
-		participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
-		self.assertTrue(participant is not None)
+        response = self.app.get('/adventures/leave/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+    def test_adventures_leave_route_no_joined(self):
+        """Ensure that leave adventure do not allow leaving for someone who does not joined to adventure"""
 
-	def test_adventures_leave_route_requires_login(self):
-		"""Ensure that leave adventures requires login"""
+        # add adventure to database
+        a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
 
-		response = self.app.get('/adventures/leave/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('users/login.html')
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-	def test_adventures_leave_route_big_number(self):
-		"""Ensure that leave adventure requires small adventure_id"""
+        # login user to system
+        self.login(username='john', password='a')
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        response = self.app.get('/adventures/leave/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-		# login user to system
-		self.login(username='john', password='a')
+    def test_adventures_leave_route_leave(self):
+        """Ensure that leave adventure actually allows to leave the adventure"""
 
-		response = self.app.get('/adventures/leave/1324981234124381734891234', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        # add adventure to database
+        a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
 
-	def test_adventures_leave_route_no_adventure(self):
-		"""Ensure that leave adventure require existing adventure"""
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        # login user to system
+        self.login(username='john', password='a')
 
-		# login user to system
-		self.login(username='john', password='a')
+        # add user to adventure participants
+        ap = AdventureParticipant(user_id=1, adventure_id=1)
+        db.session.add(ap)
+        db.session.commit()
 
-		response = self.app.get('/adventures/leave/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        response = self.app.get('/adventures/leave/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-	def test_adventures_leave_route_creator(self):
-		"""Ensure that leave adventure do not allow leaving for creator of the adventure"""
+        # check if user was removed from adventure participants
+        ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
+        self.assertTrue(ap is None)
 
-		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
+    def test_adventures_new_route_requires_login(self):
+        """Ensure adventures new route requires a logged in user"""
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        response = self.app.get('/adventures/new', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('users/login.html')
 
-		# login user to system
-		self.login(username='john', password='a')
+    def test_adventures_edit_route_requires_login(self):
+        """Ensure adventures edit route requires a logged in user"""
 
-		response = self.app.get('/adventures/leave/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        response = self.app.get('/adventures/edit/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('users/login.html')
 
-	def test_adventures_leave_route_no_joined(self):
-		"""Ensure that leave adventure do not allow leaving for someone who does not joined to adventure"""
+    def test_adventures_edit_route_big_number(self):
+        """Ensure that edit adventure requires small adventure_id"""
 
-		# add adventure to database
-		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        # login user to system
+        self.login(username='john', password='a')
 
-		# login user to system
-		self.login(username='john', password='a')
+        response = self.app.get('/adventures/edit/128345792384572394857234598982347582', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-		response = self.app.get('/adventures/leave/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+    def test_adventures_edit_route_no_adventure(self):
+        """Ensure that edit adventure requires existing adventure"""
 
-	def test_adventures_leave_route_leave(self):
-		"""Ensure that leave adventure actually allows to leave the adventure"""
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		# add adventure to database
-		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
+        # login user to system
+        self.login(username='john', password='a')
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        response = self.app.get('/adventures/edit/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-		# login user to system
-		self.login(username='john', password='a')
+    def test_adventures_edit_route_no_creator(self):
+        """Ensure that edit adventure requires creator of the adventure"""
 
-		# add user to adventure participants
-		ap = AdventureParticipant(user_id=1, adventure_id=1)
-		db.session.add(ap)
-		db.session.commit()
+        # add adventure to database
+        a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
 
-		response = self.app.get('/adventures/leave/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		# check if user was removed from adventure participants
-		ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
-		self.assertTrue(ap is None)
+        # login user to system
+        self.login(username='john', password='a')
 
-	def test_adventures_new_route_requires_login(self):
-		"""Ensure adventures new route requires a logged in user"""
+        response = self.app.get('/adventures/edit/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-		response = self.app.get('/adventures/new', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('users/login.html')
+    def test_adventures_edit_route_edit(self):
+        """Ensure that edit adventure redirect user to editing page"""
 
-	def test_adventures_edit_route_requires_login(self):
-		"""Ensure adventures edit route requires a logged in user"""
+        # add adventure to database
+        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
 
-		response = self.app.get('/adventures/edit/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('users/login.html')
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-	def test_adventures_edit_route_big_number(self):
-		"""Ensure that edit adventure requires small adventure_id"""
+        # login user to system
+        self.login(username='john', password='a')
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        response = self.app.get('/adventures/edit/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('adventures/edit.html')
 
-		# login user to system
-		self.login(username='john', password='a')
+    def test_adventures_delete_route_requires_login(self):
+        """Ensure that delete adventure requires login"""
 
-		response = self.app.get('/adventures/edit/128345792384572394857234598982347582', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        response = self.app.get('/adventures/delete/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('users/login.html')
 
-	def test_adventures_edit_route_no_adventure(self):
-		"""Ensure that edit adventure requires existing adventure"""
+    def test_adventures_delete_route_big_number(self):
+        """Ensure that delete adventure requires small adventure_id"""
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		# login user to system
-		self.login(username='john', password='a')
+        # login user to system
+        self.login(username='john', password='a')
 
-		response = self.app.get('/adventures/edit/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        response = self.app.get('/adventures/delete/128345792384572394857234598982347582', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-	def test_adventures_edit_route_no_creator(self):
-		"""Ensure that edit adventure requires creator of the adventure"""
+    def test_adventures_delete_route_no_adventure(self):
+        """Ensure that delete adventure requires adventure to exists"""
 
-		# add adventure to database
-		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        # login user to system
+        self.login(username='john', password='a')
 
-		# login user to system
-		self.login(username='john', password='a')
+        response = self.app.get('/adventures/delete/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-		response = self.app.get('/adventures/edit/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+    def test_adventures_delete_route_no_creator(self):
+        """Ensure that delete adventure requires creator to be logged"""
 
-	def test_adventures_edit_route_edit(self):
-		"""Ensure that edit adventure redirect user to editing page"""
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
+        # login user to system
+        self.login(username='john', password='a')
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        # add adventure to database
+        a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
 
-		# login user to system
-		self.login(username='john', password='a')
+        response = self.app.get('/adventures/delete/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')
 
-		response = self.app.get('/adventures/edit/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('adventures/edit.html')
+    def test_adventures_delete_route_delete(self):
+        """Ensure that delete adventure delete all the stuff"""
 
-	def test_adventures_delete_route_requires_login(self):
-		"""Ensure that delete adventure requires login"""
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
 
-		response = self.app.get('/adventures/delete/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('users/login.html')
+        # login user to system
+        self.login(username='john', password='a')
 
-	def test_adventures_delete_route_big_number(self):
-		"""Ensure that delete adventure requires small adventure_id"""
+        # add adventure to database
+        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        # add adventure participants to database
+        ap = AdventureParticipant(adventure_id=1, user_id=2)
+        db.session.add(ap)
+        db.session.commit()
 
-		# login user to system
-		self.login(username='john', password='a')
+        ap = AdventureParticipant(adventure_id=1, user_id=3)
+        db.session.add(ap)
+        db.session.commit()
 
-		response = self.app.get('/adventures/delete/128345792384572394857234598982347582', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        # add some coordinates to database
+        c = Coordinate(adventure_id=1, path_point=1, latitude=50.24324242, longitude=50.24324242)
+        db.session.add(c)
+        db.session.commit()
 
-	def test_adventures_delete_route_no_adventure(self):
-		"""Ensure that delete adventure requires adventure to exists"""
+        c = Coordinate(adventure_id=1, path_point=2, latitude=50.24324242, longitude=50.24324242)
+        db.session.add(c)
+        db.session.commit()
 
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
+        response = self.app.get('/adventures/delete/1', follow_redirects=True)
 
-		# login user to system
-		self.login(username='john', password='a')
+        a = Adventure.query.filter_by(id=1).first()
+        ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
+        c = Coordinate.query.filter_by(adventure_id=1).first()
+        self.assertTrue(a is None)
+        self.assertTrue(ap is None)
+        self.assertTrue(c is None)
 
-		response = self.app.get('/adventures/delete/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
-
-	def test_adventures_delete_route_no_creator(self):
-		"""Ensure that delete adventure requires creator to be logged"""
-
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
-
-		# login user to system
-		self.login(username='john', password='a')
-
-		# add adventure to database
-		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
-
-		response = self.app.get('/adventures/delete/1', follow_redirects=True)
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
-
-	def test_adventures_delete_route_delete(self):
-		"""Ensure that delete adventure delete all the stuff"""
-
-		# add user to database
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
-		db.session.commit()
-
-		# login user to system
-		self.login(username='john', password='a')
-
-		# add adventure to database
-		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-		db.session.add(a)
-		db.session.commit()
-
-		# add adventure participants to database
-		ap = AdventureParticipant(adventure_id=1, user_id=2)
-		db.session.add(ap)
-		db.session.commit()
-
-		ap = AdventureParticipant(adventure_id=1, user_id=3)
-		db.session.add(ap)
-		db.session.commit()
-
-		# add some coordinates to database
-		c = Coordinate(adventure_id=1, path_point=1, latitude=50.24324242, longitude=50.24324242)
-		db.session.add(c)
-		db.session.commit()
-
-		c = Coordinate(adventure_id=1, path_point=2, latitude=50.24324242, longitude=50.24324242)
-		db.session.add(c)
-		db.session.commit()
-
-		response = self.app.get('/adventures/delete/1', follow_redirects=True)
-
-		a = Adventure.query.filter_by(id=1).first()
-		ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
-		c = Coordinate.query.filter_by(adventure_id=1).first()
-		self.assertTrue(a is None)
-		self.assertTrue(ap is None)
-		self.assertTrue(c is None)
-
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('index.html')

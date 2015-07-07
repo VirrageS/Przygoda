@@ -47,7 +47,7 @@ class DatabaseTestCase(unittest.TestCase):
 		assert u.email == 'john@example.com'
 		assert u.social_id == ("facebook$" + u.username)
 		assert u.registered_on is not None
-		assert u.confirmed == False
+		assert u.confirmed is False
 		assert u.confirmed_on is None
 
 		u = User(username='johner', password=generate_password_hash('a'), email='susan@examplee.com')
@@ -59,7 +59,7 @@ class DatabaseTestCase(unittest.TestCase):
 		assert u.username == 'johner'
 
 	def test_add_coordinate_to_database(self):
-		"""Testing adding coordinantes of adventure to datebase.
+		"""Testing adding cordinantes of adventure to database.
 		Main thing is that we have to check if float is begin serialized properly"""
 
 		c = Coordinate(adventure_id=1, path_point=10, latitude=52.229937, longitude=21.011380)

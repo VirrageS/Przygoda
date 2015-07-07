@@ -6,6 +6,7 @@ from app import app
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 
+
 class AdventureTestCase(unittest.TestCase):
 	def setUp(self):
 		app.config.from_object('config.TestingConfig')
@@ -28,6 +29,7 @@ class AdventureTestCase(unittest.TestCase):
 		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.AMATEURISH, info='Some info today')
 		assert a.info == 'Some info today'
 
+
 class CoordinateTestCase(unittest.TestCase):
 	def setUp(self):
 		app.config.from_object('config.TestingConfig')
@@ -49,6 +51,7 @@ class CoordinateTestCase(unittest.TestCase):
 		c = Coordinate(adventure_id=1, path_point=1, latitude=52.229937, longitude=21.011380)
 		assert c.longitude == 21.011380
 
+
 class AdventureParticipantTestCase(unittest.TestCase):
 	def setUp(self):
 		app.config.from_object('config.TestingConfig')
@@ -61,6 +64,7 @@ class AdventureParticipantTestCase(unittest.TestCase):
 	def test_coordinate_path_point(self):
 		a = AdventureParticipant(adventure_id=1, user_id=1)
 		assert a.user_id == 1
+
 
 if __name__ == '__main__':
 	unittest.main()

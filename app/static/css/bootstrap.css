@@ -2991,6 +2991,7 @@ select[multiple].input-lg {
   right: 15px;
 }
 @media (min-width: 768px) {
+  /*noinspection ALL*/
   .form-horizontal .form-group-lg .control-label {
     padding-top: 19.6666662px;
     font-size: 17px;

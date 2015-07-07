@@ -34,13 +34,13 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		return app
 
 	def login(self, username, password):
-	    return self.app.post('/users/login/', data=dict(
-	        username=username,
-	        password=password
-	    ), follow_redirects=True)
+		return self.app.post('/users/login/', data=dict(
+			username=username,
+			password=password
+		), follow_redirects=True)
 
 	def logout(self):
-	    return self.app.get('/users/logout/', follow_redirects=True)
+		return self.app.get('/users/logout/', follow_redirects=True)
 
 	def test_users_login_route_wrong_username(self):
 		"""Ensure users login does not accept wrong username"""
@@ -137,11 +137,11 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		"""Ensure users register does not allow to register when username is too short"""
 
 		response = self.app.post('/users/register/', data=dict(
-	        username='a',
+			username='a',
 			email='tomek@tomek.com',
-	        password='aaa',
+			password='aaa',
 			confirm='aaa'
-	    ), follow_redirects=True)
+		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
@@ -149,11 +149,11 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		"""Ensure users register does not allow to register with wrong email address"""
 
 		response = self.app.post('/users/register/', data=dict(
-	        username='tomek',
+			username='tomek',
 			email='tomektomek.com',
-	        password='aaa',
+			password='aaa',
 			confirm='aaa'
-	    ), follow_redirects=True)
+		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
@@ -161,11 +161,11 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		"""Ensure users register does not allow to register with wrong confirmed password"""
 
 		response = self.app.post('/users/register/', data=dict(
-	        username='tomek',
+			username='tomek',
 			email='tomek@tomek.com',
-	        password='aaa',
+			password='aaa',
 			confirm='aaaa'
-	    ), follow_redirects=True)
+		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
@@ -177,11 +177,11 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		db.session.commit()
 
 		response = self.app.post('/users/register/', data=dict(
-	        username='tomek',
+			username='tomek',
 			email='tomek@tomek.com',
-	        password='aaa',
+			password='aaa',
 			confirm='aaa'
-	    ), follow_redirects=True)
+		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
@@ -193,11 +193,11 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		db.session.commit()
 
 		response = self.app.post('/users/register/', data=dict(
-	        username='tomek',
+			username='tomek',
 			email='tomek@tomek.com',
-	        password='aaa',
+			password='aaa',
 			confirm='aaa'
-	    ), follow_redirects=True)
+		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
@@ -205,11 +205,11 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		"""Ensure users register actually create the user"""
 
 		response = self.app.post('/users/register/', data=dict(
-	        username='tomeker',
+			username='tomeker',
 			email='tomeker@tomekads.com',
-	        password='aaaaaa',
+			password='aaaaaa',
 			confirm='aaaaaa'
-	    ), follow_redirects=True)
+		), follow_redirects=True)
 
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
