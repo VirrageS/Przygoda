@@ -6,8 +6,7 @@ from app.users.models import User
 
 class UserTestCase(unittest.TestCase):
 	def setUp(self):
-		app.config['TESTING'] = True
-		app.config['WTF_CSRF_ENABLED'] = False
+		app.config.from_object('config.TestingConfig')
 		self.app = app.test_client()
 
 	def test_user_username(self):

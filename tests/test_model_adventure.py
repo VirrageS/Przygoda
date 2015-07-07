@@ -8,8 +8,7 @@ from app.adventures import constants as ADVENTURES
 
 class AdventureTestCase(unittest.TestCase):
 	def setUp(self):
-		app.config['TESTING'] = True
-		app.config['WTF_CSRF_ENABLED'] = False
+		app.config.from_object('config.TestingConfig')
 		self.app = app.test_client()
 
 	def test_adventure_creator_id(self):
@@ -31,8 +30,7 @@ class AdventureTestCase(unittest.TestCase):
 
 class CoordinateTestCase(unittest.TestCase):
 	def setUp(self):
-		app.config['TESTING'] = True
-		app.config['WTF_CSRF_ENABLED'] = False
+		app.config.from_object('config.TestingConfig')
 		self.app = app.test_client()
 
 	def test_coordinate_adventure_id(self):
@@ -53,8 +51,7 @@ class CoordinateTestCase(unittest.TestCase):
 
 class AdventureParticipantTestCase(unittest.TestCase):
 	def setUp(self):
-		app.config['TESTING'] = True
-		app.config['WTF_CSRF_ENABLED'] = False
+		app.config.from_object('config.TestingConfig')
 		self.app = app.test_client()
 
 	def test_coordinate_adventure_id(self):
