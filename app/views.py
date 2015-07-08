@@ -7,9 +7,7 @@ from app.users.models import User
 
 mod = Blueprint('simple_page', __name__, template_folder='templates')
 
-# Index - main path
-@mod.route("/")
-def index():
+def show_all_adventures():
 	all_adventures = []
 	all_markers = []
 
@@ -60,6 +58,19 @@ def index():
 
 	return render_template('all.html', adventures=all_adventures, adventures_markers=all_markers)
 
+# Index - main path
+@mod.route("/")
+def index():
+	if not current_user.is_authenticated():
+		return render_template('landing.html')
+
+	return show_all_adventures()
+
+# Show all adventures (if not logged in)
+@mod.route("/all/")
+def all():
+	return show_all_adventures()
+
 # About us
 @mod.route("/about")
 def about():
@@ -80,7 +91,7 @@ def how_it_works():
 def features():
 	return render_template('features.html')
 
-# Carrers - aviable
+# Carrers - avaiable
 @mod.route("/carrers")
 def carrers():
 	return render_template('carrers.html')

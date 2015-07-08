@@ -5,9 +5,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 from flask.ext.mail import Mail
 
-from app.users.models import User
-from app.metrics.miscellaneous import Metrics
-
 # set app
 app = Flask(__name__)
 app.config.from_object('config.DevelopmentConfig')
@@ -17,6 +14,10 @@ db = SQLAlchemy(app)
 
 # set mail
 mail = Mail(app)
+
+# import
+from app.users.models import User
+from app.metrics.miscellaneous import Metrics
 
 # metrics
 metrics = Metrics(db)
