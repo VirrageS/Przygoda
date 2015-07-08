@@ -76,7 +76,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 
 		response = self.login(username='john', password='a')
 		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+		self.assertTemplateUsed('all.html')
 
 	def test_users_login_route_no_login_again(self):
 		"""Ensure users login does not allow to login again"""
@@ -88,11 +88,11 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 
 		response = self.login(username='john', password='a')
 		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+		self.assertTemplateUsed('all.html')
 
 		response = self.login(username='john', password='a')
 		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+		self.assertTemplateUsed('all.html')
 
 	def test_users_logout_route_requires_login(self):
 		"""Ensure users logout requires login"""
@@ -113,7 +113,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 
 		response = self.logout()
 		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+		self.assertTemplateUsed('landing.html')
 
 		response = self.logout()
 		self.assertTrue(response.status_code == 200)
@@ -131,7 +131,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 
 		response = self.app.get('/users/register', follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('index.html')
+		self.assertTemplateUsed('all.html')
 
 	def test_users_register_route_too_short_username(self):
 		"""Ensure users register does not allow to register when username is too short"""

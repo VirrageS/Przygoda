@@ -48,47 +48,59 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/320392480213849032841024803284103248712', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('landing.html')
 
     def test_adventures_show_route_no_adventure(self):
         """Ensure that show adventure require existing adventure"""
 
         response = self.app.get('/adventures/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('landing.html')
 
     def test_adventures_show_route_no_active(self):
         """Ensure that show adventure require to be active"""
 
         # add adventure to database
-        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=-9), mode=ADVENTURES.RECREATIONAL,
-                      info='Some info today')
+        a = Adventure(
+            creator_id=1,
+            date=datetime.now() + timedelta(minutes=-9),
+            mode=ADVENTURES.RECREATIONAL,
+            info='Some info today'
+        )
         db.session.add(a)
         db.session.commit()
 
         response = self.app.get('/adventures/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('landing.html')
 
     def test_adventures_show_route_no_creator(self):
         """Ensure that show adventure require existing creator"""
 
         # add adventure to database
-        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL,
-                      info='Some info today')
+        a = Adventure(
+            creator_id=1,
+            date=datetime.now() + timedelta(minutes=-9),
+            mode=ADVENTURES.RECREATIONAL,
+            info='Some info today'
+        )
         db.session.add(a)
         db.session.commit()
 
         response = self.app.get('/adventures/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('landing.html')
 
     def test_adventures_show_route(self):
         """Ensure that show adventure redirect us to the right place"""
 
         # add adventure to database
-        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL,
-                      info='Some info today')
+        a = Adventure(
+            creator_id=1,
+            date=datetime.now() + timedelta(minutes=9),
+            mode=ADVENTURES.RECREATIONAL,
+            info='Some info today'
+        )
         db.session.add(a)
         db.session.commit()
 
@@ -121,7 +133,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/join/3458304958390433485734895734085734', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_join_route_no_adventure(self):
         """Ensure that join adventure require existing adventure"""
@@ -136,7 +148,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/join/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_join_route_user_already_joined(self):
         """Ensure that join adventure does not allow to join again"""
@@ -154,9 +166,15 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         # login user to system
         self.login(username='john', password='a')
 
+        # trigger user joining
+        self.app.get('/adventures/join/1', follow_redirects=True)
+
         # check if user has been added to adventure
         participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
         self.assertTrue(participant is not None)
+
+        # trigger user second joining (which should fail)
+        self.app.get('/adventures/join/1', follow_redirects=True)
 
         participants = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).all()
         self.assertTrue(participants is not None)
@@ -178,14 +196,16 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         # login user to system
         self.login(username='john', password='a')
 
+        # trigger user joining
         response = self.app.get('/adventures/join/1', follow_redirects=True)
 
         # check if user has been added to adventure
         participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
         self.assertTrue(participant is not None)
 
+        # check proper response
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_leave_route_requires_login(self):
         """Ensure that leave adventures requires login"""
@@ -207,7 +227,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/leave/1324981234124381734891234', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_leave_route_no_adventure(self):
         """Ensure that leave adventure require existing adventure"""
@@ -222,7 +242,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/leave/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_leave_route_creator(self):
         """Ensure that leave adventure do not allow leaving for creator of the adventure"""
@@ -242,7 +262,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/leave/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_leave_route_no_joined(self):
         """Ensure that leave adventure do not allow leaving for someone who does not joined to adventure"""
@@ -262,7 +282,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/leave/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_leave_route_leave(self):
         """Ensure that leave adventure actually allows to leave the adventure"""
@@ -287,7 +307,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/leave/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
         # check if user was removed from adventure participants
         ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
@@ -320,7 +340,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/edit/128345792384572394857234598982347582', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_edit_route_no_adventure(self):
         """Ensure that edit adventure requires existing adventure"""
@@ -335,7 +355,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/edit/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_edit_route_no_creator(self):
         """Ensure that edit adventure requires creator of the adventure"""
@@ -355,7 +375,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/edit/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_edit_route_edit(self):
         """Ensure that edit adventure redirect user to editing page"""
@@ -397,7 +417,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/delete/128345792384572394857234598982347582', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_delete_route_no_adventure(self):
         """Ensure that delete adventure requires adventure to exists"""
@@ -412,7 +432,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/delete/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_delete_route_no_creator(self):
         """Ensure that delete adventure requires creator to be logged"""
@@ -432,7 +452,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         response = self.app.get('/adventures/delete/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_delete_route_delete(self):
         """Ensure that delete adventure delete all the stuff"""
@@ -478,4 +498,4 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         self.assertTrue(c is None)
 
         self.assertTrue(response.status_code == 200)
-        self.assertTemplateUsed('index.html')
+        self.assertTemplateUsed('all.html')
