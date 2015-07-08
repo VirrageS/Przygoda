@@ -448,7 +448,7 @@ def search():
 				})
 
 				# update adventure search times
-				adventure.search += 1
+				adventure.searched += 1
 				db.session.commit()
 
 		# updated search coordinates

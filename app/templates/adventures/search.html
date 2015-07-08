@@ -23,6 +23,7 @@
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script>
 		var map;
+		var rectangle;
 
 		function initialize() {
 		    var mapOptions = {
@@ -46,7 +47,7 @@
 			updateBounds(sw, ne);
 
 			// Define a rectangle and set its editable property to true.
-			var rectangle = new google.maps.Rectangle({
+			rectangle = new google.maps.Rectangle({
 				bounds: bounds,
 				editable: true,
 				draggable: true
@@ -60,6 +61,24 @@
 
 				updateBounds(sw, ne);
 			});
+
+			locateCurrentPosition();
+		}
+
+		function locateCurrentPosition() {
+		    if (navigator.geolocation) {
+		        success = function(position) {
+		            map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+
+					var sw = new google.maps.LatLng(map.getCenter().lat() - 0.01, map.getCenter().lng() - 0.02);
+					var ne = new google.maps.LatLng(map.getCenter().lat() + 0.01, map.getCenter().lng() + 0.02);
+					rectangle.setBounds(new google.maps.LatLngBounds(sw, ne));
+					updateBounds(sw, ne);
+		        };
+		        error = function() {}
+
+		        navigator.geolocation.getCurrentPosition(success, error);
+		    }
 		}
 
 		function updateBounds(sw, ne) {

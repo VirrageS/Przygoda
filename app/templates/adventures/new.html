@@ -19,6 +19,12 @@
 	<script type="text/javascript" src="/static/js/map.js"></script>
 
 	<script type="text/javascript">
+		setTimeout(function() {
+			locateCurrentPosition()
+		}, 1);
+	</script>
+
+	<script type="text/javascript">
 		$(function () {
 			$('#datetimepicker').datetimepicker({
 				locale: 'pl',

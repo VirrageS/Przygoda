@@ -54,6 +54,17 @@ function initialize() {
     });
 }
 
+function locateCurrentPosition() {
+    if (navigator.geolocation) {
+        success = function(position) {
+            map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+        };
+        error = function() {}
+
+        navigator.geolocation.getCurrentPosition(success, error);
+    }
+}
+
 // compute total distance of path
 function computeTotalDistance(result) {
     var total = 0;
