@@ -5,7 +5,7 @@ from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
 
 import ast # for convering string to double
-from datetime import datetime, date # for current date
+from datetime import datetime, date, timedelta # for current date
 
 from app import app, db
 from app.miscellaneous import confirmed_email_required
@@ -280,7 +280,7 @@ def edit(adventure_id=0):
 		adventure_id=adventure_id,
 		markers=final_coordinates,
 		participants=final_participants,
-		date=datetime.now().strftime("%m/%d/%Y %H:%M")
+		min_date=datetime.now().strftime("%m/%d/%Y %H:%M")
 	)
 
 # New adventure
@@ -329,7 +329,8 @@ def new():
 	return render_template(
 		'adventures/new.html',
 		form=form,
-		date=datetime.now().strftime("%m/%d/%Y %H:%M")
+		min_date=datetime.now().strftime("%m/%d/%Y %H:%M"),
+		date=(datetime.now() + timedelta(hours=1)).strftime("%m/%d/%Y %H:%M")
 	)
 
 # Delete adventure

@@ -44,7 +44,8 @@
 		$(function () {
 			$('#datetimepicker').datetimepicker({
 				locale: 'pl',
-				minDate: {{ date|tojson|safe }}
+				minDate: {{ min_date|tojson|safe }}
+				date: {{ form.date.data|tojson|safe }}
 			});
 		});
 	</script>
