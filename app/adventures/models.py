@@ -10,8 +10,9 @@ class Adventure(db.Model):
 	date = db.Column('date', db.DateTime)
 	mode = db.Column('mode', db.SmallInteger)
 	info = db.Column('info', db.String)
-	views = db.Column('views', db.BigInteger)
-	searched = db.Column('searched', db.BigInteger)
+	views = db.Column('views', db.BigInteger, default=0)
+	searched = db.Column('searched', db.BigInteger, default=0)
+	deleted = db.Column('deleted', db.Boolean, default=False)
 
 	def __init__(self, creator_id, date, mode, info):
 		self.creator_id = creator_id
@@ -20,13 +21,14 @@ class Adventure(db.Model):
 		self.info = info
 		self.views = 0
 		self.searched = 0
+		self.deleted = False
 
 	def get_mode(self):
 		return ADVENTURES.MODES[self.mode]
 
 	def is_active(self):
 		"""Checks if adventure is active"""
-		return self.date >= datetime.now()
+		return (self.date >= datetime.now()) or (not self.deleted)
 
 class Coordinate(db.Model):
 	__tablename__ = 'coordinates'

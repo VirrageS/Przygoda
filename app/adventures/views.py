@@ -357,20 +357,20 @@ def delete(adventure_id):
 		flash('You cannot delete this adventure!', 'danger')
 		return redirect(url_for('simple_page.index'))
 
-	# delete all adventure participants
-	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-	for participant in participants:
-		db.session.delete(participant)
-		db.session.commit()
-
-	# delete all adventure coordinates
-	coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
-	for coordinate in coordinates:
-		db.session.delete(coordinate)
-		db.session.commit()
+	# # delete all adventure participants
+	# participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+	# for participant in participants:
+	# 	db.session.delete(participant)
+	# 	db.session.commit()
+	#
+	# # delete all adventure coordinates
+	# coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
+	# for coordinate in coordinates:
+	# 	db.session.delete(coordinate)
+	# 	db.session.commit()
 
 	# delete adventure
-	db.session.delete(adventure)
+	adventure.deleted = True
 	db.session.commit()
 
 	flash('Your adventure has been deleted', 'success')

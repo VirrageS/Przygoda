@@ -493,9 +493,10 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         a = Adventure.query.filter_by(id=1).first()
         ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
         c = Coordinate.query.filter_by(adventure_id=1).first()
-        self.assertTrue(a is None)
-        self.assertTrue(ap is None)
-        self.assertTrue(c is None)
+        self.assertTrue(a is not None)
+        self.assertTrue(a.is_active() is False)
+        self.assertTrue(ap is not None)
+        self.assertTrue(c is not None)
 
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('all.html')
