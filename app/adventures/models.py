@@ -12,7 +12,6 @@ class Adventure(db.Model):
 	info = db.Column('info', db.String)
 	views = db.Column('views', db.BigInteger)
 	searched = db.Column('searched', db.BigInteger)
-	tomek = db.Column('tomek', db.BigInteger)
 
 	def __init__(self, creator_id, date, mode, info):
 		self.creator_id = creator_id
@@ -21,7 +20,6 @@ class Adventure(db.Model):
 		self.info = info
 		self.views = 0
 		self.searched = 0
-		self.tomek = 0
 
 	def get_mode(self):
 		return ADVENTURES.MODES[self.mode]

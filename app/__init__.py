@@ -4,8 +4,6 @@ from flask import Flask, render_template, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 from flask.ext.mail import Mail
-from flask.ext.script import Manager
-from flask.ext.migrate import Migrate, MigrateCommand
 
 # set app
 app = Flask(__name__)
@@ -13,13 +11,6 @@ app.config.from_object('config.DevelopmentConfig')
 
 # set database
 db = SQLAlchemy(app)
-
-# set migration
-migrate = Migrate(app, db)
-
-# set manager
-manager = Manager(app)
-manager.add_command('db', MigrateCommand)
 
 # set mail
 mail = Mail(app)
@@ -70,20 +61,6 @@ def load_user(id):
 @app.before_request
 def before_request():
 	g.user = current_user
-
-
-# add admin
-u = User.query.filter_by(username="admin").first()
-if u is None:
-	from werkzeug import generate_password_hash
-	from app.users import constants as USER
-
-	u = User("admin", generate_password_hash("supertajnehaslo"), "email@email.com", social_id=None)
-	u.role = USER.ADMIN
-	u.confirmed = True
-	db.session.add(u)
-	db.session.commit()
-
 
 # error handling
 @app.errorhandler(404)

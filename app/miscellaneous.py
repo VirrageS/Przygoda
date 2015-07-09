@@ -52,3 +52,18 @@ def admin_required(f):
 
 		return f(*args, **kwargs)
 	return wrapper
+
+def add_admin():
+	# add admin
+	from app.users.models import User
+	from werkzeug import generate_password_hash
+	from app.users import constants as USER
+	from app import db
+
+	u = User.query.filter_by(username="admin").first()
+	if u is None:
+		u = User("admin", generate_password_hash("supertajnehaslo"), "email@email.com", social_id=None)
+		u.role = USER.ADMIN
+		u.confirmed = True
+		db.session.add(u)
+		db.session.commit()

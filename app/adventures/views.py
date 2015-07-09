@@ -77,7 +77,6 @@ def show(adventure_id):
 
 	# update adventure views
 	adventure.views += 1
-	adventure.tomek += 1
 	db.session.commit()
 
 	# get coordinates of existing points
