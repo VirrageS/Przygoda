@@ -15,6 +15,8 @@ from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures.forms import NewForm, EditForm, SearchForm
 from app.users.models import User
 
+from app.mine.models import AdventureSearches, AdventureViews
+
 mod = Blueprint('adventures', __name__, url_prefix='/adventures')
 
 @mod.after_request
@@ -76,7 +78,8 @@ def show(adventure_id):
 		}
 
 	# update adventure views
-	adventure.views += 1
+	views = AdventureViews(adventure_id=adventure.id)
+	db.session.add(views)
 	db.session.commit()
 
 	# get coordinates of existing points
@@ -448,7 +451,8 @@ def search():
 				})
 
 				# update adventure search times
-				adventure.searched += 1
+				searches = AdventureSearches(adventure_id=adventure.id)
+				db.session.add(searches)
 				db.session.commit()
 
 		# updated search coordinates

@@ -10,8 +10,6 @@ class Adventure(db.Model):
 	date = db.Column('date', db.DateTime)
 	mode = db.Column('mode', db.SmallInteger)
 	info = db.Column('info', db.String)
-	views = db.Column('views', db.BigInteger, default=0)
-	searched = db.Column('searched', db.BigInteger, default=0)
 	deleted = db.Column('deleted', db.Boolean, default=False)
 
 	def __init__(self, creator_id, date, mode, info):
@@ -19,8 +17,6 @@ class Adventure(db.Model):
 		self.date = date
 		self.mode = mode
 		self.info = info
-		self.views = 0
-		self.searched = 0
 		self.deleted = False
 
 	def get_mode(self):
