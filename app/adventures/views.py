@@ -360,18 +360,6 @@ def delete(adventure_id):
 		flash('You cannot delete this adventure!', 'danger')
 		return redirect(url_for('simple_page.index'))
 
-	# # delete all adventure participants
-	# participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-	# for participant in participants:
-	# 	db.session.delete(participant)
-	# 	db.session.commit()
-	#
-	# # delete all adventure coordinates
-	# coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
-	# for coordinate in coordinates:
-	# 	db.session.delete(coordinate)
-	# 	db.session.commit()
-
 	# delete adventure
 	adventure.deleted = True
 	db.session.commit()
@@ -392,25 +380,21 @@ def search():
 		# get start position from html element
 		start_pos = request.form.get('bl_corner')
 		if (start_pos is None) or (start_pos is ''):
-			flash('Something gone wrong start_pos', 'danger')
 			return redirect(url_for('adventures.search'))
 
 		# convert value to point (double, double)
 		start_pos = ast.literal_eval(str(start_pos))
 		if (start_pos is None) or (not is_float(start_pos[0])) or (not is_float(start_pos[1])):
-			flash('Something gone wrong start_pos convert', 'danger')
 			return redirect(url_for('adventures.search'))
 
 		# get end position from html element
 		end_pos = request.form.get('tr_corner')
 		if (end_pos is None) or (end_pos is ''):
-			flash('Something gone wrong end_pos', 'danger')
 			return redirect(url_for('adventures.search'))
 
 		# convert value to point (double, double)
 		end_pos = ast.literal_eval(str(end_pos))
 		if (end_pos is None) or (not is_float(end_pos[0])) or (not is_float(end_pos[1])):
-			flash('Something gone wrong end_pos convert', 'danger')
 			return redirect(url_for('adventures.search'))
 
 		# get adventures from area
@@ -460,8 +444,6 @@ def search():
 
 		# sort adventures by date
 		final_adventures = sorted(final_adventures, key=(lambda a: a['date']))
-
-		# flash(u'Wyszukiwanie powiodlo sie', 'success')
 
 	return render_template(
 		'adventures/search.html',

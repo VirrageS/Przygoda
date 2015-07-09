@@ -52,6 +52,10 @@ function initialize() {
     google.maps.event.addListener(map, 'click', function(event) {
         addMarker(event.latLng);
     });
+
+    google.maps.event.addListenerOnce(map, 'idle', function() {
+        updateMapBounds();
+    });
 }
 
 function locateCurrentPosition() {
@@ -160,6 +164,21 @@ function showRoute() {
             }
         }
     });
+}
+
+function updateMapBounds() {
+    if (markers.length <= 0)
+        return;
+
+    var bounds = new google.maps.LatLngBounds();
+
+    for (var i = 0; i < markers.length; i++) {
+        // update bounds
+        bounds.extend(markers[i]);
+    }
+
+    // center map
+    map.fitBounds(bounds);
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
