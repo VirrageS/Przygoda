@@ -227,3 +227,9 @@ Sprawdzamy czy nasza konfiguracja nginx'a jest poprawna
 Teraz restartujemy nginx'a i powinno już wszystko działać
 
 	sudo service nginx restart
+
+# Server testing
+
+## Stress tests
+
+	ab -k -n 50000 -c 2 -e test.cvs http://104.131.76.86/

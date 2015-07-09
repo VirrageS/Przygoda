@@ -15,14 +15,6 @@ db = SQLAlchemy(app)
 # set mail
 mail = Mail(app)
 
-# import
-from app.users.models import User
-from app.metrics.miscellaneous import Metrics
-
-# metrics
-metrics = Metrics(db)
-metrics.update_metrics(interval=30)
-
 # if not debuging we should keep log of our app
 if not app.config['DEBUG']:
 	import logging
@@ -60,7 +52,7 @@ login_manager.login_view = 'users.login'  # path to login (handel 'required_logi
 login_manager.login_message = 'Please log in to access this page'
 login_manager.login_message_category = 'warning'
 
-
+from app.users.models import User
 @login_manager.user_loader
 def load_user(id):
 	return User.query.get(int(id))
@@ -69,6 +61,19 @@ def load_user(id):
 @app.before_request
 def before_request():
 	g.user = current_user
+
+
+# add admin
+u = User.query.filter_by(username="admin").first()
+if u is None:
+	from werkzeug import generate_password_hash
+	from app.users import constants as USER
+
+	u = User("admin", generate_password_hash("supertajnehaslo"), "email@email.com", social_id=None)
+	u.role = USER.ADMIN
+	u.confirmed = True
+	db.session.add(u)
+	db.session.commit()
 
 
 # error handling
@@ -84,16 +89,16 @@ def internal_error(error):
 
 # blueprint
 from app.users.views import mod as usersModule
-
 app.register_blueprint(usersModule)
 
 from app.adventures.views import mod as adventuresModules
-
 app.register_blueprint(adventuresModules)
 
 from app.views import mod as modules
-
 app.register_blueprint(modules)
+
+from app.admin.views import mod as adminModules
+app.register_blueprint(adminModules)
 
 # Later on you'll import the other blueprints the same way:
 # from app.comments.views import mod as commentsModule

@@ -38,7 +38,7 @@ function initialize() {
         var legs = directionsDisplay.getDirections().routes[0].legs;
 
         // update all points
-        for (var i = 0; i < legs.length; i++) {
+        for (var i = 0; i < legs.length && i + 1 < markers.length; i++) {
             markers[i + 1] = legs[i].end_location;
             updateMarkerStatus(i + 1, legs[i].end_location);
         }
@@ -125,12 +125,16 @@ function addMarker(markerPosition) {
     // });
 }
 
+function removeElement(element) {
+    return element && element.parentNode && element.parentNode.removeChild(element);
+}
+
 function showRoute() {
     var waypoints = [];
     var origin = markers[0];
-    var destination = markers[markers.length-1];
+    var destination = markers[markers.length - 1];
 
-    for (var i = 1; i < markers.length - 2; i++) {
+    for (var i = 1; i <= markers.length - 2; i++) {
         waypoints.push({location: markers[i], stopover: true});
     }
 
@@ -145,6 +149,15 @@ function showRoute() {
     directionsService.route(request, function(response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
+        } else {
+            // get last added element
+            var marker = document.getElementById('marker_' + (markers.length - 1).toString());
+            var result = removeElement(marker);
+
+            if (result) {
+                // delete last element
+                markers.pop();
+            }
         }
     });
 }
