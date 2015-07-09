@@ -65,3 +65,6 @@ def charts():
 			all_participants += len(ap)
 
 		return all_participants / len(adventures)
+
+
+	return render_template('admin/charts.html')

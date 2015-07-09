@@ -4,6 +4,8 @@ from flask import Flask, render_template, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 from flask.ext.mail import Mail
+from flask.ext.script import Manager
+from flask.ext.migrate import Migrate, MigrateCommand
 
 # set app
 app = Flask(__name__)
@@ -11,6 +13,13 @@ app.config.from_object('config.DevelopmentConfig')
 
 # set database
 db = SQLAlchemy(app)
+
+# set migration
+migrate = Migrate(app, db)
+
+# set manager
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 
 # set mail
 mail = Mail(app)
