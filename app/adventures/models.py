@@ -28,7 +28,7 @@ class Adventure(db.Model):
 
 	def is_active(self):
 		"""Checks if adventure is active"""
-		return (self.date >= datetime.now()) or (not self.deleted)
+		return (not self.deleted) && (self.date >= datetime.now())
 
 class Coordinate(db.Model):
 	__tablename__ = 'coordinates'
