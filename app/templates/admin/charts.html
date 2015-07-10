@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% block body %}
+	<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['line', 'corechart', 'timeline']}]}"></script>
+	<script type="text/javascript">
+		google.load('visualization', '1', {packages: ['line']});
+		google.setOnLoadCallback(drawAdventuresChart);
+		google.setOnLoadCallback(drawUsersChart);
+
+		function drawAdventuresChart() {
+			var data = new google.visualization.DataTable();
+			data.addColumn('datetime', 'Data');
+			data.addColumn('number', 'Wszystkie');
+			data.addColumn('number', 'Aktywne')
+
+			data.addRows([
+				{%- for adventure in all_adventures -%}
+					[
+						new Date(
+							{{ adventure.date.year }},
+							{{ adventure.date.month }} - 1,
+							{{ adventure.date.day }},
+							{{ adventure.date.hour }},
+							{{ adventure.date.minute }},
+							{{ adventure.date.second }}
+						),
+						{{ adventure.count }},
+						{{ adventure.active }}
+					],
+				{%- endfor -%}
+			]);
+
+			var dateFormatter = new google.visualization.DateFormat({pattern: 'dd MMM yyyy HH:mm:ss'});
+			dateFormatter.format(data, 0);
+
+
+			var options = {
+				title: 'Przygody',
+				width: "100%",
+				height: 550,
+				backgroundColor: 'none',
+				hAxis: {
+					title: 'Data',
+					format: 'dd MMM yyyy (HH:mm:ss)',
+					gridlines: {count: 20}
+				},
+				vAxis: {
+					title: 'Ilość',
+					minValue: 0
+				}
+			};
+
+			var chart = new google.charts.Line(document.getElementById('adventures_chart'));
+			chart.draw(data, google.charts.Line.convertOptions(options));
+		}
+
+		function drawUsersChart() {
+			var data = new google.visualization.DataTable();
+			data.addColumn('datetime', 'Data');
+			data.addColumn('number', 'Wszystkie');
+			data.addColumn('number', 'Aktywni')
+
+			data.addRows([
+				{%- for user in all_users -%}
+					[
+						new Date(
+							{{ user.date.year }},
+							{{ user.date.month }} - 1,
+							{{ user.date.day }},
+							{{ user.date.hour }},
+							{{ user.date.minute }},
+							{{ user.date.second }}
+						),
+						{{ user.count }},
+						{{ user.active }}
+					],
+				{%- endfor -%}
+			]);
+
+			var dateFormatter = new google.visualization.DateFormat({pattern: 'dd MMM yyyy HH:mm:ss'});
+			dateFormatter.format(data, 0);
+
+
+			var options = {
+				title: 'Użytkownicy',
+				width: "100%",
+				height: 550,
+				backgroundColor: 'none',
+				hAxis: {
+					title: 'Data',
+					format: 'dd MMM yyyy (HH:mm:ss)',
+					gridlines: {count: 20}
+				},
+				vAxis: {
+					title: 'Ilość',
+					minValue: 0
+				}
+			};
+
+			var chart = new google.charts.Line(document.getElementById('users_chart'));
+			chart.draw(data, google.charts.Line.convertOptions(options));
+		}
+	</script>
+
+	<h2>Wykresy</h2>
+	<br><br><div id="adventures_chart"></div>
+	<br><br><div id="users_chart"></div>
+{% endblock %}

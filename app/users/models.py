@@ -17,6 +17,8 @@ class User(UserMixin, db.Model):
 	registered_on = db.Column('registered_on', db.DateTime, nullable=False)
 	confirmed = db.Column(db.Boolean, nullable=False, default=False)
 	confirmed_on = db.Column(db.DateTime, nullable=True)
+	first_login = db.Column(db.DateTime, nullable=True)
+	last_login = db.Column(db.DateTime, nullable=True)
 	role = db.Column('role', db.SmallInteger, nullable=False, default=USER.USER)
 	paid = db.Column('paid', db.Boolean, nullable=False, default=False)
 

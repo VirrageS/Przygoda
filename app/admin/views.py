@@ -8,7 +8,7 @@ from flask.ext.sqlalchemy import get_debug_queries
 
 from app import app, db
 from app.users.models import User
-from app.adventures.models import Adventure
+from app.adventures.models import Adventure, AdventureParticipant
 
 from app.miscellaneous import admin_required
 
@@ -35,36 +35,62 @@ def panel():
 @mod.route('/charts/')
 @admin_required
 def charts():
-	def get_active_adventures():
-		adventures = Adventure.query.all()
-		adventures = list(filter(lambda a: a.is_active(), adventures))
-		return len(adventures)
-
-	def get_inactive_adventures():
-		adventures = Adventure.query.all()
-		adventures = list(filter(lambda a: not a.is_active(), adventures))
-		return len(adventures)
-
 	def get_all_adventures():
-		adventures = Adventure.query.all()
-		return len(adventures)
+		all_adventures = []
+		adventures = Adventure.query.order_by(Adventure.created_on.asc()).all()
+
+		active = 0
+		count = 0
+		participants = 0
+
+		for adventure in adventures:
+			count += 1
+			if adventure.is_active():
+				active += 1
+
+			ap = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+			participants += len(ap)
+
+			all_adventures.append({
+				'date': {
+					'year': adventure.created_on.year,
+					'month': adventure.created_on.month,
+					'day': adventure.created_on.day,
+					'hour': adventure.created_on.hour,
+					'minute': adventure.created_on.minute,
+					'second': adventure.created_on.second
+				},
+				'active': active,
+				'count': count,
+				'users_per_adventure': participants / count
+			})
+
+		return all_adventures
 
 	def get_all_users():
-		users = User.query.all()
-		return len(users)
+		all_users = []
+		users = User.query.order_by(User.registered_on.asc()).all()
 
-	def get_users_per_adventure():
-		adventures = Adventure.query.all()
+		active = 0
+		count = 0
+		for user in users:
+			# if adventure.:
+				# active += 1
 
-		if len(adventures) == 0:
-			return 0
+			count += 1
+			all_users.append({
+				'date': {
+					'year': user.registered_on.year,
+					'month': user.registered_on.month,
+					'day': user.registered_on.day,
+					'hour': user.registered_on.hour,
+					'minute': user.registered_on.minute,
+					'second': user.registered_on.second
+				},
+				'active': active,
+				'count': count
+			})
 
-		all_participants = 0
-		for adventure in adventures:
-			ap = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-			all_participants += len(ap)
+		return all_users
 
-		return all_participants / len(adventures)
-
-
-	return render_template('admin/charts.html')
+	return render_template('admin/charts.html', all_adventures=get_all_adventures(), all_users=get_all_users())

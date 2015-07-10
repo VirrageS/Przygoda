@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import datetime
+from datetime import datetime
 from werkzeug import check_password_hash, generate_password_hash
 from flask import Blueprint, request, render_template, flash, redirect, url_for
 from flask.ext.login import current_user, login_user, logout_user, login_required
@@ -48,6 +48,14 @@ def login():
 		if (registered_user is not None) and check_password_hash(registered_user.password, form.password.data):
 			# login user to system
 			login_user(registered_user, remember=form.remember_me.data)
+
+			# update first login date
+			if registered_user.first_login is None:
+				registered_user.first_login = datetime.now()
+
+			# update last login date
+			registered_user.last_login = datetime.now()
+			db.session.commit()
 
 			flash(u'Zalogowałeś sie poprawnie. Witaj w Przygodzie.', 'success')
 			return redirect(request.args.get('next') or url_for('simple_page.index'))
@@ -225,7 +233,7 @@ def confirm_email(token):
 
 	# update user informations and add to database
 	user.confirmed = True
-	user.confirmed_on = datetime.datetime.now()
+	user.confirmed_on = datetime.now()
 	db.session.add(user)
 	db.session.commit()
 
