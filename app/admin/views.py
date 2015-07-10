@@ -74,8 +74,8 @@ def charts():
 		active = 0
 		count = 0
 		for user in users:
-			# if adventure.:
-				# active += 1
+			if user.is_active_login():
+				active += 1
 
 			count += 1
 			all_users.append({

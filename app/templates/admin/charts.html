@@ -8,9 +8,10 @@
 
 		function drawAdventuresChart() {
 			var data = new google.visualization.DataTable();
-			data.addColumn('datetime', 'Data');
-			data.addColumn('number', 'Wszystkie');
-			data.addColumn('number', 'Aktywne')
+			data.addColumn('datetime', 'Date');
+			data.addColumn('number', 'All');
+			data.addColumn('number', 'Active');
+			data.addColumn('number', 'Users per adventure');
 
 			data.addRows([
 				{%- for adventure in all_adventures -%}
@@ -24,7 +25,8 @@
 							{{ adventure.date.second }}
 						),
 						{{ adventure.count }},
-						{{ adventure.active }}
+						{{ adventure.active }},
+						{{ adventure.users_per_adventure }}
 					],
 				{%- endfor -%}
 			]);
@@ -34,17 +36,17 @@
 
 
 			var options = {
-				title: 'Przygody',
+				title: 'ADVENTURES',
 				width: "100%",
 				height: 550,
 				backgroundColor: 'none',
 				hAxis: {
-					title: 'Data',
+					title: 'Date',
 					format: 'dd MMM yyyy (HH:mm:ss)',
 					gridlines: {count: 20}
 				},
 				vAxis: {
-					title: 'Ilość',
+					title: 'Value',
 					minValue: 0
 				}
 			};
@@ -55,9 +57,9 @@
 
 		function drawUsersChart() {
 			var data = new google.visualization.DataTable();
-			data.addColumn('datetime', 'Data');
-			data.addColumn('number', 'Wszystkie');
-			data.addColumn('number', 'Aktywni')
+			data.addColumn('datetime', 'Date');
+			data.addColumn('number', 'All');
+			data.addColumn('number', 'Active login')
 
 			data.addRows([
 				{%- for user in all_users -%}
@@ -81,17 +83,17 @@
 
 
 			var options = {
-				title: 'Użytkownicy',
+				title: 'USERS',
 				width: "100%",
 				height: 550,
 				backgroundColor: 'none',
 				hAxis: {
-					title: 'Data',
+					title: 'Date',
 					format: 'dd MMM yyyy (HH:mm:ss)',
 					gridlines: {count: 20}
 				},
 				vAxis: {
-					title: 'Ilość',
+					title: 'Value',
 					minValue: 0
 				}
 			};
@@ -102,6 +104,6 @@
 	</script>
 
 	<h2>Wykresy</h2>
-	<br><br><div id="adventures_chart"></div>
-	<br><br><div id="users_chart"></div>
+	<br><br><br><div id="adventures_chart"></div>
+	<br><br><br><div id="users_chart"></div>
 {% endblock %}

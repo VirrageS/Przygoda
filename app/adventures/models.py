@@ -11,6 +11,7 @@ class Adventure(db.Model):
 	mode = db.Column('mode', db.SmallInteger, nullable=False, default=ADVENTURES.RECREATIONAL)
 	info = db.Column('info', db.String, nullable=False, default='')
 	created_on = db.Column('created_on', db.DateTime)
+	disabled = db.Column('disabled', db.Boolean, nullable=False, default=False)
 	deleted = db.Column('deleted', db.Boolean, nullable=False, default=False)
 	deleted_on = db.Column('deleted_on', db.DateTime, nullable=True)
 
@@ -19,15 +20,16 @@ class Adventure(db.Model):
 		self.date = date
 		self.mode = mode
 		self.info = info
-		self.deleted = False
 		self.created_on = datetime.now()
+		self.disabled = False
+		self.deleted = False
 
 	def get_mode(self):
 		return ADVENTURES.MODES[self.mode]
 
 	def is_active(self):
 		"""Checks if adventure is active"""
-		return (not self.deleted) and (self.date >= datetime.now())
+		return (not self.deleted) and (self.date >= datetime.now()) and (not self.disabled)
 
 class Coordinate(db.Model):
 	__tablename__ = 'coordinates'

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask.ext.login import UserMixin
 
@@ -48,6 +48,12 @@ class User(UserMixin, db.Model):
 
 	def get_role(self):
 		return USER.ROLE[self.role]
+
+	def is_active_login(self, delta=timedelta(days=4)):
+		if self.last_login is None:
+			return False
+
+		return (self.last_login + delta >= datetime.now())
 
 	def __repr__(self):
 		return '<User %r>' % (self.username)
