@@ -1,64 +1,4 @@
-var rendererOptions = {
-    draggable: true,
-    preserveViewport: true,
-    suppressBicyclingLayer: true,
-
-    polylineOptions: {
-        strokeColor: '#6CA4FB',
-        strokeWeight: 6,
-        strokeOpacity: 0.95,
-        clickable: false,
-        draggable: false,
-        editable: false
-    }
-    // suppressMarkers : true
-};
-var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
-var directionsService = new google.maps.DirectionsService();
-
-var map;
-
-var markers = [];
-
-function initialize() {
-    var mapOptions = {
-        zoom: 13,
-        center: new google.maps.LatLng(52.229937, 21.011380),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-
-    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-    directionsDisplay.setMap(map);
-
-    google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
-        // compute total distance
-        computeTotalDistance(directionsDisplay.getDirections());
-
-        // get legs from route
-        var legs = directionsDisplay.getDirections().routes[0].legs;
-
-        // update all points
-        for (var i = 0; i < legs.length && i + 1 < markers.length; i++) {
-            markers[i + 1] = legs[i].end_location;
-            updateMarkerStatus(i + 1, legs[i].end_location);
-        }
-
-        // update origin
-        markers[0] = legs[0].start_location;
-        updateMarkerStatus(0, legs[0].start_location);
-    });
-
-    // add a listener for the click event
-    google.maps.event.addListener(map, 'click', function(event) {
-        addMarker(event.latLng);
-    });
-
-    google.maps.event.addListenerOnce(map, 'idle', function() {
-        updateMapBounds();
-    });
-}
-
-function locateCurrentPosition() {
+function setMapCenterAtCurrentPosition(map) {
     if (navigator.geolocation) {
         success = function(position) {
             map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
@@ -98,7 +38,7 @@ function updateMarkerStatus(number, position) {
     }
 }
 
-function addMarker(markerPosition) {
+function addMarker(markers, markerPosition) {
     // add new position to markers array
     markers.push(markerPosition);
 
@@ -106,7 +46,7 @@ function addMarker(markerPosition) {
     updateMarkerStatus(markers.length-1, markerPosition);
 
     // show new route
-    showRoute();
+    showRoute(markers);
 
     // add listener for right click which handels marker's deleting
     // google.maps.event.addListener(marker, 'rightclick', function() {
@@ -133,7 +73,7 @@ function removeElement(element) {
     return element && element.parentNode && element.parentNode.removeChild(element);
 }
 
-function showRoute() {
+function showRoute(markers) {
     var waypoints = [];
     var origin = markers[0];
     var destination = markers[markers.length - 1];
@@ -166,7 +106,7 @@ function showRoute() {
     });
 }
 
-function updateMapBounds() {
+function updateMapBounds(markers) {
     if (markers.length <= 0)
         return;
 
@@ -180,5 +120,3 @@ function updateMapBounds() {
     // center map
     map.fitBounds(bounds);
 }
-
-google.maps.event.addDomListener(window, 'load', initialize);

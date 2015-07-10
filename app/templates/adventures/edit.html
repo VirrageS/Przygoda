@@ -18,27 +18,78 @@
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
 	<script type="text/javascript" src="/static/js/map.js"></script>
 	<script type="text/javascript">
-		setTimeout(function() {
-			{% for marker in markers %}
-				var pos = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
-				markers.push(pos);
-			{% endfor %}
+		var rendererOptions = {
+		    draggable: true,
+		    preserveViewport: true,
+		    suppressBicyclingLayer: true,
 
-			showRoute();
+		    polylineOptions: {
+		        strokeColor: '#6CA4FB',
+		        strokeWeight: 6,
+		        strokeOpacity: 0.95,
+		        clickable: false,
+		        draggable: false,
+		        editable: false
+		    }
+		    // suppressMarkers : true
+		};
 
-			for (var i = 0; i < markers.length; i++) {
-				updateMarkerStatus(i, markers[i]);
-			}
-		}, 1);
+		var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
+		var directionsService = new google.maps.DirectionsService();
 
-		// window.onload = function() {
-		// 	{% for marker in markers %}
-		// 		var pos = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
-		// 		addMarker(pos);
-		// 	{% endfor %}
-		//
-		// 	showRoute();
-		// }
+		var map;
+		var markers = [];
+
+		function initialize() {
+		    var mapOptions = {
+		        zoom: 13,
+		        center: new google.maps.LatLng(52.229937, 21.011380),
+		        mapTypeId: google.maps.MapTypeId.ROADMAP
+		    };
+
+		    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		    directionsDisplay.setMap(map);
+
+		    google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+		        // compute total distance
+		        computeTotalDistance(directionsDisplay.getDirections());
+
+		        // get legs from route
+		        var legs = directionsDisplay.getDirections().routes[0].legs;
+
+		        // update all points
+		        for (var i = 0; i < legs.length && i + 1 < markers.length; i++) {
+		            markers[i + 1] = legs[i].end_location;
+		            updateMarkerStatus(i + 1, legs[i].end_location);
+		        }
+
+		        // update origin
+		        markers[0] = legs[0].start_location;
+		        updateMarkerStatus(0, legs[0].start_location);
+		    });
+
+		    // add a listener for the click event
+		    google.maps.event.addListener(map, 'click', function(event) {
+		        addMarker(markers, event.latLng);
+		    });
+
+		    google.maps.event.addListenerOnce(map, 'idle', function() {
+				{% for marker in markers %}
+					var pos = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
+					markers.push(pos);
+				{% endfor %}
+
+				showRoute(markers);
+
+				for (var i = 0; i < markers.length; i++) {
+					updateMarkerStatus(i, markers[i]);
+				}
+
+				updateMapBounds(markers);
+		    });
+		}
+
+		google.maps.event.addDomListener(window, 'load', initialize);
 	</script>
 	<script type="text/javascript">
 		$(function () {
