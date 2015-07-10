@@ -5,10 +5,12 @@ from werkzeug import check_password_hash, generate_password_hash
 from flask import Blueprint, request, render_template, flash, redirect, url_for
 from flask.ext.login import current_user, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
+from sqlalchemy.sql import func
 
 from app import app, db
 from app.users.models import User
 from app.adventures.models import Adventure, AdventureParticipant
+from app.mine.models import AdventureViews, AdventureSearches
 
 from app.miscellaneous import admin_required
 
@@ -93,4 +95,36 @@ def charts():
 
 		return all_users
 
-	return render_template('admin/charts.html', all_adventures=get_all_adventures(), all_users=get_all_users())
+	def get_adventures_views():
+		all_adventures_views = []
+		adventures = AdventureViews.query.add_column(func.count(AdventureViews.value)).group_by(AdventureViews.adventure_id).all()
+
+		for adventure in adventures:
+			all_adventures_views.append({
+				'id': adventure[0].adventure_id,
+				'views': adventure[1]
+			})
+
+		all_adventures_views = sorted(all_adventures_views, key=(lambda a: a['views']), reverse=True)
+		return all_adventures_views
+
+	def get_adventures_searches():
+		all_adventures_searches = []
+		adventures = AdventureSearches.query.add_column(func.count(AdventureSearches.value)).group_by(AdventureSearches.adventure_id).all()
+
+		for adventure in adventures:
+			all_adventures_searches.append({
+				'id': adventure[0].adventure_id,
+				'searches': adventure[1]
+			})
+
+		all_adventures_searches = sorted(all_adventures_searches, key=(lambda a: a['searches']), reverse=True)
+		return all_adventures_searches
+
+	return render_template(
+		'admin/charts.html',
+		all_adventures=get_all_adventures(),
+		all_users=get_all_users(),
+		all_adventures_views=get_adventures_views(),
+		all_adventures_searches=get_adventures_searches()
+	)
