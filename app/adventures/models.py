@@ -8,9 +8,11 @@ class Adventure(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	date = db.Column('date', db.DateTime)
-	mode = db.Column('mode', db.SmallInteger)
-	info = db.Column('info', db.String)
-	deleted = db.Column('deleted', db.Boolean, default=False)
+	mode = db.Column('mode', db.SmallInteger, nullable=False, default=ADVENTURES.RECREATIONAL)
+	info = db.Column('info', db.String, nullable=False, default='')
+	created_on = db.Column('created_on', db.DateTime)
+	deleted = db.Column('deleted', db.Boolean, nullable=False, default=False)
+	deleted_on = db.Column('deleted_on', db.DateTime, nullable=True)
 
 	def __init__(self, creator_id, date, mode, info):
 		self.creator_id = creator_id
@@ -18,6 +20,7 @@ class Adventure(db.Model):
 		self.mode = mode
 		self.info = info
 		self.deleted = False
+		self.created_on = datetime.now()
 
 	def get_mode(self):
 		return ADVENTURES.MODES[self.mode]

@@ -362,6 +362,7 @@ def delete(adventure_id):
 
 	# delete adventure
 	adventure.deleted = True
+	adventure.deleted_on = datetime.now()
 	db.session.commit()
 
 	flash('Your adventure has been deleted', 'success')
