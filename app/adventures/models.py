@@ -50,7 +50,13 @@ class AdventureParticipant(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	adventure_id = db.Column(db.Integer, db.ForeignKey('adventures.id'))
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	joined_on = db.Column('joined_on', db.DateTime, nullable=True)
+	left_on = db.Column('left_on', db.DateTime, nullable=True)
 
 	def __init__(self, adventure_id, user_id):
 		self.adventure_id = adventure_id
 		self.user_id = user_id
+		self.joined_on = datetime.now()
+
+	def is_active(self):
+		return (self.left_on is None)

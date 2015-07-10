@@ -172,6 +172,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         # check if user has been added to adventure
         participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
         self.assertTrue(participant is not None)
+        self.assertTrue(participant.is_active())
 
         # trigger user second joining (which should fail)
         self.app.get('/adventures/join/1', follow_redirects=True)
@@ -311,7 +312,8 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         # check if user was removed from adventure participants
         ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
-        self.assertTrue(ap is None)
+        self.assertTrue(ap is not None)
+        self.assertTrue(not ap.is_active())
 
     def test_adventures_new_route_requires_login(self):
         """Ensure adventures new route requires a logged in user"""

@@ -15,7 +15,7 @@ def show_all_adventures():
 	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
 
 	# get all active adventures
-	adventures = filter(lambda a: a.is_active(), adventures)
+	adventures = list(filter(lambda a: a.is_active(), adventures))
 
 	for adventure in adventures:
 		# get creator of the event
@@ -23,11 +23,12 @@ def show_all_adventures():
 
 		# get joined participants
 		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+		participants = list(filter(lambda ap: ap.is_active(), participants))
 
 		action = -1
 		if current_user.is_authenticated():
 			participant = AdventureParticipant.query.filter_by(adventure_id=adventure.id, user_id=current_user.id).first()
-			if participant is None:
+			if (participant is None) or (not participant.is_active()):
 				action = 0
 			else:
 				action = 1

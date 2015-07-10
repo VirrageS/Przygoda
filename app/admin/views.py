@@ -51,6 +51,7 @@ def charts():
 				active += 1
 
 			ap = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+			ap = list(filter(lambda ap: ap.is_active(), ap))
 			participants += len(ap)
 
 			all_adventures.append({

@@ -47,7 +47,7 @@
 											{% elif adventure.action == 0 %}
 												<a href="/adventures/join/{{ adventure.id|safe }}"><i class="fa fa-gear"></i> Dołącz</a>
 											{% else %}
-												<a href="/adventures/leave/{{ adventure.i|safe }}"><i class="fa fa-gear"></i> Wypisz się</a>
+												<a href="/adventures/leave/{{ adventure.id|safe }}"><i class="fa fa-gear"></i> Wypisz się</a>
 											{% endif %}
 										{% else %}
 											<i class="fa fa-gear"></i> Nie ma akcji

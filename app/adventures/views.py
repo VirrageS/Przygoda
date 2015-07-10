@@ -61,6 +61,8 @@ def show(adventure_id):
 
 	# get joined participants
 	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+	participants = list(filter(lambda ap: ap.is_active(), participants))
+
 	for participant in participants:
 		user = User.query.filter_by(id=participant.user_id).first()
 
@@ -111,16 +113,24 @@ def join(adventure_id):
 
 	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
 
-	# check if user joined adventure
-	if participant is not None:
-		flash('You arleady have joined to this adventure', 'warning')
-	else:
+	# check if user joining adventure for the first time
+	if participant is None:
 		# add user to adventure participants to database
 		participant = AdventureParticipant(adventure_id=adventure_id, user_id=current_user.id)
 		db.session.add(participant)
 		db.session.commit()
 		flash('You have joined to this adventure', 'success')
+		return redirect(url_for('simple_page.index'))
 
+	# check if user is rejoining
+	if participant.is_active():
+		flash('You arleady have joined to this adventure', 'warning')
+		return redirect(url_for('simple_page.index'))
+
+	participant.left_on = None
+	participant.joined_on = datetime.now()
+	db.session.commit()
+	flash('You have joined to this adventure', 'success')
 	return redirect(url_for('simple_page.index'))
 
 @mod.route('/leave/<int:adventure_id>')
@@ -146,14 +156,14 @@ def leave(adventure_id):
 	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
 
 	# check if user joined adventure
-	if participant is None:
+	if (participant is None) or (not participant.is_active()):
 		flash('You have not joined to this adventure', 'warning')
-	else:
-		# delete user from adventure participants from database
-		db.session.delete(participant)
-		db.session.commit()
-		flash('You have left the adventure', 'success')
+		return redirect(url_for('simple_page.index'))
 
+	# delete user from adventure participants from database
+	participant.left_on = datetime.now()
+	db.session.commit()
+	flash('You have left the adventure', 'success')
 	return redirect(url_for('simple_page.index'))
 
 # Check all created and joined adventures
@@ -169,11 +179,12 @@ def my_adventures():
 	adventures = Adventure.query.filter_by(creator_id=current_user.id).order_by(Adventure.date.asc()).all()
 
 	# get all active adventures
-	adventures = filter(lambda x: x.is_active(), adventures)
+	adventures = list(filter(lambda x: x.is_active(), adventures))
 
 	for adventure in adventures:
 		# get joined participants
 		joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+		joined = list(filter(lambda ap: ap.is_active(), joined))
 
 		if joined is not None:
 			final_adventures.append({
@@ -185,6 +196,8 @@ def my_adventures():
 
 	# get all adventures to which user joined
 	joined_adventures = AdventureParticipant.query.filter_by(user_id=current_user.id).all()
+	joined_adventures = list(filter(lambda ap: ap.is_active(), joined_adventures))
+
 	for joined_adventure in joined_adventures:
 		# get adventure
 		adventure = Adventure.query.filter_by(id=joined_adventure.adventure_id).first()
@@ -232,7 +245,7 @@ def edit(adventure_id=0):
 	for participant in participants:
 		user = User.query.filter_by(id=participant.user_id).first()
 
-		if (user is not None) and (user.id != current_user.id):
+		if (user is not None) and (user.id != current_user.id) and (participant.is_active()):
 			final_participants.append(user)
 
 	# verify the edit form
@@ -424,6 +437,7 @@ def search():
 
 				# get joined participants
 				participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+				participants = list(filter(lambda ap: ap.is_active(), participants))
 
 				# add to all adventures
 				final_adventures.append({
