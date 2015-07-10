@@ -38,6 +38,12 @@ function updateMarkerStatus(number, position) {
     }
 }
 
+function updateAllMarkersStatus(markers) {
+    for (var i = 0; i < markers.length; i++) {
+        updateMarkerStatus(i, markers[i]);
+    }
+}
+
 function addMarker(markers, markerPosition) {
     // add new position to markers array
     markers.push(markerPosition);

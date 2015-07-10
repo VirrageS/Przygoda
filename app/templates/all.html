@@ -10,7 +10,7 @@
 				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
 					<div class="object post">
 						<div class="object-header image" style="background-image:url(
-						'https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=600x400&maptype=roadmap&path=color:0x0000ff|weight:5
+						'https://maps.googleapis.com/maps/api/staticmap?size=600x400&maptype=roadmap&path=color:0x0000ff|weight:5
 						{%- for marker in adventure.markers -%}
 							|{{ marker[0]|tojson|safe }},{{ marker[1]|tojson|safe }}
 						{%- endfor -%}

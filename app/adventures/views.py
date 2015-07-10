@@ -10,12 +10,15 @@ from datetime import datetime, date, timedelta # for current date
 from app import app, db
 from app.miscellaneous import confirmed_email_required
 from app.adventures import constants as ADVENTURES
-from app.adventures.miscellaneous import is_float
+from app.adventures.miscellaneous import is_float, get_waypoints
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures.forms import NewForm, EditForm, SearchForm
 from app.users.models import User
 
 from app.mine.models import AdventureSearches, AdventureViews
+
+import googlemaps
+gmaps = googlemaps.Client(key='AIzaSyA78hACcUKnn2S6cyy9gY5M8hVhiuxqhuE')
 
 mod = Blueprint('adventures', __name__, url_prefix='/adventures')
 
@@ -250,40 +253,47 @@ def edit(adventure_id=0):
 
 	# verify the edit form
 	if form.validate_on_submit():
-		# delete existing coordinates for the adventure_id
-		db.session.query(Coordinate).filter_by(adventure_id=adventure_id).delete()
-		db.session.commit()
+		try:
+			# get all waypoints
+			waypoints = get_waypoints(request.form)
 
-		# add coordinates of adventure to database
-		i = 0
-		while True:
-			# get value from html element
-			marker = request.form.get('marker_' + str(i))
-			if (marker is None) or (marker is ''):
-				break
+			if (waypoints is None) or (len(waypoints) <= 0):
+				flash('You must place at least one marker', 'warning')
+				return redirect(url_for('adventures.new'))
 
-			# convert value to point (double, double) and add it to database
-			raw_coordinate = ast.literal_eval(str(marker))
-			if (raw_coordinate is not None) and is_float(raw_coordinate[0]) and is_float(raw_coordinate[1]):
-				c = Coordinate(
-					adventure_id=adventure.id,
-					path_point=i,
-					latitude=raw_coordinate[0],
-					longitude=raw_coordinate[1]
-				)
-				db.session.add(c)
+			# check if directions are good
+			directions_result = gmaps.directions(
+				origin=waypoints[0],
+				destination=waypoints[-1],
+	            waypoints=list(filter(lambda w: (w is not waypoints[0]) and (w is not waypoints[-1]), waypoints)),
+	            mode="bicycling"
+			)
+
+			if (directions_result is None) or (len(directions_result) <= 0):
+				flash('Sorry, not supported adventure path', 'warning')
+				return redirect(url_for('simple_page.index'))
+
+			# delete existing coordinates for the adventure_id
+			db.session.query(Coordinate).filter_by(adventure_id=adventure_id).delete()
+			db.session.commit()
+
+			for i, waypoint in enumerate(waypoints):
+				# add coordinates of adventure to database
+				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=waypoint['lat'], longitude=waypoint['lng'])
+				db.session.add(coordinate)
 				db.session.commit()
 
-			i = i + 1
+			# get edited adventure from the form
+			form.populate_obj(adventure)
 
-		# get edited adventure from the form
-		form.populate_obj(adventure)
-
-		# update adventure in database
-		db.session.commit()
+			# update adventure in database
+			db.session.commit()
+		except (googlemaps.exceptions.ApiError, googlemaps.exceptions.HTTPError, googlemaps.exceptions.TransportError) as e:
+			flash('Something went wrong try again', 'danger')
+			return redirect(url_for('simple_page.index'))
 
 		# everything is okay
-		flash('Adventure has been successfully edited', 'success')
+		flash('Adventure item was successfully created', 'success')
 		return redirect(url_for('simple_page.index'))
 
 	# get coordinates of existing points
@@ -311,32 +321,45 @@ def new():
 
 	# verify the new form
 	if form.validate_on_submit():
-		# add adventure to database
-		adventure = Adventure(creator_id=current_user.id, date=form.date.data, mode=form.mode.data, info=form.info.data)
-		db.session.add(adventure)
-		db.session.commit()
+		try:
+			# get all waypoints
+			waypoints = get_waypoints(request.form)
 
-		# add participant of adventure to database
-		participant = AdventureParticipant(adventure_id=adventure.id, user_id=current_user.id)
-		db.session.add(participant)
-		db.session.commit()
+			if (waypoints is None) or (len(waypoints) <= 0):
+				flash('You must place at least one marker', 'warning')
+				return redirect(url_for('adventures.new'))
 
-		# add coordinates of adventure to database
-		i = 0
-		while True:
-			# get value from html element
-			marker = request.form.get('marker_' + str(i))
-			if (marker is None) or (marker is ''):
-				break
+			# check if directions are good
+			directions_result = gmaps.directions(
+				origin=waypoints[0],
+				destination=waypoints[-1],
+	            waypoints=list(filter(lambda w: (w is not waypoints[0]) and (w is not waypoints[-1]), waypoints)),
+	            mode="bicycling"
+			)
 
-			# convert value to point (double, double) and add it to database
-			raw_coordinate = ast.literal_eval(str(marker))
-			if (raw_coordinate is not None) and is_float(raw_coordinate[0]) and is_float(raw_coordinate[1]):
-				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=raw_coordinate[0], longitude=raw_coordinate[1])
+			if (directions_result is None) or (len(directions_result) <= 0):
+				flash('Sorry, not supported adventure path', 'warning')
+				return redirect(url_for('adventures.new'))
+
+			# add adventure to database
+			adventure = Adventure(creator_id=current_user.id, date=form.date.data, mode=form.mode.data, info=form.info.data)
+			db.session.add(adventure)
+			db.session.commit()
+
+			# add participant of adventure to database
+			participant = AdventureParticipant(adventure_id=adventure.id, user_id=current_user.id)
+			db.session.add(participant)
+			db.session.commit()
+
+			# add coordinates of adventure to database
+			for i, waypoint in enumerate(waypoints):
+				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=waypoint['lat'], longitude=waypoint['lng'])
 				db.session.add(coordinate)
 				db.session.commit()
 
-			i = i + 1 # check for next marker
+		except (googlemaps.exceptions.ApiError, googlemaps.exceptions.HTTPError, googlemaps.exceptions.TransportError) as e:
+			flash('Something went wrong try again', 'danger')
+			return redirect(url_for('adventures.new'))
 
 		# everything is okay
 		flash('Adventure item was successfully created', 'success')

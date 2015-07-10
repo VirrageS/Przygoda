@@ -15,7 +15,7 @@
 		</div>
 	{% endmacro %}
 
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp?language=pl?key=AIzaSyCUcFnTQOK-YqYdcQfkb0-dQ85FZ4zvPxU&signed_in=true"></script>
 	<script type="text/javascript" src="/static/js/map.js"></script>
 
 	<script type="text/javascript">
@@ -76,7 +76,6 @@
 
 		    google.maps.event.addListenerOnce(map, 'idle', function() {
 				setMapCenterAtCurrentPosition(map);
-		        // updateMapBounds();
 		    });
 		}
 
