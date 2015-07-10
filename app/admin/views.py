@@ -96,6 +96,44 @@ def charts():
 
 		return all_users
 
+
+	def get_users_per_adventure():
+		all_users_per_adventure = []
+		participants = AdventureParticipant.query.order_by(AdventureParticipant.joined_on).all()
+
+		users = 0
+		for participant in participants:
+			users += 1
+
+			registered_adventures = Adventure.query.filter(Adventure.created_on <= participant.joined_on).all()
+			all_users_per_adventure.append({
+				'date': {
+					'year': participant.joined_on.year,
+					'month': participant.joined_on.month,
+					'day': participant.joined_on.day,
+					'hour': participant.joined_on.hour,
+					'minute': participant.joined_on.minute,
+					'second': participant.joined_on.second
+				},
+				'users_per_adventure': users / len(registered_adventures)
+			})
+
+			# if participant.left_on is not None:
+			# 	left_adventures = Adventure.query.filter(Adventure.created_on <= participant.left_on).all()
+			# 	all_users_per_adventure.append({
+			# 		'date': {
+			# 			'year': participant.left_on.year,
+			# 			'month': participant.left_on.month,
+			# 			'day': participant.left_on.day,
+			# 			'hour': participant.left_on.hour,
+			# 			'minute': participant.left_on.minute,
+			# 			'second': participant.left_on.second
+			# 		},
+			# 		'users_per_adventure': len(left_adventures)
+			# 	})
+
+		return all_users_per_adventure
+
 	def get_adventures_views():
 		all_adventures_views = []
 		adventures = AdventureViews.query.add_column(func.count(AdventureViews.value)).group_by(AdventureViews.adventure_id).all()
@@ -126,6 +164,7 @@ def charts():
 		'admin/charts.html',
 		all_adventures=get_all_adventures(),
 		all_users=get_all_users(),
+		all_users_per_adventure=get_users_per_adventure(),
 		all_adventures_views=get_adventures_views(),
 		all_adventures_searches=get_adventures_searches()
 	)

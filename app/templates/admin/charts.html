@@ -5,6 +5,7 @@
 		google.load('visualization', '1', {packages: ['line', 'bar']});
 		google.setOnLoadCallback(drawAdventuresChart);
 		google.setOnLoadCallback(drawUsersChart);
+		google.setOnLoadCallback(drawUsersPerAdventureChart);
 		google.setOnLoadCallback(drawAdventuresViewsChart);
 		google.setOnLoadCallback(drawAdventuresSearchesChart);
 
@@ -13,7 +14,6 @@
 			data.addColumn('datetime', 'Date');
 			data.addColumn('number', 'All');
 			data.addColumn('number', 'Active');
-			data.addColumn('number', 'Users per adventure');
 
 			data.addRows([
 				{%- for adventure in all_adventures -%}
@@ -27,15 +27,13 @@
 							{{ adventure.date.second }}
 						),
 						{{ adventure.count }},
-						{{ adventure.active }},
-						{{ adventure.users_per_adventure }}
+						{{ adventure.active }}
 					],
 				{%- endfor -%}
 			]);
 
 			var dateFormatter = new google.visualization.DateFormat({pattern: 'dd MMM yyyy HH:mm:ss'});
 			dateFormatter.format(data, 0);
-
 
 			var options = {
 				title: 'ADVENTURES',
@@ -104,6 +102,50 @@
 			chart.draw(data, google.charts.Line.convertOptions(options));
 		}
 
+		function drawUsersPerAdventureChart() {
+			var data = new google.visualization.DataTable();
+			data.addColumn('datetime', 'Date');
+			data.addColumn('number', 'Users per adventure');
+
+			data.addRows([
+				{%- for adventure in all_users_per_adventure -%}
+					[
+						new Date(
+							{{ adventure.date.year }},
+							{{ adventure.date.month }} - 1,
+							{{ adventure.date.day }},
+							{{ adventure.date.hour }},
+							{{ adventure.date.minute }},
+							{{ adventure.date.second }}
+						),
+						{{ adventure.users_per_adventure }}
+					],
+				{%- endfor -%}
+			]);
+
+			var dateFormatter = new google.visualization.DateFormat({pattern: 'dd MMM yyyy HH:mm:ss'});
+			dateFormatter.format(data, 0);
+
+			var options = {
+				title: 'USERS PER ADVENTURE',
+				width: "100%",
+				height: 550,
+				backgroundColor: 'none',
+				hAxis: {
+					title: 'Date',
+					format: 'dd MMM yyyy (HH:mm:ss)',
+					gridlines: {count: 20}
+				},
+				vAxis: {
+					title: 'Value',
+					minValue: 0
+				}
+			};
+
+			var chart = new google.charts.Line(document.getElementById('users_per_adventure_chart'));
+			chart.draw(data, google.charts.Line.convertOptions(options));
+		}
+
 		function drawAdventuresViewsChart() {
 			var data = google.visualization.arrayToDataTable([
 	    		['Adventure ID', 'Views'],
@@ -166,6 +208,7 @@
 	<h2>Wykresy</h2>
 	<br><br><br><div id="adventures_chart"></div>
 	<br><br><br><div id="users_chart"></div>
+	<br><br><br><div id="users_per_adventure_chart"></div>
 	<br><br><br><div id="adventures_views_chart"></div>
 	<br><br><br><div id="adventures_searches_chart"></div>
 {% endblock %}
