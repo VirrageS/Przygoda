@@ -10,8 +10,13 @@ from app.users.models import User
 
 import re # for checking username
 
-def validate_username(username):
+def validate_username_characters(username):
 	return username == re.sub('[^a-zA-Z0-9_\.]', '', username)
+
+def validate_username_blocked(username):
+	blocked = ['admin','mod','moderator']
+	return not (username.lower() in blocked)
+
 
 class RequiredIf(Required):
 	# a validator which makes a field required if
@@ -84,26 +89,32 @@ class AccountForm(Form):
 			return False
 
 		# check if username has valid characters
-		if not validate_username(self.username.data):
+		if not validate_username_characters(self.username.data):
 			self.username.errors.append('Username contains illegal characters')
+			return False
+
+		if not validate_username_blocked(self.username.data):
+			self.username.errors.append('This username is blocked')
 			return False
 
 		# check username
 		user = User.query.filter_by(username=self.username.data).first()
 		if (user is not None) and (user.id != current_user.id):
-			self.username.errors.append('This username is already in use. Please choose another one.')
+			self.username.errors.append('This username is already in use. Please choose another one')
 			return False
 
 		# email check
 		user = User.query.filter_by(email=self.email.data.lower()).first()
 		if (user is not None) and (user.id != current_user.id):
-			self.email.errors.append('This email is already in use.')
+			self.email.errors.append('This email is already in use')
 			return False
 
 		# check old password
-		if ((self.old_password.data is not None) and
+		if (
+			(self.old_password.data is not None) and
 			(self.old_password.data is not '') and
-			(not check_password_hash(current_user.password, self.old_password.data))):
+			(not check_password_hash(current_user.password, self.old_password.data))
+		):
 			self.old_password.errors.append('Old password is not correct')
 			return False
 
