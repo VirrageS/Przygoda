@@ -14,9 +14,15 @@ def validate_username_characters(username):
 	return username == re.sub('[^a-zA-Z0-9_\.]', '', username)
 
 def validate_username_blocked(username):
-	blocked = ['admin','mod','moderator']
-	return not (username.lower() in blocked)
+	# blocked names
+	blocked_names = ['admin', 'mod', 'moderator']
 
+	for blocked_name in blocked_names:
+		# check if username is substring of blocked name
+		if (username.lower() in blocked_name) or (blocked_name in username.lower()):
+			return False
+
+	return True
 
 class RequiredIf(Required):
 	# a validator which makes a field required if
