@@ -257,8 +257,8 @@ def edit(adventure_id=0):
 			# get all waypoints
 			waypoints = get_waypoints(request.form)
 
-			if (waypoints is None) or (len(waypoints) <= 0):
-				flash('You must place at least one marker', 'warning')
+			if (waypoints is None) or (len(waypoints) < 2):
+				flash('You must place at least two markers', 'warning')
 				return redirect(url_for('adventures.new'))
 
 			# check if directions are good
@@ -325,8 +325,8 @@ def new():
 			# get all waypoints
 			waypoints = get_waypoints(request.form)
 
-			if (waypoints is None) or (len(waypoints) <= 0):
-				flash('You must place at least one marker', 'warning')
+			if (waypoints is None) or (len(waypoints) < 2):
+				flash('You must place at least two markerss', 'warning')
 				return redirect(url_for('adventures.new'))
 
 			# check if directions are good

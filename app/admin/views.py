@@ -41,18 +41,26 @@ def charts():
 		all_adventures = []
 		adventures = Adventure.query.order_by(Adventure.created_on.asc()).all()
 
-		active = 0
 		count = 0
-		participants = 0
-
 		for adventure in adventures:
 			count += 1
-			if adventure.is_active():
-				active += 1
+			active = Adventure.query.filter(
+				Adventure.date > adventure.created_on,
+				Adventure.created_on <= adventure.created_on
+			).all()
 
-			ap = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-			ap = list(filter(lambda ap: ap.is_active(), ap))
-			participants += len(ap)
+			active = list(filter(
+				lambda a: (
+					(
+						((a.deleted_on is not None) and (a.deleted_on > adventure.created_on)) or
+						(a.deleted_on is None)
+					)
+					# ) and (
+					# 	((a.disabled_on is not None) and (a.disabled_on > adventure.created_on)) or
+					# 	(a.disabled_on is None)
+					# )
+				), active
+			))
 
 			all_adventures.append({
 				'date': {
@@ -63,9 +71,8 @@ def charts():
 					'minute': adventure.created_on.minute,
 					'second': adventure.created_on.second
 				},
-				'active': active,
-				'count': count,
-				'users_per_adventure': participants / count
+				'active': len(active),
+				'count': count
 			})
 
 		return all_adventures
