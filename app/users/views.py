@@ -55,7 +55,7 @@ def login():
 
 			# update last login date
 			registered_user.last_login = datetime.now()
-			db.session.add(register_user)
+			db.session.add(registered_user)
 			db.session.commit()
 
 			flash(u'Zalogowałeś sie poprawnie. Witaj w Przygodzie.', 'success')

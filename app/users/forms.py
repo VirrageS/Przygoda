@@ -65,8 +65,12 @@ class RegisterForm(Form):
 			return False
 
 		# check if username has valid characters
-		if not validate_username(self.username.data):
+		if not validate_username_characters(self.username.data):
 			self.username.errors.append('Username contains illegal characters')
+			return False
+
+		if not validate_username_blocked(self.username.data):
+			self.username.errors.append('This username is blocked')
 			return False
 
 		# check username
