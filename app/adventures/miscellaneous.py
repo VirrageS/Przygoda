@@ -20,9 +20,12 @@ def get_waypoints(form):
 			break
 
 		# convert value to point (double, double) and add it to database
-		raw_coordinate = ast.literal_eval(str(marker))
-		if (raw_coordinate is not None) and is_float(raw_coordinate[0]) and is_float(raw_coordinate[1]):
-			waypoints.append({'lat': raw_coordinate[0], 'lng': raw_coordinate[1]})
+		try:
+			raw_coordinate = ast.literal_eval(str(marker))
+			if (raw_coordinate is not None) and is_float(raw_coordinate[0]) and is_float(raw_coordinate[1]):
+				waypoints.append({'lat': raw_coordinate[0], 'lng': raw_coordinate[1]})
+		except:
+			return None
 
 		i = i + 1 # check next marker
 
@@ -35,8 +38,11 @@ def get_bounds(form):
 		return None
 
 	# convert value to point (double, double)
-	start_pos = ast.literal_eval(str(start_pos))
-	if (start_pos is None) or (not is_float(start_pos[0])) or (not is_float(start_pos[1])):
+	try:
+		start_pos = ast.literal_eval(str(start_pos))
+		if (start_pos is None) or (not is_float(start_pos[0])) or (not is_float(start_pos[1])):
+			return None
+	except:
 		return None
 
 	# get end position from html element
@@ -44,9 +50,12 @@ def get_bounds(form):
 	if (end_pos is None) or (end_pos is ''):
 		return None
 
-	# convert value to point (double, double)
-	end_pos = ast.literal_eval(str(end_pos))
-	if (end_pos is None) or (not is_float(end_pos[0])) or (not is_float(end_pos[1])):
+	try:
+		# convert value to point (double, double)
+		end_pos = ast.literal_eval(str(end_pos))
+		if (end_pos is None) or (not is_float(end_pos[0])) or (not is_float(end_pos[1])):
+			return None
+	except:
 		return None
 
 	return {'bl_corner': start_pos, 'tr_corner': end_pos}
