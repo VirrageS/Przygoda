@@ -130,9 +130,12 @@ def join(adventure_id):
 		flash('You arleady have joined to this adventure', 'warning')
 		return redirect(url_for('simple_page.index'))
 
+	# join user again
 	participant.left_on = None
 	participant.joined_on = datetime.now()
+	db.session.add(participant)
 	db.session.commit()
+
 	flash('You have joined to this adventure', 'success')
 	return redirect(url_for('simple_page.index'))
 

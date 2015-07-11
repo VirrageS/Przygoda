@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import datetime
-from werkzeug import check_password_hash, generate_password_hash
+from datetime import datetime, timedelta
 from flask import Blueprint, request, render_template, flash, redirect, url_for
-from flask.ext.login import current_user, login_user, logout_user, login_required
-from flask.ext.sqlalchemy import get_debug_queries
 from sqlalchemy.sql import func
 
 from app import app, db
@@ -15,17 +12,6 @@ from app.mine.models import AdventureViews, AdventureSearches
 from app.miscellaneous import admin_required
 
 mod = Blueprint('admin', __name__, url_prefix='/admin')
-
-# check for slow quieries
-@mod.after_request
-def after_request(response):
-	for query in get_debug_queries():
-		if query.duration >= app.config['DATABASE_QUERY_TIMEOUT']:
-			app.logger.warning(
-				"SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" %
-				(query.statement, query.parameters, query.duration, query.context)
-			)
-	return response
 
 # Admin panel
 @mod.route('/')
@@ -81,11 +67,20 @@ def charts():
 		all_users = []
 		users = User.query.order_by(User.registered_on.asc()).all()
 
-		active = 0
 		count = 0
 		for user in users:
-			if user.is_active_login():
-				active += 1
+			active = User.query.filter(
+				User.registered_on <= user.registered_on
+			).all()
+
+			User.last_login + timedelta(days=4) >= user.registered_on
+
+			active = list(filter(
+				lambda u: (
+					((u.last_login is not None) and (u.last_login + timedelta(days=4) > user.registered_on)) or
+					(u.last_login is None)
+				), active
+			))
 
 			count += 1
 			all_users.append({
@@ -97,7 +92,7 @@ def charts():
 					'minute': user.registered_on.minute,
 					'second': user.registered_on.second
 				},
-				'active': active,
+				'active': len(active),
 				'count': count
 			})
 
