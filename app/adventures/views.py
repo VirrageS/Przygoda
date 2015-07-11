@@ -10,7 +10,7 @@ from datetime import datetime, date, timedelta # for current date
 from app import app, db
 from app.miscellaneous import confirmed_email_required
 from app.adventures import constants as ADVENTURES
-from app.adventures.miscellaneous import is_float, get_waypoints
+from app.adventures.miscellaneous import get_bounds, get_waypoints
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures.forms import NewForm, EditForm, SearchForm
 from app.users.models import User
@@ -414,30 +414,18 @@ def search():
 	form = SearchForm(request.form)
 
 	if form.validate_on_submit():
-		# get start position from html element
-		start_pos = request.form.get('bl_corner')
-		if (start_pos is None) or (start_pos is ''):
-			return redirect(url_for('adventures.search'))
+		# get bounds
+		bounds = get_bounds(request.form)
 
-		# convert value to point (double, double)
-		start_pos = ast.literal_eval(str(start_pos))
-		if (start_pos is None) or (not is_float(start_pos[0])) or (not is_float(start_pos[1])):
-			return redirect(url_for('adventures.search'))
-
-		# get end position from html element
-		end_pos = request.form.get('tr_corner')
-		if (end_pos is None) or (end_pos is ''):
-			return redirect(url_for('adventures.search'))
-
-		# convert value to point (double, double)
-		end_pos = ast.literal_eval(str(end_pos))
-		if (end_pos is None) or (not is_float(end_pos[0])) or (not is_float(end_pos[1])):
+		# check if bounds are good
+		if bounds is None:
+			flash('Something went wrong try again', 'danger')
 			return redirect(url_for('adventures.search'))
 
 		# get adventures from area
 		coordinates = Coordinate.query.filter(
-			Coordinate.latitude >= start_pos[0], Coordinate.latitude <= end_pos[0],
-			Coordinate.longitude >= start_pos[1], Coordinate.longitude <= end_pos[1]
+			Coordinate.latitude >= bounds['bl_corner'][0], Coordinate.latitude <= bounds['tr_corner'][0],
+			Coordinate.longitude >= bounds['bl_corner'][1], Coordinate.longitude <= bounds['tr_corner'][1]
 		).group_by(Coordinate.adventure_id).all()
 
 		for coordinate in coordinates:
@@ -478,7 +466,7 @@ def search():
 				db.session.commit()
 
 		# updated search coordinates
-		final_coordinates = (start_pos, end_pos)
+		final_coordinates = (bounds['bl_corner'], bounds['tr_corner'])
 
 		# sort adventures by date
 		final_adventures = sorted(final_adventures, key=(lambda a: a['date']))
