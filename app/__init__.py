@@ -4,6 +4,7 @@ from flask import Flask, render_template, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 from flask.ext.mail import Mail
+from flask.ext.cache import Cache
 
 # set app
 app = Flask(__name__)
@@ -14,6 +15,9 @@ db = SQLAlchemy(app)
 
 # set mail
 mail = Mail(app)
+
+# cache
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 # if not debuging we should keep log of our app
 if not app.config['DEBUG']:

@@ -4,9 +4,11 @@ from flask.ext.login import current_user
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 from app.users.models import User
+from app import cache
 
 mod = Blueprint('simple_page', __name__, template_folder='templates')
 
+# @cache.cached(timeout=50)
 def show_all_adventures():
 	all_adventures = []
 	all_markers = []
