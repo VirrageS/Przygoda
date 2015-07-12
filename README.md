@@ -7,10 +7,9 @@ Aplikacja Przygoda jest najlepszym sposobem na znajdowanie miłośników roweró
 
 Klonujemy nasze repozytorium:
 
-	MacBook-Air-Janusz:Desktop VirrageS$
+	MacBook-Air-Janusz:Desktop VirrageS$ sudo apt-get install git
 	MacBook-Air-Janusz:Desktop VirrageS$ git clone https://github.com/VirrageS/przygoda
 	MacBook-Air-Janusz:Desktop VirrageS$ cd przygoda
-	MacBook-Air-Janusz:przygoda VirrageS$
 
 ## Inicjacja wirtualnego środowiska i bibliotek
 
@@ -20,6 +19,7 @@ Jeżeli nie masz `pip` to użyj komend:
 
 	MacBook-Air-Janusz:przygoda VirrageS$ apt-get update
 	MacBook-Air-Janusz:przygoda VirrageS$ sudo apt-get install python3-pip python3-dev
+	MacBook-Air-Janusz:przygoda VirrageS$ sudo apt-get build-dep python3-psycopg2
 
 I zainstaluj `pip3`:
 
@@ -132,12 +132,51 @@ Otwieramy nową kartę w terminalu i wpisujemy
 Powinniśmy od razu zostać przekierowani i przy komendzie `sudo` powinno nas zapytać o hasło.
 Koniec tej części.
 
+## All in one
+
+	sudo apt-get update; sudo apt-get build-dep python3-psycopg2; sudo apt-get install python3-pip python3-dev nginx git; sudo pip3 install virtualenv; git clone https://github.com/VirrageS/przygoda; cd przygoda; virtualenv env; source env/bin/activate; pip3 install psycopg2; pip3 install -r requirements.txt; deactivate; sudo nano /etc/init/przygoda.conf;
+
+```
+description "Gunicorn application server running przygoda"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+setuid ubuntu
+setgid www-data
+
+env PATH=/home/ubuntu/przygoda/env/bin
+chdir /home/ubuntu/przygoda
+exec gunicorn --workers 4 --bind unix:przygoda.sock -m 007 run:app
+```
+
+	sudo start przygoda; sudo rm -rf /etc/nginx/sites-enabled/default; sudo rm -rf /etc/nginx/sites-available/default; sudo nano /etc/nginx/sites-available/przygoda
+
+```
+server {
+    listen 80;
+    server_name ;
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/przygoda/przygoda.sock;
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
+    }
+}
+```
+
+	sudo ln -s /etc/nginx/sites-available/przygoda /etc/nginx/sites-enabled; sudo nginx -t; sudo service nginx restart
+
+
 ## Aplikacja
 
 Na początku ściągamy wszystkie potrzebne nam biblioteki i narzędzia
 
 	sudo apt-get update
-	sudo apt-get install python3-pip python3-dev nginx
+	sudo apt-get build-dep python3-psycopg2
+	sudo apt-get install python3-pip python3-dev nginx git
 
 Następnie instalujemy virtualne środowisko
 
@@ -155,7 +194,7 @@ Instalujemy w nim virtualne środowisko i aktywujemy je
 
 Instalujemy wszystko czego potrzebujemy
 
-	pip3 install gunicorn flask
+	pip3 install psycopg2
 	pip3 install -r requirements.txt
 
 Dezaktywujemy virtualne środowisko i przechodzimy do dalszej części
@@ -182,7 +221,7 @@ setgid www-data
 
 env PATH=/home/virrages/przygoda/env/bin
 chdir /home/virrages/przygoda
-exec gunicorn --workers 3 --bind unix:przygoda.sock -m 007 run:app
+exec gunicorn --workers 4 --bind unix:przygoda.sock -m 007 run:app
 ```
 
 Teraz startujemy nasz skrypt, który powinnien zostać poprawnie odpalony
@@ -205,11 +244,11 @@ i umieszczamy w niej:
 ```
 server {
     listen 80;
-    server_name 104.131.76.86;
+    server_name ;
 
     location / {
         include proxy_params;
-        proxy_pass http://unix:/home/virrages/przygoda/przygoda.sock;
+        proxy_pass http://unix:/home/ubuntu/przygoda/przygoda.sock;
         proxy_connect_timeout 300s;
         proxy_read_timeout 300s;
     }
@@ -232,4 +271,4 @@ Teraz restartujemy nginx'a i powinno już wszystko działać
 
 ## Stress tests
 
-	ab -k -n 50000 -c 2 -e test.cvs http://104.131.76.86/
+	ab -k -n 50000 -c 500 -e test.cvs http://..../
