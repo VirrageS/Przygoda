@@ -429,7 +429,7 @@ def search():
 		coordinates = Coordinate.query.filter(
 			Coordinate.latitude >= bounds['bl_corner'][0], Coordinate.latitude <= bounds['tr_corner'][0],
 			Coordinate.longitude >= bounds['bl_corner'][1], Coordinate.longitude <= bounds['tr_corner'][1]
-		).group_by(Coordinate.adventure_id).all()
+		).distinct(Coordinate.adventure_id).all()
 
 		for coordinate in coordinates:
 			# get adventure with coordinates id

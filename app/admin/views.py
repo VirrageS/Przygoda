@@ -138,12 +138,14 @@ def charts():
 
 	def get_adventures_views():
 		all_adventures_views = []
-		adventures = AdventureViews.query.add_column(func.count(AdventureViews.value)).group_by(AdventureViews.adventure_id).all()
+		adventures = db.session.query(
+			AdventureViews.adventure_id.label('adventure_id'), func.sum(AdventureViews.value).label('views')
+		).group_by(AdventureViews.adventure_id).all()
 
 		for adventure in adventures:
 			all_adventures_views.append({
-				'id': adventure[0].adventure_id,
-				'views': adventure[1]
+				'id': adventure.adventure_id,
+				'views': adventure.views
 			})
 
 		all_adventures_views = sorted(all_adventures_views, key=(lambda a: a['views']), reverse=True)
@@ -151,12 +153,14 @@ def charts():
 
 	def get_adventures_searches():
 		all_adventures_searches = []
-		adventures = AdventureSearches.query.add_column(func.count(AdventureSearches.value)).group_by(AdventureSearches.adventure_id).all()
+		adventures = db.session.query(
+			AdventureSearches.adventure_id.label('adventure_id'), func.sum(AdventureSearches.value).label('searches')
+		).group_by(AdventureSearches.adventure_id).all()
 
 		for adventure in adventures:
 			all_adventures_searches.append({
-				'id': adventure[0].adventure_id,
-				'searches': adventure[1]
+				'id': adventure.adventure_id,
+				'searches': adventure.searches
 			})
 
 		all_adventures_searches = sorted(all_adventures_searches, key=(lambda a: a['searches']), reverse=True)

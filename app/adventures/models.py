@@ -12,7 +12,7 @@ class Adventure(db.Model):
 	info = db.Column('info', db.String, nullable=False, default='')
 	created_on = db.Column('created_on', db.DateTime)
 	disabled = db.Column('disabled', db.Boolean, nullable=False, default=False)
-	# disabled_on = db.Column('disabled_on', db.DateTime, nullable=True)
+	disabled_on = db.Column('disabled_on', db.DateTime, nullable=True)
 	deleted = db.Column('deleted', db.Boolean, nullable=False, default=False)
 	deleted_on = db.Column('deleted_on', db.DateTime, nullable=True)
 
