@@ -5,16 +5,18 @@
 # git clone https://github.com/VirrageS/przygoda;
 
 WORKERS=3
-PROJECT_NAME="przygoda"
+PROJECT_NAME=przygoda
 USER=ubuntu
-IP=http://przygoda-1532623138.eu-west-1.elb.amazonaws.com
+IP=przygoda-1532623138.eu-west-1.elb.amazonaws.com
 
 apt-get update;
 apt-get build-dep python3-psycopg2;
 apt-get install python3-pip python3-dev nginx;
+
 pip3 install virtualenv;
 virtualenv env;
-source env/bin/activate;
+
+. ./env/bin/activate;
 pip3 install psycopg2;
 pip3 install -r requirements.txt;
 deactivate;
@@ -36,6 +38,7 @@ exec gunicorn --workers $WORKERS --bind unix:$PROJECT_NAME.sock -m 007 run:app
 " > /etc/init/$PROJECT_NAME.conf;
 
 start $PROJECT_NAME;
+
 rm -rf /etc/nginx/sites-enabled/default;
 rm -rf /etc/nginx/sites-available/default;
 
