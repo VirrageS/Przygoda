@@ -1,26 +1,26 @@
 #!/bin/bash
 
 # before using this script use
-# sudo apt-get git;
+# sudo apt-get install git;
 # git clone https://github.com/VirrageS/przygoda;
 
 WORKERS=3
-PROJECT_NAME=przygoda
+PROJECT_NAME="przygoda"
 USER=ubuntu
+IP=http://przygoda-1532623138.eu-west-1.elb.amazonaws.com
 
 apt-get update;
 apt-get build-dep python3-psycopg2;
 apt-get install python3-pip python3-dev nginx;
 pip3 install virtualenv;
-cd $PROJECT_NAME;
 virtualenv env;
 source env/bin/activate;
 pip3 install psycopg2;
 pip3 install -r requirements.txt;
 deactivate;
 
-touch "/etc/init/$PROJECT_NAME.conf";
-"
+touch /etc/init/$PROJECT_NAME.conf;
+echo "
 description \"Gunicorn application server running $PROJECT_NAME\"
 
 start on runlevel [2345]
@@ -33,26 +33,26 @@ setgid www-data
 env PATH=/home/$USER/$PROJECT_NAME/env/bin
 chdir /home/$USER/$PROJECT_NAME
 exec gunicorn --workers $WORKERS --bind unix:$PROJECT_NAME.sock -m 007 run:app
-" > "/etc/init/$PROJECT_NAME.conf";
+" > /etc/init/$PROJECT_NAME.conf;
 
 start $PROJECT_NAME;
 rm -rf /etc/nginx/sites-enabled/default;
 rm -rf /etc/nginx/sites-available/default;
 
-touch "/etc/nginx/sites-available/$PROJECT_NAME";
-"
+touch /etc/nginx/sites-available/$PROJECT_NAME;
+echo "
 server {
     listen 80;
-    server_name ;
+    server_name $IP;
 
     location / {
         include proxy_params;
-        proxy_pass http://unix:/home/ubuntu/przygoda/przygoda.sock;
+        proxy_pass http://unix:/home/$USER/$PROJECT_NAME/przygoda.sock;
         proxy_connect_timeout 30s;
         proxy_read_timeout 30s;
     }
 }
-" > "/etc/nginx/sites-available/$PROJECT_NAME";
+" > /etc/nginx/sites-available/$PROJECT_NAME;
 
 ln -s /etc/nginx/sites-available/$PROJECT_NAME /etc/nginx/sites-enabled;
 nginx -t;
