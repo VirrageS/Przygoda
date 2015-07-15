@@ -24,7 +24,7 @@ pip3 install -r requirements.txt;
 deactivate;
 
 sudo touch /etc/init/$PROJECT_NAME.conf;
-echo "
+sudo echo "
 description \"Gunicorn application server running $PROJECT_NAME\"
 
 start on runlevel [2345]
@@ -43,7 +43,7 @@ sudo rm -rf /etc/nginx/sites-enabled/default;
 sudo rm -rf /etc/nginx/sites-available/default;
 
 sudo touch /etc/nginx/sites-available/$PROJECT_NAME;
-echo "
+sudo echo "
 server {
     listen 80;
     server_name $IP;
