@@ -20,4 +20,4 @@ sudo rm -rf /home/$USER/$PROJECT_NAME
 
 # make fresh directories
 sudo mkdir /home/$USER/$PROJECT_NAME
-sudo chmod 666 /home/$USER/$PROJECT_NAME
+sudo chmod 777 /home/$USER/$PROJECT_NAME
