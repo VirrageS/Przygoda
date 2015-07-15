@@ -249,8 +249,8 @@ server {
     location / {
         include proxy_params;
         proxy_pass http://unix:/home/ubuntu/przygoda/przygoda.sock;
-        proxy_connect_timeout 300s;
-        proxy_read_timeout 300s;
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
     }
 }
 ```
