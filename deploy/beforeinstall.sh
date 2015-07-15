@@ -19,4 +19,5 @@ sudo rm -rf /etc/nginx/sites-available/$PROJECT_NAME;
 sudo rm -rf /home/$USER/$PROJECT_NAME
 
 # make fresh directories
-mkdir /home/$USER/$PROJECT_NAME
+sudo mkdir /home/$USER/$PROJECT_NAME
+sudo chmod 666 /home/$USER/$PROJECT_NAME
