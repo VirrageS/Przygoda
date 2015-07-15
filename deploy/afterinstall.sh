@@ -9,9 +9,9 @@ PROJECT_NAME=przygoda
 USER=ubuntu
 IP=przygoda-1532623138.eu-west-1.elb.amazonaws.com
 
-sudo apt-get update;
-sudo apt-get build-dep python3-psycopg2;
-sudo apt-get install python3-pip python3-dev nginx;
+sudo apt-get --yes update;
+sudo apt-get --yes build-dep python3-psycopg2;
+sudo apt-get --yes install python3-pip python3-dev nginx;
 
 cd /home/$USER/$PROJECT_NAME;
 
