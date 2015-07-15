@@ -22,7 +22,7 @@ os: linux
 #   "files" section altogether. A blank or incomplete "files" section
 #   may cause associated deployments to fail.
 files:
-  - source: ./
+  - source: /
     destination: /home/ubuntu/przygoda
 # For deployments to Amazon Linux and Ubuntu Server instances,
 #   you can specify a "permissions"
@@ -88,27 +88,27 @@ hooks:
 # During the BeforeInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
   BeforeInstall:
-    - location: ./deploy/beforeinstall.sh
-      timeout: 300
-      runas: ubuntu
+    - location: /deploy/beforeinstall.sh
+      # timeout: 300
+      # runas: ubuntu
     # - location: ./deploy/start.sh
       # timeout:
       # runas:
 # During the AfterInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
   AfterInstall:
-    - location: ./deploy/afterinstall.sh
-      timeout: 300
-      runas: ubuntu
+    - location: /deploy/afterinstall.sh
+      # timeout: 300
+      # runas: ubuntu
     # - location:
       # timeout:
       # runas:
 # During the ApplicationInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
   ApplicationStart:
-    - location: ./deploy/start.sh
-      timeout: 300
-      runas: ubuntu
+    - location: /deploy/start.sh
+      # timeout: 300
+      # runas: ubuntu
     # - location:
       # timeout:
       # runas:

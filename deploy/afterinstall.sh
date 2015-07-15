@@ -13,7 +13,7 @@ sudo apt-get update;
 sudo apt-get build-dep python3-psycopg2;
 sudo apt-get install python3-pip python3-dev nginx;
 
-cd /home/$USER/$PRZYGODA;
+cd /home/$USER/$PROJECT_NAME;
 
 pip3 install virtualenv;
 virtualenv env;

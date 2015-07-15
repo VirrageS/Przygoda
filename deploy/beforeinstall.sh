@@ -11,6 +11,8 @@ sudo service nginx stop;
 sudo rm -f /etc/init/$PROJECT_NAME.conf
 sudo rm -rf /etc/init/$PROJECT_NAME.conf
 
+sudo rm -f /etc/nginx/sites-enabled/$PROJECT_NAME;
+sudo rm -f /etc/nginx/sites-available/$PROJECT_NAME;
 sudo rm -rf /etc/nginx/sites-enabled/$PROJECT_NAME;
 sudo rm -rf /etc/nginx/sites-available/$PROJECT_NAME;
 
