@@ -23,7 +23,7 @@ pip3 install psycopg2;
 pip3 install -r requirements.txt;
 deactivate;
 
-touch /etc/init/$PROJECT_NAME.conf;
+sudo touch /etc/init/$PROJECT_NAME.conf;
 echo "
 description \"Gunicorn application server running $PROJECT_NAME\"
 
@@ -42,7 +42,7 @@ exec gunicorn --workers $WORKERS --bind unix:$PROJECT_NAME.sock -m 007 run:app
 sudo rm -rf /etc/nginx/sites-enabled/default;
 sudo rm -rf /etc/nginx/sites-available/default;
 
-touch /etc/nginx/sites-available/$PROJECT_NAME;
+sudo touch /etc/nginx/sites-available/$PROJECT_NAME;
 echo "
 server {
     listen 80;
@@ -57,5 +57,5 @@ server {
 }
 " > /etc/nginx/sites-available/$PROJECT_NAME;
 
-ln -s /etc/nginx/sites-available/$PROJECT_NAME /etc/nginx/sites-enabled;
-nginx -t;
+sudo ln -s /etc/nginx/sites-available/$PROJECT_NAME /etc/nginx/sites-enabled;
+sudo nginx -t;
