@@ -9,9 +9,11 @@ PROJECT_NAME=przygoda
 USER=ubuntu
 IP=przygoda-1532623138.eu-west-1.elb.amazonaws.com
 
-apt-get update;
-apt-get build-dep python3-psycopg2;
-apt-get install python3-pip python3-dev nginx;
+sudo apt-get update;
+sudo apt-get build-dep python3-psycopg2;
+sudo apt-get install python3-pip python3-dev nginx;
+
+cd /home/$USER/$PRZYGODA;
 
 pip3 install virtualenv;
 virtualenv env;
@@ -37,10 +39,8 @@ chdir /home/$USER/$PROJECT_NAME
 exec gunicorn --workers $WORKERS --bind unix:$PROJECT_NAME.sock -m 007 run:app
 " > /etc/init/$PROJECT_NAME.conf;
 
-start $PROJECT_NAME;
-
-rm -rf /etc/nginx/sites-enabled/default;
-rm -rf /etc/nginx/sites-available/default;
+sudo rm -rf /etc/nginx/sites-enabled/default;
+sudo rm -rf /etc/nginx/sites-available/default;
 
 touch /etc/nginx/sites-available/$PROJECT_NAME;
 echo "
@@ -59,4 +59,3 @@ server {
 
 ln -s /etc/nginx/sites-available/$PROJECT_NAME /etc/nginx/sites-enabled;
 nginx -t;
-service nginx restart;
