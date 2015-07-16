@@ -95,7 +95,7 @@ def register():
 		#login_user(user)
 
 		# everything okay so far
-		flash('Email potwierdzający zostal wyslany', 'info')
+		flash('Email potwierdzajacy zostal wyslany', 'info')
 		flash('Uzytkownik zostal poprawnie zarejestrowany. Witaj w Przygodzie!', 'success')
 		return redirect(url_for('users.login'))
 
