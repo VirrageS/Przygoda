@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from functools import wraps
 from flask.ext.login import current_user
 from flask import redirect, url_for, flash, abort

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask import Blueprint, render_template
 
 from flask.ext.login import current_user

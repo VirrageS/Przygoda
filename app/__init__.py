@@ -1,4 +1,5 @@
 import os
+import sys
 
 from flask import Flask, render_template, g
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -24,7 +25,7 @@ if not app.config['DEBUG']:
 	import logging
 	from logging.handlers import RotatingFileHandler
 
-	file_handler = RotatingFileHandler('tmp/przygoda.log', 'a', 1 * 1024 * 1024, 10)
+	file_handler = RotatingFileHandler('logs/przygoda.log', 'a', 1 * 1024 * 1024, 10)
 	file_handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
 	app.logger.setLevel(logging.INFO)
 	file_handler.setLevel(logging.INFO)
@@ -36,7 +37,7 @@ def install_secret_key(application, filename='secret_key'):
 	filename = os.path.join(application.instance_path, filename)
 
 	try:
-		application.config['SECRET_KEY'] = open(filename, 'rb').read()
+		app.config['SECRET_KEY'] = open(filename, 'rb').read()
 	except IOError:
 		print('Error: No secret key. Create it with:')
 		full_path = os.path.dirname(filename)
@@ -47,7 +48,8 @@ def install_secret_key(application, filename='secret_key'):
 
 
 if not app.config['DEBUG']:
-	install_secret_key(app)
+	pass
+	# install_secret_key(app)
 
 # login setup
 login_manager = LoginManager()

@@ -95,8 +95,8 @@ def register():
 		#login_user(user)
 
 		# everything okay so far
-		flash('Email potwierdzający został wysłany', 'info')
-		flash('Użytkownik został zarejestrowany poprawnie. Witaj w Przygodzie.', 'success')
+		flash('Email potwierdzający zostal wyslany', 'info')
+		flash('Uzytkownik zostal poprawnie zarejestrowany. Witaj w Przygodzie!', 'success')
 		return redirect(url_for('users.login'))
 
 	return render_template('users/register.html', form=form)
@@ -111,7 +111,7 @@ def logout():
 	logout_user()
 
 	# everything okay so back
-	flash('Wylogowałeś sie z Przygody', 'success')
+	flash('Wylogowales sie z Przygody', 'success')
 	return redirect(url_for('simple_page.index'))
 
 @mod.route('/account/', methods=['GET','POST'])

@@ -1,4 +1,4 @@
-# Przygoda | [![Code Health](https://landscape.io/github/VirrageS/przygoda/master/landscape.svg?style=flat&badge_auth_token=2d1ada759c4f46399a06205375c04926)](https://landscape.io/github/VirrageS/przygoda/master) | [![Circle CI](https://circleci.com/gh/VirrageS/przygoda.svg?style=shield&&circle-token=bbdd9a0c1379c15241b877d9678c64538730b6d5)](https://circleci.com/gh/VirrageS/przygoda) | [![Build Status](https://magnum.travis-ci.com/VirrageS/przygoda.svg?token=cnzFxz77oBFevu6Vrpep&branch=master)](https://magnum.travis-ci.com/VirrageS/przygoda)
+# Przygoda | [![Circle CI](https://circleci.com/gh/VirrageS/przygoda.svg?style=shield&&circle-token=bbdd9a0c1379c15241b877d9678c64538730b6d5)](https://circleci.com/gh/VirrageS/przygoda) | [![Build Status](https://magnum.travis-ci.com/VirrageS/przygoda.svg?token=cnzFxz77oBFevu6Vrpep&branch=master)](https://magnum.travis-ci.com/VirrageS/przygoda)
 Aplikacja Przygoda jest najlepszym sposobem na znajdowanie miłośników rowerów
 
 # Instalacja
@@ -24,7 +24,7 @@ Now we need to install virtual env:
 
 	MacBook-Air-Janusz:przygoda VirrageS$ sudo pip3 install virtualenv
 
-Lets
+Lets create virtual env in our folder:
 
 	MacBook-Air-Janusz:przygoda VirrageS$ virtualenv env
 
@@ -71,7 +71,7 @@ Hurray! Our app is alive. Open [http://127.0.0.1:5000] in your browser and that'
 
 To run unit tests type:
 
-	MacBook-Air-Janusz:przygoda VirrageS$ python3 -m unittest discover
+	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 -m unittest discover
 
 # Virtual Server
 
