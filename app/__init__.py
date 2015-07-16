@@ -8,7 +8,7 @@ from flask.ext.cache import Cache
 
 # set app
 app = Flask(__name__)
-app.config.from_object('config.DevelopmentConfig')
+app.config.from_object('config.ProductionConfig')
 
 # set database
 db = SQLAlchemy(app)

@@ -5,159 +5,165 @@ Aplikacja Przygoda jest najlepszym sposobem na znajdowanie miłośników roweró
 
 ## Clone GitHub project
 
-Klonujemy nasze repozytorium:
+Our first move is to clone GitHub project into our computer.
 
 	MacBook-Air-Janusz:Desktop VirrageS$ sudo apt-get install git
 	MacBook-Air-Janusz:Desktop VirrageS$ git clone https://github.com/VirrageS/przygoda
 	MacBook-Air-Janusz:Desktop VirrageS$ cd przygoda
 
-## Inicjacja wirtualnego środowiska i bibliotek
+## Virtual Environment initialization
 
-Teraz instalujemy wirtualne środowisko pythona.
+Now we have to install virtual env and get all python packages we need.
+So lets get python packages first:
 
-Jeżeli nie masz `pip` to użyj komend:
-
-	MacBook-Air-Janusz:przygoda VirrageS$ apt-get update
+	MacBook-Air-Janusz:przygoda VirrageS$ sudo apt-get update
 	MacBook-Air-Janusz:przygoda VirrageS$ sudo apt-get install python3-pip python3-dev
 	MacBook-Air-Janusz:przygoda VirrageS$ sudo apt-get build-dep python3-psycopg2
 
-I zainstaluj `pip3`:
+Now we need to install virtual env:
 
 	MacBook-Air-Janusz:przygoda VirrageS$ sudo pip3 install virtualenv
 
-Teraz czas na wszystkie biblioteki:
+Lets
 
 	MacBook-Air-Janusz:przygoda VirrageS$ virtualenv env
+
+Now we have to start our virtual env (if ever would want to leave virtual env just type `deactivate`):
+
 	MacBook-Air-Janusz:przygoda VirrageS$ source env/bin/activate
+
+We should get something like this:
+
+	(env)MacBook-Air-Janusz:przygoda VirrageS$
+
+And finally install requirements which we need to make our app running.
+This code will install all dependencies which our app is using. You can open `requirements.txt` to see what they are.
+
 	(env)MacBook-Air-Janusz:przygoda VirrageS$ pip3 install -r requirements.txt
 
-## Tworzenie bazy danych
+## Database
 
-Tworzymy bazę danych do naszej aplikacji. Pamiętaj: za każdym razem jak wykonujemy
-komende `db.create_all()` stara baza danych jest nadpisywana.
+Now we have to create simply database which will handle our queries.
+To make one, type:
 
-Aby utworzyć bazę danych wpisujemy:
-
-	MacBook-Air-Janusz:przygoda VirrageS$
-	MacBook-Air-Janusz:przygoda VirrageS$ source env/bin/activate
 	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 shell.py
 	>>> db.create_all()
 	>>> exit()
 
-Rekomendowane użycie: za pierwszym razem odpalenia aplikacji,
-po dodaniu noweg modułu lub modyfikacji istniejącego modułu (oczywiście
-jeżeli te moduły dziedziczą po `db.Model`).
+**IMPORTANT**: you have to be in virtual environment
 
-## Odpalanie aplikacji
+Unfortunetly if we use sqlite database we need delete our database and
+create fresh one every time we code new model or add something to existing one.
 
-Jeżeli nie jesteśmy w wirtualnym środowisku musimy wpisać:
+## Run app
 
-	MacBook-Air-Janusz:przygoda VirrageS$
-	MacBook-Air-Janusz:przygoda VirrageS$ source env/bin/activate
-	(env)MacBook-Air-Janusz:przygoda VirrageS$
-
-Teraz odpalamy naszą aplikację dzięki `python3 run.py`.
+Now we can run our app by just typing `python3 run.py`.
 
 	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 run.py
 	 * Running on http://127.0.0.1:5000/
 	 * Restarting with reloader
 
-Teraz pozostało w przeglądarce wpisać [http://127.0.0.1:5000]
-i powinniśmy zostać przekierowani do naszej aplikacji.
+**IMPORTANT**: you have to be in virtual environment
 
+Hurray! Our app is alive. Open [http://127.0.0.1:5000] in your browser and that's it!
 
-# Testowanie
+## Testing
 
-Testowanie odbywa się automatycznie po `git push` przez Travis CI (na górze widać
-aktualny status). Manualnie możemy to zrobić:
+To run unit tests type:
 
-	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 -m unittest discover
+	MacBook-Air-Janusz:przygoda VirrageS$ python3 -m unittest discover
 
-# Server
+# Virtual Server
 
-	#!/bin/bash
-	apt-get -y update
-	apt-get -y install awscli
-	apt-get -y install ruby2.0
-	cd /home/ubuntu
-	aws s3 cp s3://aws-codedeploy-eu-west-1/latest/install . --region eu-west-1
-	chmod +x ./install
-	./install auto
+Now I will show you how to setup running app on your custom virtual server.
+This tutorial I have been using to setup my first server on [Digital Ocean](digitalocean.com)
+I used `Ubuntu 14.04`
 
 ## SSH
 
+So our first step after starting our server is to set SSH between virtual server and our local machine.
+So on local machine type:
+
 	local$ ssh root@SERVER_IP_ADDRESS
 
-Poprosi nas o aktualnego użytkownika i hasło (to co dostaliśmy w emailu) a następnie będziemy musieli zmienić hasło.
-Jak już to zrobimy przechodzimy dalej.
+It should ask us for current user and current password (you should get it in email) and then
+it will us to change this password. After we do that lets go deeper.
 
-## Użytkownik
+## New custom user
 
-Teraz przyszła kolej na stworzenie użytkownika. Tworzymy go za pomocą
+Now it is time to create our own user. To do it type on virtual server command.
 
-	adduser virrages
+	adduser USER
 
-Dodajemy mu wszystkie potrzebne przywileje tak aby także był administratorem
+`USER` is your custom **username**.
 
-	gpasswd -a virrages sudo
+Now we must add all privileges to our new user. To make it happen type:
 
-## SSH ciągl dalszy
+	gpasswd -a USER sudo
 
-Na naszej lokalnej maszynie tworzymy nowy klucz ssh
+## SSH next part
+
+On our local machine we must create new SSH key to make it easy to communicate with our virtual server. Type:
 
 	local$ ssh-keygen
 
-Klikamy cały czas `enter` aż będzie wszystko w porządku.
-Następnie kopiujemy nasze ssh do naszego serwera.
+After it will ask us to provide some info but better is to leave it default
+so we just click enter until we do not have to :)
 
-	local$ ssh-copy-id virrages@104.131.76.86
+Now we have to copy SSH key to our virtual server. Type:
+
+	local$ ssh-copy-id USER@SERVER_IP_ADDRESS
 
 
 ## Security
 
-Musimy dezaktywować roota ze względów bezpieczeństwa
-Otwieramy
+To make our server a little bit secure we must deactivate root user.
+Type
 
-	nano /etc/ssh/sshd_config
+	sudo nano /etc/ssh/sshd_config
 
-i zmieniamy linijkę
+and change line
 
 	PermitRootLogin yes
 
-na
+to
 
 	PermitRootLogin no
 
-## Testujemy połączenie
+Now click `CTRL + X` then `YES` and click enter. That is it we deactivated root user.
 
-Teraz restartujemy nasze SSH
+## SSH Testing
 
-	service ssh restart
+Now lets restart our SSH
 
-Otwieramy nową kartę w terminalu i wpisujemy
+	local$ service ssh restart
 
-	ssh virrages@104.131.76.86
+Make new tab (or new window) in terminal and type:
 
-Powinniśmy od razu zostać przekierowani i przy komendzie `sudo` powinno nas zapytać o hasło.
-Koniec tej części.
+	local$ ssh USER@SERVER_IP_ADDRESS
+
+Now we should been redirected to our virtual server. Hurray! :)
 
 ## All in one
+
+This part is for people who understand what is going on and wants to make it fast to set up server.
+Scroll if you want to dive into details.
 
 	sudo apt-get update; sudo apt-get build-dep python3-psycopg2; sudo apt-get install python3-pip python3-dev nginx git; sudo pip3 install virtualenv; s cd przygoda; virtualenv env; source env/bin/activate; pip3 install psycopg2; pip3 install -r requirements.txt; deactivate; sudo nano /etc/init/przygoda.conf;
 
 ```
-description "Gunicorn application server running przygoda"
+description "Gunicorn application server running PROJECT_NAME"
 
 start on runlevel [2345]
 stop on runlevel [!2345]
 
 respawn
-setuid ubuntu
+setuid USER
 setgid www-data
 
-env PATH=/home/ubuntu/przygoda/env/bin
-chdir /home/ubuntu/przygoda
-exec gunicorn --workers 4 --bind unix:przygoda.sock -m 007 run:app
+env PATH=/home/USER/PROJECT_NAME/env/bin
+chdir /home/USER/PROJECT_NAME
+exec gunicorn --workers 3 --bind unix:PROJECT_NAME.sock -m 007 run:app
 ```
 
 	sudo start przygoda; sudo rm -rf /etc/nginx/sites-enabled/default; sudo rm -rf /etc/nginx/sites-available/default; sudo nano /etc/nginx/sites-available/przygoda
@@ -179,105 +185,201 @@ server {
 	sudo ln -s /etc/nginx/sites-available/przygoda /etc/nginx/sites-enabled; sudo nginx -t; sudo service nginx restart
 
 
-## Aplikacja
+## Application
 
-Na początku ściągamy wszystkie potrzebne nam biblioteki i narzędzia
+To make our app working on our virtual server lets install some packages.
 
 	sudo apt-get update
 	sudo apt-get build-dep python3-psycopg2
 	sudo apt-get install python3-pip python3-dev nginx git
-
-Następnie instalujemy virtualne środowisko
-
 	sudo pip3 install virtualenv
 
-Teraz musimy ściągnąć nasz projekt
+Now lets clone our project:
 
 	git clone https://github.com/VirrageS/przygoda
 	cd ~/przygoda
 
-Instalujemy w nim virtualne środowisko i aktywujemy je
+Setup virtual env and activate it
 
 	virtualenv env
 	source env/bin/activate
 
-Instalujemy wszystko czego potrzebujemy
+Install all packages
 
 	pip3 install psycopg2
 	pip3 install -r requirements.txt
 
-Dezaktywujemy virtualne środowisko i przechodzimy do dalszej części
+Deactivate virtual env because for the next part we will not need it
 
 	deactivate
 
 ## Gunicorn
 
-Tworzymy skrypt, który będzie ciągle próbował utrzymać stabliność
+Now we have to create script that will run our server. First step is to type:
 
 	sudo nano /etc/init/przygoda.conf
 
-i umieszczamy w nim
+and put this code:
 
 ```
-description "Gunicorn application server running przygoda"
+description "Gunicorn application server running PROJECT_NAME"
 
 start on runlevel [2345]
 stop on runlevel [!2345]
 
 respawn
-setuid virrages
+setuid USER
 setgid www-data
 
-env PATH=/home/virrages/przygoda/env/bin
-chdir /home/virrages/przygoda
-exec gunicorn --workers 4 --bind unix:przygoda.sock -m 007 run:app
+env PATH=/home/USER/PROJECT_NAME/env/bin
+chdir /home/USER/PROJECT_NAME
+exec gunicorn --workers 3 --bind unix:PROJECT_NAME.sock -m 007 run:app
 ```
 
-Teraz startujemy nasz skrypt, który powinnien zostać poprawnie odpalony
+Before saving. Change **USER** and **PROJECT_NAME** to our current user and project name for example `przygoda`.
+Now lets test our script and set it running.
 
 	sudo start przygoda
 
-## Nginx
+## NGINX
 
-Na początku usuwamy default'owe strony, których nie będziemy potrzebować ani używać
+First step is to remove default sites because we will not need them. Type:
 
 	sudo rm -rf /etc/nginx/sites-enabled/default
 	sudo rm -rf /etc/nginx/sites-available/default
 
-Tworzymy nową konfigurację strony
+Create new site by:
 
-	sudo nano /etc/nginx/sites-available/przygoda
+	sudo nano /etc/nginx/sites-available/PROJECT_NAME
 
-i umieszczamy w niej:
+and put code like this:
 
 ```
 server {
     listen 80;
-    server_name ;
+    server_name SERVER_IP_ADDRESS;
 
     location / {
         include proxy_params;
-        proxy_pass http://unix:/home/ubuntu/przygoda/przygoda.sock;
+        proxy_pass http://unix:/home/USER/PROJECT_NAME/PROJECT_NAME.sock;
         proxy_connect_timeout 30s;
         proxy_read_timeout 30s;
     }
 }
 ```
 
-Przenosimy konfigurację z dostępnych do aktywnych stron
+Now we have to connect our site to enabled sites. Type:
 
-	sudo ln -s /etc/nginx/sites-available/przygoda /etc/nginx/sites-enabled
+	sudo ln -s /etc/nginx/sites-available/PROJECT_NAME /etc/nginx/sites-enabled
 
-Sprawdzamy czy nasza konfiguracja nginx'a jest poprawna
+Check if our nginx configuration is properly set:
 
 	sudo nginx -t
 
-Teraz restartujemy nginx'a i powinno już wszystko działać
+And start nginx:
 
 	sudo service nginx restart
 
-# Server testing
+Now, if we type SERVER_IP_ADDRESS into our browser we should see our app up and running :)!
 
 ## Stress tests
 
-	ab -k -n 50000 -c 500 -e test.cvs http://..../
+To check if our site is able to handle a lot of traffic we can preform stress tests:
+
+	ab -k -r -n 50000 -c 500 http://..../
+
+Parameter | Desc | Value
+--- | --- | ---
+-n | Set how much packets will be send to our server | 50000
+-c | Simulate simultaneous user connections (most important parameter) | 500
+
+# Amazon AWS
+
+## Init EC2 instance
+
+Initing EC2 is quite simple but good practice is to set init code into our instance.
+
+	#!/bin/bash
+	apt-get -y update
+	apt-get -y install awscli
+	apt-get -y install ruby2.0
+	cd /home/ubuntu
+	aws s3 cp s3://aws-codedeploy-eu-west-1/latest/install . --region eu-west-1
+	chmod +x ./install
+	./install auto
+
+## Instance Role
+
+Inline Policies:
+
+	{
+	    "Statement": [
+	        {
+	            "Resource": "*",
+	            "Action": [
+	                "autoscaling:Describe*",
+	                "cloudformation:Describe*",
+	                "cloudformation:GetTemplate",
+	                "s3:Get*",
+	                "s3:List*"
+	            ],
+	            "Effect": "Allow"
+	        }
+	    ]
+	}
+
+Trust relationships:
+
+	{
+	  "Version": "2012-10-17",
+	  "Statement": [
+	    {
+	      "Sid": "",
+	      "Effect": "Allow",
+	      "Principal": {
+	        "Service": "ec2.amazonaws.com"
+	      },
+	      "Action": "sts:AssumeRole"
+	    }
+	  ]
+	}
+
+## CodeDeploy Role
+
+Inline Policies:
+
+	{
+	    "Version": "2012-10-17",
+	    "Statement": [
+	        {
+	            "Action": [
+	                "autoscaling:PutLifecycleHook",
+	                "autoscaling:DeleteLifecycleHook",
+	                "autoscaling:RecordLifecycleActionHeartbeat",
+	                "autoscaling:CompleteLifecycleAction",
+	                "autoscaling:DescribeAutoscalingGroups",
+	                "autoscaling:PutInstanceInStandby",
+	                "autoscaling:PutInstanceInService",
+	                "ec2:Describe*"
+	            ],
+	            "Effect": "Allow",
+	            "Resource": "*"
+	        }
+	    ]
+	}
+
+Trust relationships:
+
+	{
+	  "Version": "2008-10-17",
+	  "Statement": [
+	    {
+	      "Sid": "1",
+	      "Effect": "Allow",
+	      "Principal": {
+	        "Service": "codedeploy.amazonaws.com"
+	      },
+	      "Action": "sts:AssumeRole"
+	    }
+	  ]
+	}
