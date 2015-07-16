@@ -1,8 +1,40 @@
 <!-- extend base layout -->
 {% extends "layout.html" %}
 
-{% block body %}
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyD9ryFHC07cVPEgeKlRG-wFHRgF9dTPPL8"></script>
+{% set landing=True %}
+{% block landing %}
+	<section id="intro">
+		<div class="text text-center">
+			<div class="row">
+				<div class="col-sm-8 col-sm-offset-2">
+					<p class="lead">
+						Rowerzysto! Śmigasz rekreacyjnie, wyczynowo a może nawet profesjonalnie?<br>Znajdź towarzystwo i ruszaj z nim na Przygodę!
+					</p>
+					<p><a class="hd_btn hd_btnBlack" href="{{ url_for('users.register') }}">Zarejestruj się</a></p>
+				</div>
+			</div>
+		</div>
+	</section>
 
-	<h1>Landing page</h1>
+	<section id="footer" class="text-center">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4 col-sm-6"><a href="/about">O nas</a></div>
+				<div class="col-md-4 col-sm-6"><a href="/blog">Blog</a></div>
+				<div class="col-md-4 col-sm-6"><a href="/contact">Kontakt</a></div>
+				<div class="col-md-4 col-sm-6"><a href="/features">Funkcje</a></div>
+				<div class="col-md-4 col-sm-6"><a href="/terms">Regulamin i prywatność</a></div>
+				<div class="col-md-4 col-sm-6"><a href="/help">Pomoc</a></div>
+			</div>
+
+			<div class="row social">
+				<div class="col-md-6 col-sm-6 col-xs-6"><a href="https://www.facebook.com/przygodapl"><i class="fa fa-facebook fa-2x"></i></a></div>
+				<div class="col-md-6 col-sm-6 col-xs-6"><a href="https://www.facebook.com/przygodapl"><i class="fa fa-twitter fa-2x"></i></a></div>
+			</div>
+
+			<div class="copyrights text-center">
+				<i class="fa fa-copyright"></i> 2015 Przygoda. All Rights Reserved.
+			</div>
+		</div>
+	</section>
 {% endblock %}
