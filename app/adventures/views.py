@@ -474,6 +474,11 @@ def search():
 		# sort adventures by date
 		final_adventures = sorted(final_adventures, key=(lambda a: a['date']))
 
+		if len(final_adventures) > 0:
+			flash('Poniżej znajdziesz wybrane dla Ciebie Przygody.', 'success')
+		else:
+			flash('Niestety nie udało się znaleźć żadnych Przygód. Spróbuj zmienić obszar lub kryteria', 'warning')
+
 	return render_template(
 		'adventures/search.html',
 		form=form,

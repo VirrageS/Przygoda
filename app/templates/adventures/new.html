@@ -102,6 +102,8 @@
 		}
 	</script>
 
+	<div class="alert alert-info" role="info"><b>Tip:</b> Aby dodać znacznik na mapę kliknij w wybrane miejsce (możesz go także przesuwać)</div>
+	<br><br>
 	<h2>Stwórz Przygodę</h2>
 	<br>
 	<div id="map-canvas"></div>
@@ -131,7 +133,7 @@
 		</div>
 
 		<div class="form-group">
-			{{ render_field(form.info, placeholder="Informacje o Przygodzie") }}
+			{{ render_field(form.info, placeholder="Informacje o Przygodzie", rows="4", style="max-width: 100%;") }}
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.info.errors[0] }}</small>
 			</div>

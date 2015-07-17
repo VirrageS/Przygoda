@@ -1,3 +1,4 @@
+from flask import flash
 from flask.ext.wtf import Form
 from wtforms import DateTimeField, TextAreaField, HiddenField, SelectField, SelectMultipleField, widgets
 from wtforms.validators import Required
@@ -35,7 +36,15 @@ class EditForm(NewForm):
 class SearchForm(Form):
 	modes = SelectMultipleField(
 		u'Modes',
-		choices=[(str(value), name) for value, name in ADVENTURES.MODES.items()],
-		# option_widget=widgets.CheckboxInput(),
-        # widget=widgets.ListWidget(prefix_label=False)
+		choices=[(str(value), name) for value, name in ADVENTURES.MODES.items()]
 	)
+
+	def validate(self):
+		if not Form.validate(self):
+			return False
+
+		if (self.modes.data is None) or (len(self.modes.data) <= 0):
+			self.modes.errors.append('Musisz wybrać typy')
+			return False
+
+		return True

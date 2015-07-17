@@ -14,14 +14,14 @@
 		</div>
 	{% endmacro %}
 
-	<h2>Moje konto</h2><br>
-
 	{% if not g.user.confirmed %}
 		<div class="alert alert-warning" role="alert">
 			Twoje konto nie zostało jeszcze aktywowane.
 			<a href="{{ url_for('users.resend_confirmation_email') }}">Kliknij tutaj</a> aby wysłać ponownie email potwierdzający.
 		</div>
+		<br>
 	{% endif %}
+	<h2>Moje konto</h2><br>
 
 	<form action="" method="post" name="register">
 		{{ form.hidden_tag() }}
