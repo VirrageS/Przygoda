@@ -7,7 +7,7 @@ from sqlalchemy.sql import func
 from app import app, db
 from app.users.models import User
 from app.adventures.models import Adventure, AdventureParticipant
-from app.mine.models import AdventureViews, AdventureSearches
+from app.mine.models import AdventureViews, AdventureSearches, UserReports
 
 from app.miscellaneous import admin_required
 
@@ -174,3 +174,33 @@ def charts():
 		all_adventures_views=get_adventures_views(),
 		all_adventures_searches=get_adventures_searches()
 	)
+
+# Reports
+@mod.route('/reports/')
+@admin_required
+def reports():
+	all_reports = []
+	reports = UserReports.query.all()
+	all_reports = list(filter(lambda r: r.display, reports))
+	all_reports = sorted(all_reports, key=(lambda r: r.created_on))
+
+	return render_template(
+		'admin/reports.html',
+		reports=all_reports
+	)
+
+# Hide report
+@mod.route('/reports/hide/<int:report_id>')
+@admin_required
+def hide(report_id):
+	report = UserReports.query.filter_by(id=report_id).first()
+	if report is not None:
+		report.display = False
+		db.session.add(report)
+		db.session.commit()
+
+		flash('Raport został schowany', 'success')
+		return redirect(url_for('admin.reports'))
+
+	flash('Raport nie istnieje', 'danger')
+	return redirect(url_for('admin.reports'))

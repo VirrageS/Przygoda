@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block body %}
+    <h2>Raporty</h2>
+    <br><br>
+    <table class="table table-hover">
+        <tr>
+            <th>#</th>
+            <th>User</th>
+            <th>Data stworzenia</th>
+            <th>Temat</th>
+            <th>Treść</th>
+            <th>Akcja</th>
+        </tr>
+        {% for report in reports %}
+            <tr>
+                <td>{{ report.id|safe }}</td>
+                <td>
+                    {% if (report.user_id is defined) and report.user_id %}
+                        {{ report.user_id|safe }}
+                    {% else %}
+                        Anonymous
+                    {% endif %}
+                </td>
+                <td>{{ report.created_on.strftime('%d.%m.%Y %H:%M')|safe }}</td>
+                <td>{{ report.subject|safe }}</td>
+                <td>{{ report.message|safe }}</td>
+                <td><a href="/admin/reports/hide/{{ report.id|safe }}">Schowaj</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
