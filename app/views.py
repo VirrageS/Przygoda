@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from flask import Blueprint, render_template
+from flask import Blueprint, request, render_template, flash, redirect, url_for
 
 from flask.ext.login import current_user
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 from app.users.models import User
-from app import cache
+from app import cache, db
+
+from app.mine.forms import ReportForm
+from app.mine.models import UserReports
 
 mod = Blueprint('simple_page', __name__, template_folder='templates')
 
@@ -82,9 +85,27 @@ def about():
 	return render_template('about.html')
 
 # Contact
-@mod.route("/contact")
+@mod.route("/contact/", methods=['GET', 'POST'])
 def contact():
-	return render_template('contact.html')
+
+	form = ReportForm(request.form)
+
+	if form.validate_on_submit():
+		user_id = None
+		if current_user.is_authenticated():
+			user_id = current_user.id
+
+		report = UserReports(user_id=user_id, subject=form.subject.data, message=form.message.data)
+		db.session.add(report)
+		db.session.commit()
+
+		flash('Wiadomość wysłana. Dziękujęmy za kontakt', 'success')
+		return redirect(url_for('simple_page.index'))
+
+	return render_template(
+		'contact.html',
+		form=form
+	)
 
 # How it works
 @mod.route("/how-it-works")
