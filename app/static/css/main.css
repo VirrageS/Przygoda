@@ -509,7 +509,7 @@
 }
 
 
-.hd_btn {
+.hd-btn {
     display: inline-block;
     font-weight: 600;
     text-align: center;
@@ -528,82 +528,84 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    font-size: 13px
+    font-size: 13px;
+
+    background-color: transparent;
 }
 
-.hd_btn:hover {
+.hd-btn:hover {
     text-decoration: none;
     background: #000
 }
 
 @media (min-width:768px) {
-    .hd_btn {
+    .hd-btn {
         font-size: 15px !important
     }
 }
 
-.hd_btn.hd_btnWhite {
+.hd-btn.hd-btnWhite {
     color: #fff;
-    border: 2px solid #fff
+    border: 2px solid #fff;
 }
 
-.hd_btn.hd_btnWhite:hover {
+.hd-btn.hd-btnWhite:hover {
     color: #000;
-    background: #fff
+    background: #fff;
 }
 
-.hd_btn.hd_btnBlack:hover {
+.hd-btn.hd-btnBlack:hover {
     color: #fff;
-    background: #000
+    background: #000;
 }
 
-.hd_btn.hd_btnYellow {
+.hd-btn.hd-btnYellow {
     color: #f6da21;
     border: 2px solid #f6da21
 }
 
-.hd_btn.hd_btnYellow:hover {
+.hd-btn.hd-btnYellow:hover {
     color: #ffffff;
     background: #f6da21;
 }
 
-.hd_btn.hd_btnRed {
+.hd-btn.hd-btnRed {
     background: #b40a1e;
     color: #fff !important;
     border-color: #b40a1e
 }
 
-.hd_btn.hd_btnRed:hover {
+.hd-btn.hd-btnRed:hover {
     background: #fff;
     color: #b40a1e !important;
     border-color: #fff
 }
 
-.hd_btnMint {
+.hd-btnMint {
     background: #00a89c;
     color: #fff;
     border-color: #00a89c
 }
 
-.hd_btnMint:hover {
+.hd-btnMint:hover {
     background: #fff;
     color: #00a89c;
     border-color: #fff
 }
 
-.hd_btnOnWhite:hover {
+.hd-btnOnWhite:hover {
     background: #000;
     color: #fff
 }
 
-#intro {
+#landing_intro {
     background-image: url("/static/img/bike.jpg");
     background-size: cover;
     background-position: center;
     height: 100vh;
 }
 
-#intro .text {
+#landing_intro .text {
     padding-top: 30vh;
 }
 
@@ -635,4 +637,79 @@
 
 #main {
     margin-top: 10vh;
+    margin-bottom: 30vh;
+    min-height: 60vh;
+}
+
+.auth-box {
+    margin: 0px auto 0px auto;
+    /*text-align: center;*/
+    border: 1px solid #000000;
+}
+@media (min-width: 768px) {
+  .auth-box {
+	width: 450px;
+  }
+}
+.auth-header {
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #000000;
+}
+.auth-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.auth-social {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+.auth-separator {
+    position: relative;
+    text-align: center;
+    margin: 0px 0;
+    color: #666
+}
+.auth-separator:before, .auth-separator:after {
+    display: block;
+    content: " ";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background-color: #ccc
+}
+.auth-separator:before {
+    left: 0
+}
+.auth-separator:after {
+    right: 0
+}
+
+.auth-form {
+    margin-top: 25px;
+}
+.auth-form .btn {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.auth-footer {
+    text-align: center;
+    font-size: 14px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-top: 1px solid #ccc;
+    color: #999;
+}
+.auth-footer a {
+    color: #000000;
+}
+.auth-footer a:hover {
+    color: #f6da21;
+    text-decoration: none;
 }

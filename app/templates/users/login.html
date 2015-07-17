@@ -24,56 +24,66 @@
 		</div>
 	{%- endmacro %}
 
-	<h2>Zaloguj się do Przygody</h2>
-
-	<a href="{{ url_for('users.oauth_authorize', provider='facebook') }}" class="btn btn-block btn-sm btn-social btn-facebook" style="margin-bottom: 30px; margin-top: 30px;">
-		<i class="fa fa-facebook"></i>
-		Zaloguj się przez Facebook
-	</a>
-
-	<!-- <a href="{{ url_for('users.oauth_authorize', provider='twitter') }}" class="btn btn-block btn-sm btn-social btn-twitter" style="margin-bottom: 30px; margin-top: 30px;">
-		<i class="fa fa-twitter"></i>
-		Zaloguj się przez Twitter
-	</a> -->
-
-	<form action="" method="post" name="login">
-		{{ form.hidden_tag() }}
-
-		<div class="form-group">
-			<div class="input-group">
-				<div class="input-group-addon"><i class="fa fa-user"></i></div>
-				{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
+	<div class="auth-box">
+		<div class="auth-header">Zaloguj się</div>
+		<div class="auth-content">
+			<div class="auth-social">
+				<a href="{{ url_for('users.oauth_authorize', provider='facebook') }}" class="btn btn-block btn-sm btn-social btn-facebook">
+					<i class="fa fa-facebook"></i>
+					Zaloguj się przez Facebook
+				</a>
+				<!-- <a href="{{ url_for('users.oauth_authorize', provider='twitter') }}" class="btn btn-block btn-sm btn-social btn-twitter">
+					<i class="fa fa-twitter"></i>
+					Zaloguj się przez Twitter
+				</a> -->
 			</div>
-			{% if form.username.errors %}
-				{% for error in form.username.errors %}
-					<div class="form-group has-error">
-						<small class="help-block">{{ error }}</small>
+
+			<div class="auth-separator">
+				lub
+			</div>
+
+			<div class="auth-form">
+				<form action="" method="post" name="login">
+					{{ form.hidden_tag() }}
+
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon"><i class="fa fa-user"></i></div>
+							{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
+						</div>
+						{% if form.username.errors %}
+							{% for error in form.username.errors %}
+								<div class="form-group has-error">
+									<small class="help-block">{{ error }}</small>
+								</div>
+							{% endfor %}
+						{% endif %}
 					</div>
-				{% endfor %}
-			{% endif %}
-		</div>
-		<div class="form-group">
-			<div class="input-group">
-				<div class="input-group-addon"><i class="fa fa-lock"></i></div>
-				{{ render_field(form.password, placeholder="Hasło") }}
-			</div>
-			<div class="form-group has-error">
-				<small class="help-block">{{ form.password.errors[0] }}</small>
-			</div>
-		</div>
-		<div class="form-group">
-			{{ render_checkbox_field(form.remember_me, text="Nie wylogowuj mnie") }}
-		</div>
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon"><i class="fa fa-lock"></i></div>
+							{{ render_field(form.password, placeholder="Hasło") }}
+						</div>
+						<div class="form-group has-error">
+							<small class="help-block">{{ form.password.errors[0] }}</small>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						{{ render_checkbox_field(form.remember_me, text="Nie wylogowuj mnie") }}
+					</div>
 
-		<div class="form-group">
-			<button type="submit" class="btn btn-success">Zaloguj się do Przygody</button>
-		</div>
-	</form>
+					<div class="form-group">
+						<button type="submit" class="btn btn-success">Zaloguj się do Przygody</button>
+					</div>
+				</form>
+			</div>
 
-	<hr>
-	Nowy w Przygodach? <a href="/users/register/">Zarejstruj się</a>
-	<br><br>
-	<div style="">
-		<a role="button" href="/users/lost/">Zapomniałeś hasła?</a>
+			<div class="auth-footer">
+				Nowy w Przygodach? <a href="/users/register/">Zarejstruj się</a>
+				<br><br>
+				<a href="/users/lost/">Zapomniałeś hasła?</a>
+			</div>
+		</div>
 	</div>
 {% endblock %}
