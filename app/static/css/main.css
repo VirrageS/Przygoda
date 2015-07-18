@@ -761,3 +761,34 @@
 .contact-box .btn {
     width: 100%;
 }
+
+.admin-panel {
+    position: fixed;
+    bottom: 0px;
+    margin-right: auto;
+    margin-left: auto;
+
+    border-top: 1px solid #000000;
+    background-color: #2a3133;
+
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+
+    z-index: 1000;
+}
+.admin-panel li {
+    display: inline;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+.admin-panel a {
+    color: #ffffff;
+
+    font-size: 16px;
+    font-weight: 500;
+}
+.admin-panel a:hover {
+    color: #49a889;
+    text-decoration: none;
+}

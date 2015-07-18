@@ -49,6 +49,19 @@ class User(UserMixin, db.Model):
 	def get_role(self):
 		return USER.ROLE[self.role]
 
+	def is_admin(self):
+		return self.role == USER.ADMIN
+
+	def update_login_info(self):
+		# update first login date
+		if self.first_login is None:
+			self.first_login = datetime.now()
+
+		# update last login date
+		self.last_login = datetime.now()
+		db.session.add(self)
+		db.session.commit()
+
 	def is_active_login(self, delta=timedelta(days=4)):
 		if self.last_login is None:
 			return False

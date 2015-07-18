@@ -48,15 +48,7 @@ def login():
 		if (registered_user is not None) and check_password_hash(registered_user.password, form.password.data):
 			# login user to system
 			login_user(registered_user, remember=form.remember_me.data)
-
-			# update first login date
-			if registered_user.first_login is None:
-				registered_user.first_login = datetime.now()
-
-			# update last login date
-			registered_user.last_login = datetime.now()
-			db.session.add(registered_user)
-			db.session.commit()
+			registered_user.update_login_info()
 
 			flash(u'Zalogowałeś sie poprawnie. Witaj w Przygodzie.', 'success')
 			return redirect(request.args.get('next') or url_for('simple_page.index'))
@@ -201,6 +193,7 @@ def oauth_callback(provider):
 		db.session.commit()
 
 	login_user(user, remember=True)
+	user.update_login_info()
 	return redirect(url_for('simple_page.index'))
 
 # Send confirmation email

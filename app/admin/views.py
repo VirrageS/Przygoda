@@ -13,19 +13,18 @@ from app.miscellaneous import admin_required
 
 mod = Blueprint('admin', __name__, url_prefix='/admin')
 
-# Admin panel
-@mod.route('/')
-@admin_required
-def panel():
-	return render_template('admin/panel.html')
-
-
+# Charts
 @mod.route('/charts/')
 @admin_required
 def charts():
 	def get_all_adventures():
 		all_adventures = []
 		adventures = Adventure.query.order_by(Adventure.created_on.asc()).all()
+
+
+		adventures.append(
+			Adventure(0, datetime.now(), 0, '')
+		)
 
 		count = 0
 		for adventure in adventures:
@@ -61,11 +60,19 @@ def charts():
 				'count': count
 			})
 
+		# last adventure does not bring any value (is mock)
+		all_adventures[-1]['count'] -= 1;
+
 		return all_adventures
 
 	def get_all_users():
 		all_users = []
 		users = User.query.order_by(User.registered_on.asc()).all()
+
+		u = User('wtf', 'sf', 'email', social_id=None)
+		u.registered_on = datetime.now()
+		u.last_login = datetime.now()
+		users.append(u)
 
 		count = 0
 		for user in users:
@@ -95,6 +102,9 @@ def charts():
 				'active': len(active),
 				'count': count
 			})
+
+		# last user does not bring any value (is mock)
+		all_users[-1]['count'] -= 1
 
 		return all_users
 

@@ -89,6 +89,10 @@
 	{% block story %}
 	{% endblock story %}
 
+	{% if (g.user.is_authenticated() and g.user.is_admin()) %}
+		{% include "admin/panel.html" %}
+	{% endif %}
+
 	{% if (story is not defined) or (not story) %}
 		<section id="main">
 			<div class="container">

@@ -4391,9 +4391,9 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   margin: 5.5px -15px;
 }
 .navbar-nav > li > a {
-	font-size: 13px;
+	font-size: 14px;
 	font-weight: 300;
-    text-transform: uppercase;
+    /*text-transform: uppercase;*/
 
     padding-top: 10px;
     padding-bottom: 10px;
@@ -4440,6 +4440,11 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 	color: #ffffff !important;
 	padding-top: 15px;
 	padding-bottom: 11px;
+    padding-left: 0px;
+    padding-right: 0px;
+
+    margin-left: 22px;
+    margin-right: 22px;
   }
   .navbar-nav > li > a:hover {
 	  background: 0 0;
