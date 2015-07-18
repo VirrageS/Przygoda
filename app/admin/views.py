@@ -179,10 +179,9 @@ def charts():
 @mod.route('/reports/')
 @admin_required
 def reports():
-	all_reports = []
 	reports = UserReports.query.all()
-	all_reports = list(filter(lambda r: r.display, reports))
-	all_reports = sorted(all_reports, key=(lambda r: r.created_on))
+	reports = list(filter(lambda r: r.display, reports))
+	all_reports = sorted(reports, key=(lambda r: r.created_on))
 
 	return render_template(
 		'admin/reports.html',
@@ -204,3 +203,25 @@ def hide(report_id):
 
 	flash('Raport nie istnieje', 'danger')
 	return redirect(url_for('admin.reports'))
+
+# Users
+@mod.route('/users/')
+@admin_required
+def users():
+	all_users = User.query.all()
+
+	return render_template(
+		'admin/users.html',
+		users=all_users
+	)
+
+# Adventures
+@mod.route('/adventures/')
+@admin_required
+def adventures():
+	all_adventures = Adventure.query.all()
+
+	return render_template(
+		'admin/adventures.html',
+		adventures=all_adventures
+	)

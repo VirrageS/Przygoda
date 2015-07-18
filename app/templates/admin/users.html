@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block body %}
+	<h2>Wszyscy użytkownicy</h2>
+	<br><br>
+	<table class="table table-hover">
+		<tr>
+			<th>#</th>
+			<th>Social id</th>
+			<th>Email</th>
+			<th>Dołączył</th>
+			<th>Potwierdził</th>
+			<th>Ostatni login</th>
+			<th>Rola</th>
+			<th>Akcja</th>
+		</tr>
+		{% for user in users %}
+			<tr>
+				<td>{{ user.id|safe }}</td>
+				<td>{{ user.social_id|safe }}</td>
+				<td>{{ user.email|safe }}</td>
+				<td>{{ user.registered_on.strftime('%d %m %Y')|safe }}</td>
+				<td>{{ user.confirmed|safe }}</td>
+				<td>
+					{% if (user.last_login is defined) and user.last_login %}
+						{{ user.last_login.strftime('%d %m %Y')|safe }}
+					{% else %}
+						Undefined
+					{% endif %}
+				</td>
+				<td>{{ user.role|safe }}</td>
+				<td><a href="/admin/users/edit/{{ user.id|safe }}">Edytuj</a> | <a href="/admin/users/delete/{{ user.id|safe }}">Usuń</a></td>
+			</tr>
+		{% endfor %}
+	</table>
+{% endblock %}
