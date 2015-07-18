@@ -1,0 +1,75 @@
+$box-border-color: #000000
+
+$separator-color: #ccc
+$separator-text-color: #666666
+
+$footer-link-color: #000000
+$footer-link-hover-color: #f6da21
+
+.auth-box
+    margin: 0px auto 0px auto
+    border: 1px solid $box-border-color
+
+@media (min-width: 768px)
+    .auth-box
+        width: 450px
+
+.auth-header
+    font-size: 18px
+    font-weight: 500
+    text-align: center
+
+    padding-top: 15px
+    padding-bottom: 15px
+    border-bottom: 1px solid $box-border-color
+
+.auth-content
+    padding-left: 15px
+    padding-right: 15px
+
+.auth-social
+    margin-top: 25px
+    margin-bottom: 25px
+
+.auth-separator
+    position: relative
+    text-align: center
+    margin: 0px 0
+    color: $separator-text-color
+
+    &:before, &:after
+        display: block
+        content: " "
+        position: absolute
+        top: 50%
+        width: 40%
+        height: 1px
+        background-color: $separator-color
+
+    &:before
+        left: 0
+
+    &:after
+        right: 0
+
+.auth-form
+    margin-top: 25px
+
+    .btn
+        margin-top: 15px
+        width: 100%
+
+.auth-footer
+    text-align: center
+    font-size: 14px
+    padding-top: 15px
+    padding-bottom: 15px
+    border-top: 1px solid #ccc
+    color: #999
+
+    a
+        color: $footer-link-color
+
+        &:hover
+            color: $footer-link-hover-color
+            text-decoration: none

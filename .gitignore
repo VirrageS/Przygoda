@@ -59,4 +59,7 @@ target/
 flaskenv/*
 
 *.db
+
+# Folders
 tags
+.sass-cache
