@@ -44,7 +44,7 @@ class SearchForm(Form):
 			return False
 
 		if (self.modes.data is None) or (len(self.modes.data) <= 0):
-			self.modes.errors.append('Musisz wybrać typy')
+			self.modes.errors.append('Nieprawidłowy typ')
 			return False
 
 		return True
