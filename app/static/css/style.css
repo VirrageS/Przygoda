@@ -204,6 +204,106 @@
   background: #000000;
   color: #ffffff; }
 
+.adventure-box {
+  margin-bottom: 25px;
+  max-width: 100%; }
+
+.adventure-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding-top: 75%;
+  background-color: #242424;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  -webkit-filter: brightness(80%);
+  -webkit-transition: all 0.75s ease;
+  -moz-transition: all 0.75s ease;
+  -o-transition: all 0.75s ease;
+  -ms-transition: all 0.75s ease;
+  transition: all 0.75s ease; }
+  .adventure-image:hover {
+    -webkit-filter: brightness(100%); }
+
+.adventure-header-author {
+  font-size: 17px;
+  letter-spacing: 1.5px;
+  font-weight: 400;
+  display: block;
+  color: #1888fc;
+  overflow: hidden;
+  position: absolute;
+  bottom: 15px;
+  left: 15px; }
+
+.adventure-meta {
+  border: 1px solid #e6e6e6; }
+
+.adventure-title {
+  display: inline-block;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 300;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 10px;
+  padding-right: 10px; }
+  @media (min-width: 768px) {
+    .adventure-title {
+      font-size: 16px; } }
+  .adventure-title a {
+    color: #000000; }
+    .adventure-title a:hover {
+      color: #000000 !important;
+      text-decoration: none; }
+
+.adventure-details {
+  color: #959595;
+  letter-spacing: 1.2px;
+  font-size: 12px;
+  line-height: 1.3em;
+  vertical-align: middle;
+  height: 50px;
+  margin-top: 15px;
+  margin-bottom: 15px; }
+  @media (min-width: 768px) {
+    .adventure-details {
+      letter-spacing: 1.5px;
+      font-size: 13px;
+      line-height: 1.5px; } }
+  .adventure-details i {
+    color: #000000;
+    letter-spacing: normal;
+    font-size: 1.3em;
+    margin-right: 2.5px;
+    position: relative;
+    top: 1px; }
+  .adventure-details .left, .adventure-details .right {
+    max-width: 50%;
+    overflow: hidden;
+    padding-bottom: 10px; }
+  .adventure-details .left {
+    float: left;
+    padding-left: 15px; }
+  .adventure-details .right {
+    float: right;
+    padding-right: 15px; }
+
+.permacover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2; }
+
 #intro {
   background-image: url("/static/img/bike.jpg");
   background-size: cover;

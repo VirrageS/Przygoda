@@ -14,61 +14,49 @@
 			</div>
 		</div>
 	{% else %}
-		<div class="page-content">
-			<div class="row no-gutter">
-				{% for adventure in adventures %}
-					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
-						<div class="object post">
-							<div class="object-header image" style="background-image:url(
-							'https://maps.googleapis.com/maps/api/staticmap?size=600x400&maptype=roadmap&path=color:0x0000ff|weight:5
-							{%- for marker in adventure.markers -%}
-								|{{ marker[0]|tojson|safe }},{{ marker[1]|tojson|safe }}
-							{%- endfor -%}
-							');">
-								<a href="/adventures/{{ adventure.id|safe }}" class="permacover"></a>
-								<span class="object-header-meta">
-									<a href="/adventures/{{ adventure.id|safe }}">
-										<span class="username">{{ adventure.username|safe }}</span>
-									</a>
-								</span><!-- /.object-author -->
-							</div><!-- /.object-header -->
+		<div class="row">
+			{% for adventure in adventures %}
+				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
+					<div class="adventure-box">
+						<div class="adventure-image" style="background-image:url(
+						'https://maps.googleapis.com/maps/api/staticmap?size=640x640&scale=1&maptype=roadmap&path=color:0x0000ff|weight:5
+						{%- for marker in adventure.markers -%}
+							|{{ marker[0]|tojson|safe }},{{ marker[1]|tojson|safe }}
+						{%- endfor -%}
+						');">
+							<a href="/adventures/{{ adventure.id|safe }}" class="permacover"></a>
+							<div href="/adventures/{{ adventure.id|safe }}" class="adventure-header-author">{{ adventure.username|safe }}</div>
+						</div><!-- /.object-header -->
 
-							<div class="object-meta">
-								<span class="title"><a href="/adventures/{{ adventure.id|safe }}">{{ adventure.mode|safe }}</a></span>
+						<div class="adventure-meta">
+							<div class="adventure-title">
+								<a href="/adventures/{{ adventure.id|safe }}">{{ adventure.info|safe }}</a>
+							</div>
 
-								<div class="object-excerpt">
-									<p>{{ adventure.info|safe }}</p>
-								</div><!-- /.object-excerpt -->
-
-								<div class="object-meta-sub bottom">
-									<span class="left">
-										<span class="read-time">
-											<i class="fa fa-user"></i> {{ adventure.joined|safe }}<br>
-											<i class="fa fa-clock-o"></i> {{ adventure.date.strftime('%d.%m.%Y %H:%M')|safe }}
-										</span>
-									</span>
-
-									<span class="right">
-										<span class="action">
-											{% if g.user.is_authenticated() %}
-												{% if adventure.action == -1 %}
-													<i class="fa fa-gear"></i> Nie ma akcji
-												{% elif adventure.action == 0 %}
-													<a href="/adventures/join/{{ adventure.id|safe }}"><i class="fa fa-gear"></i> Dołącz</a>
-												{% else %}
-													<a href="/adventures/leave/{{ adventure.id|safe }}"><i class="fa fa-gear"></i> Wypisz się</a>
-												{% endif %}
-											{% else %}
-												<i class="fa fa-gear"></i> Nie ma akcji
-											{% endif %}
-										</span>
-									</span>
-								</div><!-- /.object-sub-meta -->
-							</div><!-- /.oject-meta -->
+							<div class="adventure-details">
+								<div class="left"><i class="fa fa-user"></i> {{ adventure.joined|safe }}</div>
+								<div class="right"><i class="fa fa-bicycle"></i> {{ adventure.mode|safe }}</div>
+								<div style='clear:both'></div>
+								<div class="left"><i class="fa fa-clock-o"></i> {{ adventure.date.strftime('%d.%m.%Y %H:%M')|safe }}</div>
+								<div class="right"><i class="fa fa-gear"></i>
+									{% if g.user.is_authenticated() %}
+										{% if adventure.action == -1 %}
+											Nie ma akcji
+										{% elif adventure.action == 0 %}
+											<a href="/adventures/join/{{ adventure.id|safe }}">Dołącz</a>
+										{% else %}
+											<a href="/adventures/leave/{{ adventure.id|safe }}">Wypisz się</a>
+										{% endif %}
+									{% else %}
+										Nie ma akcji
+									{% endif %}
+								</div>
+							</div>
 						</div>
 					</div>
-				{% endfor %}
-			</div>
+				</div>
+			{% endfor %}
+		</div>
 		</div>
 	{% endif %}
 {% endblock %}
