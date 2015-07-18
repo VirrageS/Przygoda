@@ -4391,11 +4391,13 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   margin: 5.5px -15px;
 }
 .navbar-nav > li > a {
-	font-size: 14px;
-	font-weight: 600;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  line-height: 18px;
+	font-size: 13px;
+	font-weight: 300;
+    text-transform: uppercase;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 18px;
 }
 @media (max-width: 767px) {
   .navbar-nav .open .dropdown-menu {
