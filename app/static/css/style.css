@@ -266,11 +266,10 @@
 
 .adventure-details {
   color: #959595;
-  letter-spacing: 1.2px;
+  letter-spacing: 1px;
   font-size: 12px;
   line-height: 1.3em;
   vertical-align: middle;
-  height: 50px;
   margin-top: 15px;
   margin-bottom: 15px; }
   @media (min-width: 768px) {
@@ -286,9 +285,9 @@
     position: relative;
     top: 1px; }
   .adventure-details .left, .adventure-details .right {
-    max-width: 50%;
     overflow: hidden;
-    padding-bottom: 10px; }
+    padding-bottom: 7.5px;
+    padding-top: 7.5px; }
   .adventure-details .left {
     float: left;
     padding-left: 15px; }
@@ -303,6 +302,13 @@
   right: 0;
   bottom: 0;
   z-index: 2; }
+
+.clearfix:after {
+  content: " ";
+  visibility: hidden;
+  display: block;
+  height: 0;
+  clear: both; }
 
 #intro {
   background-image: url("/static/img/bike.jpg");
