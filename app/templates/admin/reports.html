@@ -6,6 +6,7 @@
         <tr>
             <th>#</th>
             <th>User</th>
+            <th>Email</th>
             <th>Data stworzenia</th>
             <th>Temat</th>
             <th>Treść</th>
@@ -21,6 +22,7 @@
                         Anonymous
                     {% endif %}
                 </td>
+                <td>{{ report.email|safe }}</td>
                 <td>{{ report.created_on.strftime('%d.%m.%Y %H:%M')|safe }}</td>
                 <td>{{ report.subject|safe }}</td>
                 <td>{{ report.message|safe }}</td>

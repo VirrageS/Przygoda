@@ -90,12 +90,15 @@ def contact():
 
 	form = ReportForm(request.form)
 
+	if current_user.is_authenticated():
+		form = ReportForm(request.form, obj=current_user)
+
 	if form.validate_on_submit():
 		user_id = None
 		if current_user.is_authenticated():
 			user_id = current_user.id
 
-		report = UserReports(user_id=user_id, subject=form.subject.data, message=form.message.data)
+		report = UserReports(user_id=user_id, email=form.email.data, subject=form.subject.data, message=form.message.data)
 		db.session.add(report)
 		db.session.commit()
 
