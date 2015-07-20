@@ -11,28 +11,20 @@
 
 		function drawAdventuresChart() {
 			var data = new google.visualization.DataTable();
-			data.addColumn('datetime', 'Date');
+			data.addColumn('date', 'Date');
 			data.addColumn('number', 'All');
 			data.addColumn('number', 'Active');
 
-			data.addRows([
-				{%- for adventure in all_adventures -%}
-					[
-						new Date(
-							{{ adventure.date.year }},
-							{{ adventure.date.month }} - 1,
-							{{ adventure.date.day }},
-							{{ adventure.date.hour }},
-							{{ adventure.date.minute }},
-							{{ adventure.date.second }}
-						),
-						{{ adventure.count }},
-						{{ adventure.active }}
-					],
-				{%- endfor -%}
-			]);
+			var arr = JSON.parse({{ all_adventures|tojson|safe }})
+			for (var i = 0; i < arr.length; i++) {
+				data.addRow([
+					new Date(arr[i].date),
+					arr[i].all,
+					arr[i].active
+				])
+			}
 
-			var dateFormatter = new google.visualization.DateFormat({pattern: 'dd MMM yyyy HH:mm:ss'});
+			var dateFormatter = new google.visualization.DateFormat({pattern: 'dd MMM yyyy'});
 			dateFormatter.format(data, 0);
 
 			var options = {
@@ -42,7 +34,7 @@
 				backgroundColor: 'none',
 				hAxis: {
 					title: 'Date',
-					format: 'dd MMM yyyy (HH:mm:ss)',
+					format: 'dd MMM yyyy',
 					gridlines: {count: 20}
 				},
 				vAxis: {
@@ -57,28 +49,20 @@
 
 		function drawUsersChart() {
 			var data = new google.visualization.DataTable();
-			data.addColumn('datetime', 'Date');
+			data.addColumn('date', 'Date');
 			data.addColumn('number', 'All');
 			data.addColumn('number', 'Active login')
 
-			data.addRows([
-				{%- for user in all_users -%}
-					[
-						new Date(
-							{{ user.date.year }},
-							{{ user.date.month }} - 1,
-							{{ user.date.day }},
-							{{ user.date.hour }},
-							{{ user.date.minute }},
-							{{ user.date.second }}
-						),
-						{{ user.count }},
-						{{ user.active }}
-					],
-				{%- endfor -%}
-			]);
+			var arr = JSON.parse({{ all_users|tojson|safe }})
+			for (var i = 0; i < arr.length; i++) {
+				data.addRow([
+					new Date(arr[i].date),
+					arr[i].all,
+					arr[i].active
+				])
+			}
 
-			var dateFormatter = new google.visualization.DateFormat({pattern: 'dd MMM yyyy HH:mm:ss'});
+			var dateFormatter = new google.visualization.DateFormat({pattern: 'dd MMM yyyy'});
 			dateFormatter.format(data, 0);
 
 
@@ -89,7 +73,7 @@
 				backgroundColor: 'none',
 				hAxis: {
 					title: 'Date',
-					format: 'dd MMM yyyy (HH:mm:ss)',
+					format: 'dd MMM yyyy',
 					gridlines: {count: 20}
 				},
 				vAxis: {
@@ -107,23 +91,15 @@
 			data.addColumn('datetime', 'Date');
 			data.addColumn('number', 'Users per adventure');
 
-			data.addRows([
-				{%- for adventure in all_users_per_adventure -%}
-					[
-						new Date(
-							{{ adventure.date.year }},
-							{{ adventure.date.month }} - 1,
-							{{ adventure.date.day }},
-							{{ adventure.date.hour }},
-							{{ adventure.date.minute }},
-							{{ adventure.date.second }}
-						),
-						{{ adventure.users_per_adventure }}
-					],
-				{%- endfor -%}
-			]);
+			var arr = JSON.parse({{ all_users_per_adventure|tojson|safe }})
+			for (var i = 0; i < arr.length; i++) {
+				data.addRow([
+					new Date(arr[i].date),
+					arr[i].users_per_adventure
+				])
+			}
 
-			var dateFormatter = new google.visualization.DateFormat({pattern: 'dd MMM yyyy HH:mm:ss'});
+			var dateFormatter = new google.visualization.DateFormat({pattern: 'dd MMM yyyy'});
 			dateFormatter.format(data, 0);
 
 			var options = {

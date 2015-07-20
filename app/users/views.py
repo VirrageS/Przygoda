@@ -50,7 +50,6 @@ def login():
 			login_user(registered_user, remember=form.remember_me.data)
 			registered_user.update_login_info()
 
-			flash(u'Zalogowałeś sie poprawnie. Witaj w Przygodzie.', 'success')
 			return redirect(request.args.get('next') or url_for('simple_page.index'))
 
 		flash(u'Nieprawidłowe hasło lub nazwa użytkownika', 'danger')
@@ -87,8 +86,7 @@ def register():
 		#login_user(user)
 
 		# everything okay so far
-		flash('Email potwierdzajacy zostal wyslany', 'info')
-		flash('Uzytkownik zostal poprawnie zarejestrowany. Witaj w Przygodzie!', 'success')
+		flash(u'Email potwierdzający został wysłany', 'info')
 		return redirect(url_for('users.login'))
 
 	return render_template('users/register.html', form=form)
@@ -103,7 +101,6 @@ def logout():
 	logout_user()
 
 	# everything okay so back
-	flash('Wylogowales sie z Przygody', 'success')
 	return redirect(url_for('simple_page.index'))
 
 @mod.route('/account/', methods=['GET','POST'])
@@ -138,7 +135,7 @@ def account():
 		db.session.commit()
 
 		# everything is okay
-		flash('Your acccount has been successfully edited', 'success')
+		flash(u'Zmiany zostały zapisane', 'success')
 		return redirect(url_for('users.account'))
 
 	return render_template('users/account.html', form=form)

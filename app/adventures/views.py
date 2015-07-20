@@ -45,21 +45,16 @@ def show(adventure_id):
 	final_participants = []
 	final_coordinates = []
 
-	# get adventure and check if exists
+	# get adventure and check if exists or is active
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
-	if adventure is None:
-		flash('Adventure does not exists', 'danger')
-		return redirect(url_for('simple_page.index'))
-
-	# check if adventure is active
-	if not adventure.is_active():
-		flash('Adventure does not exists', 'danger')
+	if (adventure is None) or (not adventure.is_active()):
+		flash(u'Przygoda nie istnieje', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# get adventures creator and check if exists
 	user = User.query.filter_by(id=adventure.creator_id).first()
 	if user is None:
-		flash('Adventure creator does not exists', 'danger')
+		flash(u'Założyciel Przygody nie istnieje', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# get joined participants
@@ -111,7 +106,7 @@ def join(adventure_id):
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	if adventure is None:
-		flash('Adventure does not exists', 'danger')
+		flash(u'Przygoda nie istnieje', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
@@ -122,12 +117,12 @@ def join(adventure_id):
 		participant = AdventureParticipant(adventure_id=adventure_id, user_id=current_user.id)
 		db.session.add(participant)
 		db.session.commit()
-		flash('You have joined to this adventure', 'success')
+		flash(u'Dołączyłeś do Przygody', 'success')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is rejoining
 	if participant.is_active():
-		flash('You arleady have joined to this adventure', 'warning')
+		flash(u'Dołączyłeś do tej Przygody wcześniej', 'warning')
 		return redirect(url_for('simple_page.index'))
 
 	# join user again
@@ -136,7 +131,7 @@ def join(adventure_id):
 	db.session.add(participant)
 	db.session.commit()
 
-	flash('You have joined to this adventure', 'success')
+	flash(u'Dołączyłeś do Przygody', 'success')
 	return redirect(url_for('simple_page.index'))
 
 @mod.route('/leave/<int:adventure_id>')
@@ -151,25 +146,25 @@ def leave(adventure_id):
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	if adventure is None:
-		flash('Adventure does not exists', 'danger')
+		flash(u'Przygoda nie istnieje', 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is the creator of the adventure
 	if adventure.creator_id == current_user.id:
-		flash('You cannot leave this adventure', 'warning')
+		flash(u'Nie możesz opuścić tej Przygody', 'warning')
 		return redirect(url_for('simple_page.index'))
 
 	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
 
 	# check if user joined adventure
 	if (participant is None) or (not participant.is_active()):
-		flash('You have not joined to this adventure', 'warning')
+		flash(u'Nie dołączyłeś do tej Przygody', 'warning')
 		return redirect(url_for('simple_page.index'))
 
 	# delete user from adventure participants from database
 	participant.left_on = datetime.now()
 	db.session.commit()
-	flash('You have left the adventure', 'success')
+	flash(u'Opuściłeś Przygodę', 'success')
 	return redirect(url_for('simple_page.index'))
 
 # Check all created and joined adventures

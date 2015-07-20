@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime, timedelta
-from flask import Blueprint, request, render_template, flash, redirect, url_for
+from datetime import timedelta, date, datetime
+from flask import Blueprint, request, render_template, flash, redirect, url_for, json
 from sqlalchemy.sql import func
+from flask.ext.sqlalchemy import get_debug_queries
 
-from app import app, db
+from app import app, db, cache
 from app.users.models import User
 from app.adventures.models import Adventure, AdventureParticipant
 from app.mine.models import AdventureViews, AdventureSearches, UserReports
@@ -13,138 +14,81 @@ from app.miscellaneous import admin_required
 
 mod = Blueprint('admin', __name__, url_prefix='/admin')
 
+def daterange(start_date, end_date):
+	for n in range(int ((end_date - start_date).days)):
+		yield start_date + timedelta(n)
+
 # Charts
 @mod.route('/charts/')
 @admin_required
+@cache.cached(timeout=60)
 def charts():
 	def get_all_adventures():
-		all_adventures = []
-		adventures = Adventure.query.order_by(Adventure.created_on.asc()).all()
+		final_adventures = []
 
-
-		adventures.append(
-			Adventure(0, datetime.now(), 0, '')
-		)
-
-		count = 0
-		for adventure in adventures:
-			count += 1
-			active = Adventure.query.filter(
-				Adventure.date > adventure.created_on,
-				Adventure.created_on <= adventure.created_on
+		start_date = datetime.now() - timedelta(days=10)
+		end_date = datetime.now()
+		for single_date in daterange(start_date, end_date):
+			all_adventures = Adventure.query.filter(single_date >= Adventure.created_on).all()
+			active_adventures = Adventure.query.filter(
+				Adventure.date > single_date,
+				Adventure.created_on < single_date
 			).all()
 
-			active = list(filter(
-				lambda a: (
-					(
-						((a.deleted_on is not None) and (a.deleted_on > adventure.created_on)) or
-						(a.deleted_on is None)
-					)
-					# ) and (
-					# 	((a.disabled_on is not None) and (a.disabled_on > adventure.created_on)) or
-					# 	(a.disabled_on is None)
-					# )
-				), active
+			active_adventures = list(filter(
+				lambda a:
+					((a.deleted_on is None) or (a.deleted_on > single_date)) and
+					((a.disabled_on is None) or (a.disabled_on > single_date))
+				, active_adventures
 			))
 
-			all_adventures.append({
-				'date': {
-					'year': adventure.created_on.year,
-					'month': adventure.created_on.month,
-					'day': adventure.created_on.day,
-					'hour': adventure.created_on.hour,
-					'minute': adventure.created_on.minute,
-					'second': adventure.created_on.second
-				},
-				'active': len(active),
-				'count': count
+			final_adventures.append({
+				'date': single_date,
+				'all': len(all_adventures),
+				'active': len(active_adventures)
 			})
 
-		# last adventure does not bring any value (is mock)
-		all_adventures[-1]['count'] -= 1;
-
-		return all_adventures
+		final_adventures = json.dumps(final_adventures)
+		return final_adventures
 
 	def get_all_users():
-		all_users = []
-		users = User.query.order_by(User.registered_on.asc()).all()
+		final_users = []
 
-		u = User('wtf', 'sf', 'email', social_id=None)
-		u.registered_on = datetime.now()
-		u.last_login = datetime.now()
-		users.append(u)
-
-		count = 0
-		for user in users:
-			active = User.query.filter(
-				User.registered_on <= user.registered_on
+		start_date = datetime.now() - timedelta(days=10)
+		end_date = datetime.now()
+		for single_date in daterange(start_date, end_date):
+			all_users = User.query.filter(single_date >= User.registered_on).all()
+			active_users = User.query.filter(
+				single_date >= User.registered_on,
+				single_date <= User.last_login + timedelta(days=4)
 			).all()
 
-			User.last_login + timedelta(days=4) >= user.registered_on
-
-			active = list(filter(
-				lambda u: (
-					((u.last_login is not None) and (u.last_login + timedelta(days=4) > user.registered_on)) or
-					(u.last_login is None)
-				), active
-			))
-
-			count += 1
-			all_users.append({
-				'date': {
-					'year': user.registered_on.year,
-					'month': user.registered_on.month,
-					'day': user.registered_on.day,
-					'hour': user.registered_on.hour,
-					'minute': user.registered_on.minute,
-					'second': user.registered_on.second
-				},
-				'active': len(active),
-				'count': count
+			final_users.append({
+				'date': single_date,
+				'all': len(all_users),
+				'active': len(active_users)
 			})
 
-		# last user does not bring any value (is mock)
-		all_users[-1]['count'] -= 1
-
-		return all_users
+		final_users = json.dumps(final_users)
+		return final_users
 
 
 	def get_users_per_adventure():
-		all_users_per_adventure = []
-		participants = AdventureParticipant.query.order_by(AdventureParticipant.joined_on).all()
+		final_users_per_adventure = []
 
-		users = 0
-		for participant in participants:
-			users += 1
+		start_date = datetime.now() - timedelta(days=10)
+		end_date = datetime.now()
+		for single_date in daterange(start_date, end_date):
+			all_participants = AdventureParticipant.query.filter(single_date >= AdventureParticipant.joined_on).all()
+			all_adventures = Adventure.query.filter(single_date >= Adventure.created_on).all()
 
-			registered_adventures = Adventure.query.filter(Adventure.created_on <= participant.joined_on).all()
-			all_users_per_adventure.append({
-				'date': {
-					'year': participant.joined_on.year,
-					'month': participant.joined_on.month,
-					'day': participant.joined_on.day,
-					'hour': participant.joined_on.hour,
-					'minute': participant.joined_on.minute,
-					'second': participant.joined_on.second
-				},
-				'users_per_adventure': users / len(registered_adventures)
+			final_users_per_adventure.append({
+				'date': single_date,
+				'users_per_adventure': (0 if len(all_adventures) <= 0 else len(all_participants)/len(all_adventures))
 			})
 
-			# if participant.left_on is not None:
-			# 	left_adventures = Adventure.query.filter(Adventure.created_on <= participant.left_on).all()
-			# 	all_users_per_adventure.append({
-			# 		'date': {
-			# 			'year': participant.left_on.year,
-			# 			'month': participant.left_on.month,
-			# 			'day': participant.left_on.day,
-			# 			'hour': participant.left_on.hour,
-			# 			'minute': participant.left_on.minute,
-			# 			'second': participant.left_on.second
-			# 		},
-			# 		'users_per_adventure': len(left_adventures)
-			# 	})
-
-		return all_users_per_adventure
+		final_users_per_adventure = json.dumps(final_users_per_adventure)
+		return final_users_per_adventure
 
 	def get_adventures_views():
 		all_adventures_views = []
