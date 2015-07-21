@@ -58,15 +58,29 @@ def charts():
 		end_date = datetime.now()
 		for single_date in daterange(start_date, end_date):
 			all_users = User.query.filter(single_date >= User.registered_on).all()
+
 			active_users = User.query.filter(
 				single_date >= User.registered_on,
 				single_date <= User.last_login + timedelta(days=4)
 			).all()
 
+			created_adventure = db.session.query(
+				func.count(Adventure.creator_id).label('creator_id')
+			).filter(single_date >= Adventure.created_on).group_by(Adventure.creator_id).all()
+
+			joined_to_adventure = db.session.query(
+				func.count(AdventureParticipant.user_id).label('user_id')
+			).join(Adventure).filter(
+				single_date >= AdventureParticipant.joined_on,
+				AdventureParticipant.user_id != Adventure.creator_id
+			).group_by(AdventureParticipant.user_id).all()
+
 			final_users.append({
 				'date': single_date,
 				'all': len(all_users),
-				'active': len(active_users)
+				'active': len(active_users),
+				'created_adventure': len(created_adventure),
+				'joined_to_adventure': len(joined_to_adventure)
 			})
 
 		final_users = json.dumps(final_users)

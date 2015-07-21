@@ -51,14 +51,18 @@
 			var data = new google.visualization.DataTable();
 			data.addColumn('date', 'Date');
 			data.addColumn('number', 'All');
-			data.addColumn('number', 'Active login')
+			data.addColumn('number', 'Active login');
+			data.addColumn('number', 'Created adventure');
+			data.addColumn('number', 'Joined to adventure');
 
 			var arr = JSON.parse({{ all_users|tojson|safe }})
 			for (var i = 0; i < arr.length; i++) {
 				data.addRow([
 					new Date(arr[i].date),
 					arr[i].all,
-					arr[i].active
+					arr[i].active,
+					arr[i].created_adventure,
+					arr[i].joined_to_adventure
 				])
 			}
 
