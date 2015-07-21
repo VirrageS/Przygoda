@@ -9,7 +9,11 @@ from flask.ext.cache import Cache
 
 # set app
 app = Flask(__name__)
-app.config.from_object('config.ProductionConfig')
+
+if os.environ.get('CONFIG'):
+	app.config.from_object('config.' + os.environ.get('CONFIG') + 'Config')
+else:
+	app.config.from_object('config.DevelopmentConfig')
 
 # set database
 db = SQLAlchemy(app)
