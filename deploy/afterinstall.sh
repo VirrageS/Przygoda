@@ -58,3 +58,7 @@ echo "server {
 
 sudo ln -s /etc/nginx/sites-available/$PROJECT_NAME /etc/nginx/sites-enabled;
 sudo nginx -t;
+
+# make logs folder
+sudo mkdir /home/$USER/$PROJECT_NAME/logs
+sudo chmod 755 /home/$USER/$PROJECT_NAME/logs
