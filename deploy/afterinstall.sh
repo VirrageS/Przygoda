@@ -24,7 +24,7 @@ pip3 install -r requirements.txt;
 deactivate;
 
 aws s3 cp s3://przygoda/config.sh /home/$USER/$PROJECT_NAME/config.sh --region eu-west-1
-. config.sh
+. ./config.sh
 
 sudo touch /etc/init/$PROJECT_NAME.conf;
 echo "description \"Gunicorn application server running $PROJECT_NAME\"
