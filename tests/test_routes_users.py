@@ -23,6 +23,9 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		self.app = app.test_client()
 		db.create_all()
 
+		os.environ['MAIL_USERNAME'] = 'przygoda.web@gmail.com'
+		os.environ['MAIL_PASSWORD'] = 'przygoda12345'
+
 	def tearDown(self):
 		db.session.remove()
 		db.drop_all()
