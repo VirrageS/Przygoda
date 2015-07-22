@@ -69,6 +69,8 @@ def show_all_adventures():
 # Index - main path
 @mod.route("/")
 def index():
+	flash(app.config['SQLALCHEMY_DATABASE_URI'])
+
 	if not current_user.is_authenticated():
 		return render_template('landing.html')
 
