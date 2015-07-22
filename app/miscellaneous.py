@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime, timedelta
 from functools import wraps
 from flask.ext.login import current_user
 from flask import redirect, url_for, flash, abort
@@ -46,6 +47,7 @@ def rule_required(*roles):
 		return f(*args, **kwargs)
 	return wrapper
 
+# decorator to filter no-admin users
 def admin_required(f):
 	@wraps(f)
 	def wrapper(*args, **kwargs):
@@ -55,6 +57,7 @@ def admin_required(f):
 		return f(*args, **kwargs)
 	return wrapper
 
+# function to add admin to database
 def add_admin():
 	# add admin
 	from app.users.models import User
@@ -69,3 +72,20 @@ def add_admin():
 		u.confirmed = True
 		db.session.add(u)
 		db.session.commit()
+
+# decorator to compute time of the fuction
+def execution_time(f):
+	@wraps(f)
+	def wrapper(*args, **kwargs):
+		ts = datetime.now()
+		result = f(*args, **kwargs)
+		te = datetime.now()
+
+		flash('%r (%r, %r) %s sec' % (f.__name__, args, kwargs, str(te-ts)), 'info')
+		return result
+	return wrapper
+
+# compute days difference between two dates
+def daterange(start_date, end_date):
+	for n in range(int((end_date - start_date).days)):
+		yield start_date + timedelta(n)

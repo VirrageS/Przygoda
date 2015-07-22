@@ -10,23 +10,20 @@ from app.users.models import User
 from app.adventures.models import Adventure, AdventureParticipant
 from app.mine.models import AdventureViews, AdventureSearches, UserReports
 
-from app.miscellaneous import admin_required
+from app.miscellaneous import admin_required, execution_time, daterange
 
 mod = Blueprint('admin', __name__, url_prefix='/admin')
-
-def daterange(start_date, end_date):
-	for n in range(int ((end_date - start_date).days)):
-		yield start_date + timedelta(n)
 
 # Charts
 @mod.route('/charts/')
 @admin_required
-@cache.cached(timeout=60)
+@cache.cached(timeout=120)
 def charts():
+	@execution_time
 	def get_all_adventures():
 		final_adventures = []
 
-		start_date = datetime.now() - timedelta(days=10)
+		start_date = datetime.now() - timedelta(days=app.config['STATISTICS_DAYS_SPAN'])
 		end_date = datetime.now()
 		for single_date in daterange(start_date, end_date):
 			all_adventures = Adventure.query.filter(single_date >= Adventure.created_on).all()
@@ -51,10 +48,11 @@ def charts():
 		final_adventures = json.dumps(final_adventures)
 		return final_adventures
 
+	@execution_time
 	def get_all_users():
 		final_users = []
 
-		start_date = datetime.now() - timedelta(days=10)
+		start_date = datetime.now() - timedelta(days=app.config['STATISTICS_DAYS_SPAN'])
 		end_date = datetime.now()
 		for single_date in daterange(start_date, end_date):
 			all_users = User.query.filter(single_date >= User.registered_on).all()
@@ -86,11 +84,11 @@ def charts():
 		final_users = json.dumps(final_users)
 		return final_users
 
-
+	@execution_time
 	def get_users_per_adventure():
 		final_users_per_adventure = []
 
-		start_date = datetime.now() - timedelta(days=10)
+		start_date = datetime.now() - timedelta(days=app.config['STATISTICS_DAYS_SPAN'])
 		end_date = datetime.now()
 		for single_date in daterange(start_date, end_date):
 			all_participants = AdventureParticipant.query.filter(single_date >= AdventureParticipant.joined_on).all()
@@ -104,6 +102,7 @@ def charts():
 		final_users_per_adventure = json.dumps(final_users_per_adventure)
 		return final_users_per_adventure
 
+	@execution_time
 	def get_adventures_views():
 		all_adventures_views = []
 		adventures = db.session.query(
@@ -119,6 +118,7 @@ def charts():
 		all_adventures_views = sorted(all_adventures_views, key=(lambda a: a['views']), reverse=True)
 		return all_adventures_views
 
+	@execution_time
 	def get_adventures_searches():
 		all_adventures_searches = []
 		adventures = db.session.query(
