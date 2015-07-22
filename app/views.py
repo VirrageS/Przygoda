@@ -6,7 +6,7 @@ from flask.ext.login import current_user
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 from app.users.models import User
-from app import cache, db
+from app import cache, db, app
 
 from app.mine.forms import ReportForm
 from app.mine.models import UserReports
