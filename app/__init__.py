@@ -36,8 +36,8 @@ if not app.config['DEBUG']:
 		file_handler.setLevel(logging.INFO)
 		app.logger.addHandler(file_handler)
 		app.logger.info('przygoda startup')
-	except:
-		print('Probably missing logs folder')
+	except e:
+		print('Probably missing logs folder' + sys.exc_info()[0])
 
 # secret key
 def install_secret_key(application, filename='secret_key'):

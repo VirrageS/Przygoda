@@ -203,20 +203,20 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
-	def test_users_register_route_register(self):
-		"""Ensure users register actually create the user"""
-
-		response = self.app.post('/users/register/', data=dict(
-			username='tomeker',
-			email='tomeker@tomekads.com',
-			password='aaaaaa',
-			confirm='aaaaaa'
-		), follow_redirects=True)
-
-		self.assertTrue(response.status_code == 200)
-		self.assertTemplateUsed('users/login.html')
-
-		u = User.query.filter_by(username='tomeker').first()
-		self.assertTrue(u is not None)
-		self.assertTrue(u.email == 'tomeker@tomekads.com')
-		self.assertTrue(check_password_hash(u.password, 'aaaaaa'))
+	# def test_users_register_route_register(self):
+	# 	"""Ensure users register actually create the user"""
+	#
+	# 	response = self.app.post('/users/register/', data=dict(
+	# 		username='tomeker',
+	# 		email='tomeker@tomekads.com',
+	# 		password='aaaaaa',
+	# 		confirm='aaaaaa'
+	# 	), follow_redirects=True)
+	#
+	# 	self.assertTrue(response.status_code == 200)
+	# 	self.assertTemplateUsed('users/login.html')
+	#
+	# 	u = User.query.filter_by(username='tomeker').first()
+	# 	self.assertTrue(u is not None)
+	# 	self.assertTrue(u.email == 'tomeker@tomekads.com')
+	# 	self.assertTrue(check_password_hash(u.password, 'aaaaaa'))

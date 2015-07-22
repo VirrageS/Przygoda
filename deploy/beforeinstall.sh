@@ -23,3 +23,7 @@ sudo mkdir /home/$USER/$PROJECT_NAME
 
 sudo find /home/$USER/$PROJECT_NAME -type d -exec chmod 777 {} \;
 sudo find /home/$USER/$PROJECT_NAME -type f -exec chmod 644 {} \;
+
+
+sudo mkdir /home/$USER/$PROJECT_NAME/logs
+sudo chmod 755 logs
