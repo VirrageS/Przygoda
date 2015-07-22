@@ -12,14 +12,16 @@ from flask.ext.testing import TestCase
 
 from flask.ext.login import login_user, logout_user, login_required, LoginManager, current_user
 
-from app import app, db
+from app import app, db, mail
 from app.users.models import User
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
+from flask.ext.mail import Mail
 
 class RoutesUsersTestCase(TestCase, unittest.TestCase):
 	def setUp(self):
 		app.config.from_object('config.TestingConfig')
+		mail = Mail(app)
 		self.app = app.test_client()
 		db.create_all()
 
@@ -29,7 +31,6 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 
 	def create_app(self):
 		app = Flask(__name__)
-		app.config['TESTING'] = True
 
 		# Default port is 5000
 		app.config['LIVESERVER_PORT'] = 8943
@@ -203,20 +204,20 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
 
-	# def test_users_register_route_register(self):
-	# 	"""Ensure users register actually create the user"""
-	#
-	# 	response = self.app.post('/users/register/', data=dict(
-	# 		username='tomeker',
-	# 		email='tomeker@tomekads.com',
-	# 		password='aaaaaa',
-	# 		confirm='aaaaaa'
-	# 	), follow_redirects=True)
-	#
-	# 	self.assertTrue(response.status_code == 200)
-	# 	self.assertTemplateUsed('users/login.html')
-	#
-	# 	u = User.query.filter_by(username='tomeker').first()
-	# 	self.assertTrue(u is not None)
-	# 	self.assertTrue(u.email == 'tomeker@tomekads.com')
-	# 	self.assertTrue(check_password_hash(u.password, 'aaaaaa'))
+	def test_users_register_route_register(self):
+		"""Ensure users register actually create the user"""
+
+		response = self.app.post('/users/register/', data=dict(
+			username='tomeker',
+			email='tomeker@tomekads.com',
+			password='aaaaaa',
+			confirm='aaaaaa'
+		), follow_redirects=True)
+
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/login.html')
+
+		u = User.query.filter_by(username='tomeker').first()
+		self.assertTrue(u is not None)
+		self.assertTrue(u.email == 'tomeker@tomekads.com')
+		self.assertTrue(check_password_hash(u.password, 'aaaaaa'))

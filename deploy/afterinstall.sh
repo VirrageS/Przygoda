@@ -23,9 +23,6 @@ pip3 install psycopg2;
 pip3 install -r requirements.txt;
 deactivate;
 
-aws s3 cp s3://przygoda/config.sh /home/$USER/$PROJECT_NAME/config.sh --region eu-west-1
-. ./config.sh
-
 sudo touch /etc/init/$PROJECT_NAME.conf;
 echo "description \"Gunicorn application server running $PROJECT_NAME\"
 
@@ -37,8 +34,16 @@ setuid $USER
 setgid www-data
 
 env PATH=/home/$USER/$PROJECT_NAME/env/bin
+env CONFIG=Production
+env MAIL_USERNAME=CHANGE_THIS_!!!
+env MAIL_PASSWORD=CHANGE_THIS_!!!
+env DATABASE_USERNAME=CHANGE_THIS_!!!
+env DATABASE_PASSWORD=CHANGE_THIS_!!!
 chdir /home/$USER/$PROJECT_NAME
 exec gunicorn --workers $WORKERS --bind unix:$PROJECT_NAME.sock -m 007 run:app" | sudo tee --append /etc/init/$PROJECT_NAME.conf > /dev/null
+
+aws s3 cp s3://przygoda/config.sh /home/$USER/$PROJECT_NAME/config.sh --region eu-west-1
+. ./config.sh
 
 sudo rm -rf /etc/nginx/sites-enabled/default;
 sudo rm -rf /etc/nginx/sites-available/default;
@@ -58,3 +63,6 @@ echo "server {
 
 sudo ln -s /etc/nginx/sites-available/$PROJECT_NAME /etc/nginx/sites-enabled;
 sudo nginx -t;
+
+sudo mkdir /home/$USER/$PROJECT_NAME/logs
+sudo chmod 777 /home/$USER/$PROJECT_NAME/logs
