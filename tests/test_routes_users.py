@@ -36,24 +36,24 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		app.config['LIVESERVER_PORT'] = 8943
 		return app
 
-	def login(self, username, password):
+	def login(self, email, password):
 		return self.app.post('/users/login/', data=dict(
-			username=username,
+			email=email,
 			password=password
 		), follow_redirects=True)
 
 	def logout(self):
 		return self.app.get('/users/logout/', follow_redirects=True)
 
-	def test_users_login_route_wrong_username(self):
-		"""Ensure users login does not accept wrong username"""
+	def test_users_login_route_wrong_email(self):
+		"""Ensure users login does not accept wrong email"""
 
 		# add user to database
 		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
 		db.session.add(u)
 		db.session.commit()
 
-		response = self.login(username='johne', password='a')
+		response = self.login(email='johner@example.com', password='a')
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
 
@@ -65,7 +65,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		db.session.add(u)
 		db.session.commit()
 
-		response = self.login(username='john', password='ab')
+		response = self.login(email='john@example.com', password='ab')
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
 
@@ -77,7 +77,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		db.session.add(u)
 		db.session.commit()
 
-		response = self.login(username='john', password='a')
+		response = self.login(email='john@example.com', password='a')
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('all.html')
 
@@ -89,11 +89,11 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		db.session.add(u)
 		db.session.commit()
 
-		response = self.login(username='john', password='a')
+		response = self.login(email='john@example.com', password='a')
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('all.html')
 
-		response = self.login(username='john', password='a')
+		response = self.login(email='john@example.com', password='a')
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('all.html')
 
@@ -112,7 +112,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		db.session.add(u)
 		db.session.commit()
 
-		self.login(username='john', password='a')
+		self.login(email='john@example.com', password='a')
 
 		response = self.logout()
 		self.assertTrue(response.status_code == 200)
@@ -130,7 +130,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		db.session.add(u)
 		db.session.commit()
 
-		self.login(username='john', password='a')
+		self.login(email='john@example.com', password='a')
 
 		response = self.app.get('/users/register', follow_redirects=True)
 		self.assertTrue(response.status_code == 200)

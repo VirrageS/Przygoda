@@ -40,7 +40,7 @@ class RequiredIf(Required):
 			super(RequiredIf, self).__call__(form, field)
 
 class LoginForm(Form):
-	username = StringField('Username', [Length(min=4, max=25)])
+	email = StringField('Email Address', [Email(), Length(min=6, max=35)])
 	password = PasswordField('Password', [Required()])
 	remember_me = BooleanField('Remember me', [])
 

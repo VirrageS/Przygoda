@@ -43,7 +43,7 @@ def login():
 
 	# verify the login form
 	if form.validate_on_submit():
-		registered_user = User.query.filter_by(username=form.username.data).first()
+		registered_user = User.query.filter_by(email=form.email.data).first()
 
 		if (registered_user is not None) and check_password_hash(registered_user.password, form.password.data):
 			# login user to system
@@ -52,7 +52,7 @@ def login():
 
 			return redirect(request.args.get('next') or url_for('simple_page.index'))
 
-		flash(u'Nieprawidłowe hasło lub nazwa użytkownika', 'danger')
+		flash(u'Nieprawidłowe hasło lub email', 'danger')
 
 	return render_template('users/login.html', form=form)
 

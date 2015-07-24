@@ -48,16 +48,12 @@
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-addon"><i class="fa fa-user"></i></div>
-							{{ render_field(form.username, placeholder="Nazwa użytkownika", autofocus="") }}
+							<div class="input-group-addon"><i class="fa fa-envelope"></i></div>
+							{{ render_field(form.email, placeholder="Email") }}
 						</div>
-						{% if form.username.errors %}
-							{% for error in form.username.errors %}
-								<div class="form-group has-error">
-									<small class="help-block">{{ error }}</small>
-								</div>
-							{% endfor %}
-						{% endif %}
+						<div class="form-group has-error">
+							<small class="form-group has-error help-block">{{ form.email.errors[0] }}</small>
+						</div>
 					</div>
 					<div class="form-group">
 						<div class="input-group">
@@ -68,7 +64,7 @@
 							<small class="help-block">{{ form.password.errors[0] }}</small>
 						</div>
 					</div>
-					
+
 					<div class="form-group">
 						{{ render_checkbox_field(form.remember_me, text="Nie wylogowuj mnie") }}
 					</div>

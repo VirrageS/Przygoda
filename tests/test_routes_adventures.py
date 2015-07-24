@@ -34,9 +34,9 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         app.config['LIVESERVER_PORT'] = 8943
         return app
 
-    def login(self, username, password):
+    def login(self, email, password):
         return self.app.post('/users/login/', data=dict(
-            username=username,
+            email=email,
             password=password
         ), follow_redirects=True)
 
@@ -129,7 +129,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/join/3458304958390433485734895734085734', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -144,7 +144,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/join/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -164,7 +164,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         # trigger user joining
         self.app.get('/adventures/join/1', follow_redirects=True)
@@ -195,7 +195,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         # trigger user joining
         response = self.app.get('/adventures/join/1', follow_redirects=True)
@@ -224,7 +224,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/leave/1324981234124381734891234', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -239,7 +239,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/leave/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -259,7 +259,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/leave/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -279,7 +279,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/leave/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -299,7 +299,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         # add user to adventure participants
         ap = AdventureParticipant(user_id=1, adventure_id=1)
@@ -338,7 +338,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/edit/128345792384572394857234598982347582', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -353,7 +353,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/edit/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -373,7 +373,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/edit/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -393,7 +393,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/edit/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -415,7 +415,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/delete/128345792384572394857234598982347582', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -430,7 +430,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         response = self.app.get('/adventures/delete/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
@@ -445,7 +445,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         # add adventure to database
         a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
@@ -465,7 +465,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # login user to system
-        self.login(username='john', password='a')
+        self.login(email='john@example.com', password='a')
 
         # add adventure to database
         a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
