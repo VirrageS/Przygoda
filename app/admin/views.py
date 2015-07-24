@@ -20,10 +20,10 @@ mod = Blueprint('admin', __name__, url_prefix='/admin')
 @cache.cached(timeout=120)
 def charts():
 	@execution_time
-	def get_all_adventures():
+	def get_all_adventures(days):
 		final_adventures = []
 
-		start_date = datetime.now() - timedelta(days=app.config['STATISTICS_DAYS_SPAN'])
+		start_date = datetime.now() - timedelta(days=days)
 		end_date = datetime.now()
 		for single_date in daterange(start_date, end_date):
 			all_adventures = Adventure.query.filter(single_date >= Adventure.created_on).all()
@@ -49,10 +49,10 @@ def charts():
 		return final_adventures
 
 	@execution_time
-	def get_all_users():
+	def get_all_users(days):
 		final_users = []
 
-		start_date = datetime.now() - timedelta(days=app.config['STATISTICS_DAYS_SPAN'])
+		start_date = datetime.now() - timedelta(days=days)
 		end_date = datetime.now()
 		for single_date in daterange(start_date, end_date):
 			all_users = User.query.filter(single_date >= User.registered_on).all()
@@ -85,10 +85,10 @@ def charts():
 		return final_users
 
 	@execution_time
-	def get_users_per_adventure():
+	def get_users_per_adventure(days):
 		final_users_per_adventure = []
 
-		start_date = datetime.now() - timedelta(days=app.config['STATISTICS_DAYS_SPAN'])
+		start_date = datetime.now() - timedelta(days=days)
 		end_date = datetime.now()
 		for single_date in daterange(start_date, end_date):
 			all_participants = AdventureParticipant.query.filter(single_date >= AdventureParticipant.joined_on).all()
@@ -136,9 +136,9 @@ def charts():
 
 	return render_template(
 		'admin/charts.html',
-		all_adventures=get_all_adventures(),
-		all_users=get_all_users(),
-		all_users_per_adventure=get_users_per_adventure(),
+		all_adventures=get_all_adventures(app.config['STATISTICS_DAYS_SPAN']),
+		all_users=get_all_users(app.config['STATISTICS_DAYS_SPAN']),
+		all_users_per_adventure=get_users_per_adventure(app.config['STATISTICS_DAYS_SPAN']),
 		all_adventures_views=get_adventures_views(),
 		all_adventures_searches=get_adventures_searches()
 	)
