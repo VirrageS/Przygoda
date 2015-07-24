@@ -99,6 +99,9 @@ app.register_blueprint(modules)
 from app.admin.views import mod as adminModules
 app.register_blueprint(adminModules)
 
+from app.api.views import mod as apiModules
+app.register_blueprint(apiModules)
+
 # Later on you'll import the other blueprints the same way:
 # from app.comments.views import mod as commentsModule
 # from app.posts.views import mod as postsModule
