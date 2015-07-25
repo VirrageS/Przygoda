@@ -65,6 +65,9 @@ def register():
 	if ('password' not in request.args) or (request.args['password'] == ''):
 		return make_response(jsonify({'error': 'Password not provided'}), 400)
 
+	if ('confirm' not in request.args) or (request.args['confirm'] == ''):
+		return make_response(jsonify({'error': 'Confirm password not provided'}), 400)
+
 	form = RegisterForm(request.args)
 	form.csrf_enabled = False
 	if not form.validate():
@@ -76,10 +79,6 @@ def register():
 		errors = [item for sublist in errors for item in sublist]
 
 		return make_response(jsonify({'error': errors[0]}), 400)
-
-	u = User.query.filter_by(username=request.args['username'], email=request.args['email']).first()
-	if u is not None:
-		return make_response(jsonify({'error': 'User with provied username or email already exists'}), 400)
 
 	u = User(username=request.args['username'], email=request.args['email'], password=generate_password_hash(request.args['password']))
 	db.session.add(u)
