@@ -185,7 +185,51 @@ def get_all_adventures():
 
 	return jsonify(final_adventures)
 
-@mod.route('/adventure/delete/', methods=['GET'])
+
+@mod.route('/adventure/leave', methods=['GET'])
+def leave_adventure():
+	if 'user_id' not in request.args:
+		return make_response(jsonify({'error': 'User id not provided'}), 400)
+
+	if 'adventure_id' not in request.args:
+		return make_resposne(jsonify({'error': 'Adventure id not provied'}), 400)
+
+	if request.args['adventure_id'] >= 9223372036854775807:
+		return make_response(jsonify({'error': 'Adventure id is too large'}), 400)
+
+	if request.args['user_id'] >= 9223372036854775807:
+		return make_response(jsonify({'error': 'User id is too large'}), 400)
+
+	# check if is in adventure
+
+	# check if is adventure creator
+
+	# update leaving
+
+	# make response
+	return make_response(jsonify({'success': 'User has left the adventure'}), 200)
+
+@mod.route('/adventure/join', methods=['GET'])
+	if 'user_id' not in request.args:
+		return make_response(jsonify({'error': 'User id not provided'}), 400)
+
+	if 'adventure_id' not in request.args:
+		return make_resposne(jsonify({'error': 'Adventure id not provied'}), 400)
+
+	if request.args['adventure_id'] >= 9223372036854775807:
+		return make_response(jsonify({'error': 'Adventure id is too large'}), 400)
+
+	if request.args['user_id'] >= 9223372036854775807:
+		return make_response(jsonify({'error': 'User id is too large'}), 400)
+
+	# check if is in adventure
+
+	# update joining
+
+	# make response
+	return make_response(jsonify({'success': 'User has joined the adventure'}), 200)
+
+@mod.route('/adventure/delete', methods=['GET'])
 def delete_adventure():
 	if 'user_id' not in request.args:
 		return make_response(jsonify({'error': 'User id not provided'}), 400)
@@ -214,4 +258,4 @@ def delete_adventure():
 	db.session.commit()
 
 	# make response
-	return make_response(jsonify({'success': 'Adventure has been deleted'}), 202)
+	return make_response(jsonify({'success': 'Adventure has been deleted'}), 200)
