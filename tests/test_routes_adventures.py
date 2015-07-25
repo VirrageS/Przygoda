@@ -15,10 +15,6 @@ from app.users.models import User
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 
-# TODO: add test [test_adventures_leave_route_adventure_no_active]
-# TODO: add test [test_adventures_join_route_adventure_no_active]
-# TODO: add test [test_adventures_delete_route_adventure_no_active]
-
 class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
     def setUp(self):
         app.config.from_object('config.TestingConfig')
@@ -149,7 +145,14 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         # login user to system
         self.login(email='john@example.com', password='a')
 
+        # trigger user joining
         response = self.app.get('/adventures/join/1', follow_redirects=True)
+
+        # check if user has not! been added to adventure
+        participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
+        self.assertTrue(participant is None)
+
+        # check proper response
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('all.html')
 
@@ -183,6 +186,34 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         participants = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).all()
         self.assertTrue(participants is not None)
         self.assertTrue(len(participants) == 1)
+
+
+    def test_adventures_join_route_adventure_no_active(self):
+        """Ensure that join adventure does not allow to join if adventure is no active"""
+
+        # add adventure to database
+        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
+
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
+
+        # login user to system
+        self.login(email='john@example.com', password='a')
+
+        # trigger user joining
+        response = self.app.get('/adventures/join/1', follow_redirects=True)
+
+        # check if user has not! been added to adventure
+        participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
+        self.assertTrue(participant is None)
+
+        # check proper response
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('all.html')
 
     def test_adventures_join_route_join(self):
         """Ensure that join adventure create adventure participant"""
@@ -287,6 +318,36 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         response = self.app.get('/adventures/leave/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('all.html')
+
+    def test_adventures_leave_route_adventure_no_active(self):
+        """Ensure that leave adventure do not allow leaving if the adventure is not active"""
+
+        # add adventure to database
+        a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
+
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
+
+        # login user to system
+        self.login(email='john@example.com', password='a')
+
+        # add user to adventure participants
+        ap = AdventureParticipant(user_id=1, adventure_id=1)
+        db.session.add(ap)
+        db.session.commit()
+
+        response = self.app.get('/adventures/leave/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('all.html')
+
+        # check if user was removed from adventure participants
+        ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
+        self.assertTrue(ap is not None)
+        self.assertTrue(ap.is_active())
 
     def test_adventures_leave_route_leave(self):
         """Ensure that leave adventure actually allows to leave the adventure"""
@@ -456,6 +517,45 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         response = self.app.get('/adventures/delete/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('all.html')
+
+    def test_adventures_delete_route_adventure_no_active(self):
+        """Ensure that delete adventure requires for adventure to be active"""
+
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
+
+        # login user to system
+        self.login(email='john@example.com', password='a')
+
+        # add adventure to database
+        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
+
+        # add adventure participants to database
+        ap = AdventureParticipant(adventure_id=1, user_id=2)
+        db.session.add(ap)
+        db.session.commit()
+
+        # add some coordinates to database
+        c = Coordinate(adventure_id=1, path_point=1, latitude=50.24324242, longitude=50.24324242)
+        db.session.add(c)
+        db.session.commit()
+
+        response = self.app.get('/adventures/delete/1', follow_redirects=True)
+
+        a = Adventure.query.filter_by(id=1).first()
+        ap = AdventureParticipant.query.filter_by(adventure_id=1).first()
+        c = Coordinate.query.filter_by(adventure_id=1).first()
+        self.assertTrue(a is not None)
+        self.assertTrue(a.is_active() is False)
+        self.assertTrue(ap is not None)
+        self.assertTrue(c is not None)
+
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('all.html')
 
