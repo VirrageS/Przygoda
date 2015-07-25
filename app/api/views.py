@@ -200,9 +200,16 @@ def leave_adventure():
 	if request.args['user_id'] >= 9223372036854775807:
 		return make_response(jsonify({'error': 'User id is too large'}), 400)
 
+	# check if adventure exists
+	a = Adventure.query.filter_by(id=request.args['adventure_id']).first()
+	if a is None:
+		return make_response(jsonify({'error': 'Adventure does not exists'}), 400)
+
 	# check if is in adventure
 
-	# check if is adventure creator
+	# check if creator_id match with user_id
+	if a.creator_id == user_id:
+		return make_response(jsonify({'error': 'User is creator and cannot leave this adventure'}), 400)
 
 	# update leaving
 
@@ -222,9 +229,26 @@ def leave_adventure():
 	if request.args['user_id'] >= 9223372036854775807:
 		return make_response(jsonify({'error': 'User id is too large'}), 400)
 
-	# check if is in adventure
+	# get participant
+	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
 
-	# update joining
+	# check if user joining adventure for the first time
+	if participant is None:
+		# add user to adventure participants to database
+		participant = AdventureParticipant(adventure_id=adventure_id, user_id=current_user.id)
+		db.session.add(participant)
+		db.session.commit()
+		return make_response(jsonify({'success': 'User has joined the adventure'}), 200)
+
+	# check if user is rejoining
+	if participant.is_active():
+		return make_response(jsonify({'error': 'User has joined this adventure before'}), 400)
+
+	# join user again
+	participant.left_on = None
+	participant.joined_on = datetime.now()
+	db.session.add(participant)
+	db.session.commit()
 
 	# make response
 	return make_response(jsonify({'success': 'User has joined the adventure'}), 200)
