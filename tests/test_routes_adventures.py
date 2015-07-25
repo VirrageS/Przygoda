@@ -15,6 +15,9 @@ from app.users.models import User
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 
+# TODO: add test [test_adventures_leave_route_adventure_no_active]
+# TODO: add test [test_adventures_join_route_adventure_no_active]
+# TODO: add test [test_adventures_delete_route_adventure_no_active]
 
 class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
     def setUp(self):
@@ -154,7 +157,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that join adventure does not allow to join again"""
 
         # add adventure to database
-        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
         db.session.add(a)
         db.session.commit()
 
@@ -185,7 +188,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that join adventure create adventure participant"""
 
         # add adventure to database
-        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
         db.session.add(a)
         db.session.commit()
 
@@ -289,7 +292,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that leave adventure actually allows to leave the adventure"""
 
         # add adventure to database
-        a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        a = Adventure(creator_id=2, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
         db.session.add(a)
         db.session.commit()
 
@@ -468,7 +471,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         self.login(email='john@example.com', password='a')
 
         # add adventure to database
-        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
         db.session.add(a)
         db.session.commit()
 
