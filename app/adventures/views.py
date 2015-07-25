@@ -105,7 +105,7 @@ def join(adventure_id):
 
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
-	if adventure is None:
+	if (adventure is None) or (not adventure.is_active()):
 		flash(u'Przygoda nie istnieje', 'danger')
 		return redirect(url_for('simple_page.index'))
 
@@ -145,7 +145,7 @@ def leave(adventure_id):
 
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
-	if adventure is None:
+	if (adventure is None) or (not adventure.is_active()):
 		flash(u'Przygoda nie istnieje', 'danger')
 		return redirect(url_for('simple_page.index'))
 

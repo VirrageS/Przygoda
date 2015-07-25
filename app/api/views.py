@@ -188,29 +188,40 @@ def get_all_adventures():
 
 @mod.route('/adventure/leave', methods=['GET'])
 def leave_adventure():
+	# check if data is provided
 	if 'user_id' not in request.args:
 		return make_response(jsonify({'error': 'User id not provided'}), 400)
 
 	if 'adventure_id' not in request.args:
-		return make_resposne(jsonify({'error': 'Adventure id not provied'}), 400)
+		return make_response(jsonify({'error': 'Adventure id not provied'}), 400)
 
-	if request.args['adventure_id'] >= 9223372036854775807:
-		return make_response(jsonify({'error': 'Adventure id is too large'}), 400)
+	# check if there is no input error
+	user_id = None
+	adventure_id = None
+	try:
+		user_id = int(request.args['user_id'])
+		adventure_id = int(request.args['adventure_id'])
+	except:
+		return make_response(jsonify({'error': 'Input error'}), 400)
 
-	if request.args['user_id'] >= 9223372036854775807:
-		return make_response(jsonify({'error': 'User id is too large'}), 400)
+	if (user_id >= 9223372036854775807) or (user_id < 0) or (adventure_id >= 9223372036854775807) or (adventure_id < 0):
+		return make_response(jsonify({'error': 'Input error'}), 400)
 
 	# check if adventure exists
-	a = Adventure.query.filter_by(id=request.args['adventure_id']).first()
-	if a is None:
+	a = Adventure.query.filter_by(id=adventure_id).first()
+	if (a is None) or (not a.is_active()):
 		return make_response(jsonify({'error': 'Adventure does not exists'}), 400)
 
+	u = User.query.filter_by(id=user_id).first()
+	if u is None:
+		return make_response(jsonify({'error': 'User does not exists'}), 400)
+
 	# check if creator_id match with user_id
-	if a.creator_id == request.args['user_id']:
+	if a.creator_id == user_id:
 		return make_response(jsonify({'error': 'User cannot leave this adventure'}), 400)
 
 	# get participant
-	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
+	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=user_id).first()
 
 	# check if user joined adventure
 	if (participant is None) or (not participant.is_active()):
@@ -222,25 +233,42 @@ def leave_adventure():
 	return make_response(jsonify({'success': 'User has left the adventure'}), 200)
 
 @mod.route('/adventure/join', methods=['GET'])
+def join_adventure():
+	# check if data is provided
 	if 'user_id' not in request.args:
 		return make_response(jsonify({'error': 'User id not provided'}), 400)
 
 	if 'adventure_id' not in request.args:
-		return make_resposne(jsonify({'error': 'Adventure id not provied'}), 400)
+		return make_response(jsonify({'error': 'Adventure id not provied'}), 400)
 
-	if request.args['adventure_id'] >= 9223372036854775807:
-		return make_response(jsonify({'error': 'Adventure id is too large'}), 400)
+	# check if there is no input error
+	user_id = None
+	adventure_id = None
+	try:
+		user_id = int(request.args['user_id'])
+		adventure_id = int(request.args['adventure_id'])
+	except:
+		return make_response(jsonify({'error': 'Input error'}), 400)
 
-	if request.args['user_id'] >= 9223372036854775807:
-		return make_response(jsonify({'error': 'User id is too large'}), 400)
+	if (user_id >= 9223372036854775807) or (user_id < 0) or (adventure_id >= 9223372036854775807) or (adventure_id < 0):
+		return make_response(jsonify({'error': 'Input error'}), 400)
+
+	# check if adventure exists
+	a = Adventure.query.filter_by(id=adventure_id).first()
+	if (a is None) or (not a.is_active()):
+		return make_response(jsonify({'error': 'Adventure does not exists'}), 400)
+
+	u = User.query.filter_by(id=user_id).first()
+	if u is None:
+		return make_response(jsonify({'error': 'User does not exists'}), 400)
 
 	# get participant
-	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
+	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=user_id).first()
 
 	# check if user joining adventure for the first time
 	if participant is None:
 		# add user to adventure participants to database
-		participant = AdventureParticipant(adventure_id=adventure_id, user_id=current_user.id)
+		participant = AdventureParticipant(adventure_id=adventure_id, user_id=user_id)
 		db.session.add(participant)
 		db.session.commit()
 		return make_response(jsonify({'success': 'User has joined the adventure'}), 200)
@@ -260,22 +288,33 @@ def leave_adventure():
 
 @mod.route('/adventure/delete', methods=['GET'])
 def delete_adventure():
+	# check if data is provided
 	if 'user_id' not in request.args:
 		return make_response(jsonify({'error': 'User id not provided'}), 400)
 
 	if 'adventure_id' not in request.args:
-		return make_resposne(jsonify({'error': 'Adventure id not provied'}), 400)
+		return make_response(jsonify({'error': 'Adventure id not provied'}), 400)
 
-	if request.args['adventure_id'] >= 9223372036854775807:
-		return make_response(jsonify({'error': 'Adventure id is too large'}), 400)
+	# check if there is no input error
+	user_id = None
+	adventure_id = None
+	try:
+		user_id = int(request.args['user_id'])
+		adventure_id = int(request.args['adventure_id'])
+	except:
+		return make_response(jsonify({'error': 'Input error'}), 400)
 
-	if request.args['user_id'] >= 9223372036854775807:
-		return make_response(jsonify({'error': 'User id is too large'}), 400)
+	if (user_id >= 9223372036854775807) or (user_id < 0) or (adventure_id >= 9223372036854775807) or (adventure_id < 0):
+		return make_response(jsonify({'error': 'Input error'}), 400)
 
 	# check if adventure exists
-	a = Adventure.query.filter_by(id=request.args['adventure_id']).first()
-	if a is None:
+	a = Adventure.query.filter_by(id=adventure_id).first()
+	if (a is None) or (not a.is_active()):
 		return make_response(jsonify({'error': 'Adventure does not exists'}), 400)
+
+	u = User.query.filter_by(id=user_id).first()
+	if u is None:
+		return make_response(jsonify({'error': 'User does not exists'}), 400)
 
 	# check if creator_id match with user_id
 	if a.creator_id != user_id:
