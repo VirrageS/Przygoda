@@ -3,14 +3,14 @@
 import time
 from datetime import datetime
 from werkzeug import check_password_hash, generate_password_hash
-from flask import Blueprint, request, render_template, flash, redirect, url_for, make_response, jsonify
+from flask import Blueprint, request, render_template, flash, redirect, url_for, make_response, jsonify, json
 from flask.ext.login import current_user, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
 from app import app, db
 from app.users.models import User
 from app.users.forms import RegisterForm, LoginForm
-from app.adventures.models import Adventure, AdventureParticipant
+from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 
 mod = Blueprint('api', __name__, url_prefix='/api/v1.0')
 
@@ -126,7 +126,7 @@ def get_adventure(adventure_id):
 
 @mod.route('/adventure/get/all/')
 def get_all_adventures():
-	final_adventures = []
+	final_adventures = {}
 
 	# get all adventures
 	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
@@ -136,12 +136,12 @@ def get_all_adventures():
 
 	for adventure in adventures:
 		# get creator and check if exists
-		creator = User.query.filter_by(id=adventure.creator_id).all()
+		creator = User.query.filter_by(id=adventure.creator_id).first()
 		if creator is None:
 			continue
 
 		# get joined participants
-		final_participants = []
+		final_participants = {}
 		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
 		participants = list(filter(lambda ap: ap.is_active(), participants))
 
@@ -149,31 +149,39 @@ def get_all_adventures():
 			user = User.query.filter_by(id=participant.user_id).first()
 
 			if user is not None:
-				final_participants.append({
+				final_participants[user.id] = {
 					'id': user.id,
 					'username': user.username,
-					'joined_on': participant.joined_on
-				})
+					'joined_on': int(participant.joined_on.strftime('%s'))
+				}
 
+		# get static image url
+		static_image_url = 'https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off&style=feature:road|element:labels.text.fill|color:0x959595&style=feature:poi|element:all|visibility:off&style=feature:administrative|element:all|visiblity:off&path=color:0x0000ff|weight:5'
 
 		# get all coordinates
-		final_coordinates = []
+		final_coordinates = {}
 		coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
-		final_coordinates = [{'latitude': coordinate.latitude, 'longitude': coordinate.longitude} for coordinate in coordinates]
+		for coordinate in coordinates:
+			final_coordinates[coordinate.path_point] = {
+				'latitude': coordinate.latitude,
+				'longitude': coordinate.longitude
+			}
+
+			static_image_url += '|' + str(coordinate.latitude) + ',' + str(coordinate.longitude)
 
 		# add everything
-		final_adventures.append({
+		final_adventures[adventure.id] = {
 			'id': adventure.id,
 			'creator_id': creator.id,
 			'creator_name': creator.username,
-			'date': int(a.date.strftime('%s')),
-			'mode': a.mode,
-			'info': a.info,
+			'date': int(adventure.date.strftime('%s')),
+			'mode': adventure.mode,
+			'info': adventure.info,
 			'joined': len(final_participants),
 			'participants': final_participants,
-			'coordinates': final_coordinates
-
-		})
+			'coordinates': final_coordinates,
+			'static_image_url': static_image_url
+		}
 
 	return jsonify(final_adventures)
 
