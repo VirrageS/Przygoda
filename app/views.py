@@ -25,8 +25,10 @@ def show_all_adventures():
 	adventures = list(filter(lambda a: a.is_active(), adventures))
 
 	for adventure in adventures:
-		# get creator of the event
+		# get creator of the event and check if still exists
 		user = User.query.filter_by(id=adventure.creator_id).first()
+		if user is None:
+			continue
 
 		# get joined participants
 		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
@@ -49,18 +51,16 @@ def show_all_adventures():
 		if markers:
 			all_markers.append(markers)
 
-		# check if creator still exists
-		if user is not None:
-			all_adventures.append({
-				'id': adventure.id,
-				'username': user.username,
-				'date': adventure.date,
-				'info': adventure.info,
-				'joined': len(participants),
-				'mode': ADVENTURES.MODES[int(adventure.mode)],
-				'action': action,
-				'markers': markers
-			})
+		all_adventures.append({
+			'id': adventure.id,
+			'username': user.username,
+			'date': adventure.date,
+			'info': adventure.info,
+			'joined': len(participants),
+			'mode': ADVENTURES.MODES[int(adventure.mode)],
+			'action': action,
+			'markers': markers
+		})
 
 
 

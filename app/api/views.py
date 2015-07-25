@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import time
 from datetime import datetime
 from werkzeug import check_password_hash, generate_password_hash
 from flask import Blueprint, request, render_template, flash, redirect, url_for, make_response, jsonify
@@ -8,6 +9,7 @@ from flask.ext.sqlalchemy import get_debug_queries
 
 from app import app, db
 from app.users.models import User
+from app.users.forms import RegisterForm, LoginForm
 from app.adventures.models import Adventure, AdventureParticipant
 
 mod = Blueprint('api', __name__, url_prefix='/api/v1.0')
@@ -26,52 +28,63 @@ def after_request(response):
 # User login
 @mod.route('/user/login', methods=['GET'])
 def login():
-    if 'email' not in request.args:
-        return make_response(jsonify({'error': 'Email not provided'}), 400)
+	if 'email' not in request.args:
+		return make_response(jsonify({'error': 'Email not provided'}), 400)
 
-    if 'password' not in request.args:
-        return make_response(jsonify({'error': 'Password not provided'}), 400)
+	if 'password' not in request.args:
+		return make_response(jsonify({'error': 'Password not provided'}), 400)
 
-    u = User.query.filter_by(email=request.args['email']).first()
-    if u is None:
-        return make_response(jsonify({'error': 'User not found'}), 400)
+	u = User.query.filter_by(email=request.args['email']).first()
+	if u is None:
+		return make_response(jsonify({'error': 'User not found'}), 400)
 
-    if not check_password_hash(u.password, request.args['password']):
-        return make_response(jsonify({'error': 'Password not correct'}), 400)
+	if not check_password_hash(u.password, request.args['password']):
+		return make_response(jsonify({'error': 'Password not correct'}), 400)
 
-    response_user = {
-        'id': u.id,
-        'social_id': u.social_id,
-        'username': u.username,
-        'email': u.email,
-        'registered_on': u.registered_on
-    }
+	response_user = {
+		'id': u.id,
+		'social_id': u.social_id,
+		'username': u.username,
+		'email': u.email,
+		'registered_on': int(u.registered_on.strftime('%s'))
+	}
 
-    # curl -i http://127.0.0.1:5000/api/v1.0/login?username=tomek\&password=t
+	# curl -i http://127.0.0.1:5000/api/v1.0/login?username=tomek\&password=t
 
-    return jsonify(response_user)
+	return jsonify(response_user)
 
 # User register
-@mod.route('/user/register/', methods=['GET'])
+@mod.route('/user/register', methods=['GET'])
 def register():
-    if 'username' not in request.args:
-        return make_response(jsonify({'error': 'Username not provided'}), 400)
+	if ('username' not in request.args) or (request.args['username'] == ''):
+		return make_response(jsonify({'error': 'Username not provided'}), 400)
 
-    if 'email' not in request.args:
-        return make_response(jsonify({'error': 'Email not provided'}), 400)
+	if ('email' not in request.args) or (request.args['email'] == ''):
+		return make_response(jsonify({'error': 'Email not provided'}), 400)
 
-    if 'password' not in request.args:
-        return make_response(jsonify({'error': 'Password not provided'}), 400)
+	if ('password' not in request.args) or (request.args['password'] == ''):
+		return make_response(jsonify({'error': 'Password not provided'}), 400)
 
-	# TODO: length of username/email/password must be checked!!
+	form = RegisterForm(request.args)
+	form.csrf_enabled = False
+	if not form.validate():
+		errors = []
+		errors.append(form.username.errors)
+		errors.append(form.email.errors)
+		errors.append(form.password.errors)
+		errors.append(form.confirm.errors)
+		errors = [item for sublist in errors for item in sublist]
 
-    u = User.query.filter_by(username=request.args['username'], email=request.args['email']).first()
-    if u is not None:
-        return make_response(jsonify({'error': 'User with username or email already exists'}), 400)
+		return make_response(jsonify({'error': errors[0]}), 400)
 
-    db.session.add(u)
-    db.session.commit()
-    return make_response(jsonify({'success': 'User has been created'}), 201)
+	u = User.query.filter_by(username=request.args['username'], email=request.args['email']).first()
+	if u is not None:
+		return make_response(jsonify({'error': 'User with provied username or email already exists'}), 400)
+
+	u = User(username=request.args['username'], email=request.args['email'], password=generate_password_hash(request.args['password']))
+	db.session.add(u)
+	db.session.commit()
+	return make_response(jsonify({'success': 'User has been created'}), 201)
 
 
 # Adventure get
@@ -103,13 +116,66 @@ def get_adventure(adventure_id):
 	response_adventure = {
 		'id': a.id,
 		'creator_id': a.creator_id,
-		'date': a.date,
+		'date': int(a.date.strftime('%s')),
 		'mode': a.mode,
 		'info': a.info,
 		'joined': len(final_participants)
 	}
 
 	return jsonify(response_adventure)
+
+@mod.route('/adventure/get/all/')
+def get_all_adventures():
+	final_adventures = []
+
+	# get all adventures
+	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
+
+	# filter only active adventures
+	adventures = list(filter(lambda a: a.is_active(), adventures))
+
+	for adventure in adventures:
+		# get creator and check if exists
+		creator = User.query.filter_by(id=adventure.creator_id).all()
+		if creator is None:
+			continue
+
+		# get joined participants
+		final_participants = []
+		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+		participants = list(filter(lambda ap: ap.is_active(), participants))
+
+		for participant in participants:
+			user = User.query.filter_by(id=participant.user_id).first()
+
+			if user is not None:
+				final_participants.append({
+					'id': user.id,
+					'username': user.username,
+					'joined_on': participant.joined_on
+				})
+
+
+		# get all coordinates
+		final_coordinates = []
+		coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
+		final_coordinates = [{'latitude': coordinate.latitude, 'longitude': coordinate.longitude} for coordinate in coordinates]
+
+		# add everything
+		final_adventures.append({
+			'id': adventure.id,
+			'creator_id': creator.id,
+			'creator_name': creator.username,
+			'date': int(a.date.strftime('%s')),
+			'mode': a.mode,
+			'info': a.info,
+			'joined': len(final_participants),
+			'participants': final_participants,
+			'coordinates': final_coordinates
+
+		})
+
+	return jsonify(final_adventures)
 
 @mod.route('/adventure/delete/', methods=['GET'])
 def delete_adventure():
@@ -119,5 +185,25 @@ def delete_adventure():
 	if 'adventure_id' not in request.args:
 		return make_resposne(jsonify({'error': 'Adventure id not provied'}), 400)
 
-	
-	return jsonify('Hello')
+	if request.args['adventure_id'] >= 9223372036854775807:
+		return make_response(jsonify({'error': 'Adventure id is too large'}), 400)
+
+	if request.args['user_id'] >= 9223372036854775807:
+		return make_response(jsonify({'error': 'User id is too large'}), 400)
+
+	# check if adventure exists
+	a = Adventure.query.filter_by(id=request.args['adventure_id']).first()
+	if a is None:
+		return make_response(jsonify({'error': 'Adventure does not exists'}), 400)
+
+	# check if creator_id match with user_id
+	if a.creator_id != user_id:
+		return make_response(jsonify({'error': 'User is not creator of adventure'}), 400)
+
+	# delete adventure
+	a.deleted = True
+	a.deleted_on = datetime.now()
+	db.session.commit()
+
+	# make response
+	return make_response(jsonify({'success': 'Adventure has been deleted'}), 202)
