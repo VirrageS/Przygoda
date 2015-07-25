@@ -49,6 +49,18 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('landing.html')
 
+    def test_adventures_show_route_strange_number(self):
+        """Ensure that adventures_id is not wierd"""
+
+        response = self.app.get('/adventures/320392480213849032841024.asd.f.sdf.sadf.sadfasfd.803284103248712', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
+        response = self.app.get('/adventures/-11111111', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
+        response = self.app.get('/adventures/-111111111111112387912983712389172348723948231111', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
     def test_adventures_show_route_no_adventure(self):
         """Ensure that show adventure require existing adventure"""
 
@@ -79,7 +91,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         # add adventure to database
         a = Adventure(
             creator_id=1,
-            date=datetime.now() + timedelta(minutes=-9),
+            date=datetime.now() + timedelta(minutes=9),
             mode=ADVENTURES.RECREATIONAL,
             info='Some info today'
         )
@@ -133,6 +145,26 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         response = self.app.get('/adventures/join/3458304958390433485734895734085734', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('all.html')
+
+    def test_adventures_join_route_strange_number(self):
+        """Ensure that join adventure adventures_id is not wierd"""
+
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
+
+        # login user to system
+        self.login(email='john@example.com', password='a')
+
+        response = self.app.get('/adventures/join/320392480213849032841024.asd.f.sdf.sadf.sadfasfd.803284103248712', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
+        response = self.app.get('/adventures/join/-11111111', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
+        response = self.app.get('/adventures/join/-111111111111112387912983712389172348723948231111', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
 
     def test_adventures_join_route_no_adventure(self):
         """Ensure that join adventure require existing adventure"""
@@ -264,6 +296,26 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('all.html')
 
+    def test_adventures_leave_route_strange_number(self):
+        """Ensure that leave adventure adventures_id is not wierd"""
+
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
+
+        # login user to system
+        self.login(email='john@example.com', password='a')
+
+        response = self.app.get('/adventures/leave/320392480213849032841024.asd.f.sdf.sadf.sadfasfd.803284103248712', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
+        response = self.app.get('/adventures/leave/-11111111', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
+        response = self.app.get('/adventures/leave/-111111111111112387912983712389172348723948231111', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
     def test_adventures_leave_route_no_adventure(self):
         """Ensure that leave adventure require existing adventure"""
 
@@ -283,7 +335,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that leave adventure do not allow leaving for creator of the adventure"""
 
         # add adventure to database
-        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
         db.session.add(a)
         db.session.commit()
 
@@ -303,7 +355,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that leave adventure do not allow leaving for someone who does not joined to adventure"""
 
         # add adventure to database
-        a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        a = Adventure(creator_id=2, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
         db.session.add(a)
         db.session.commit()
 
@@ -408,6 +460,26 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('all.html')
 
+    def test_adventures_edit_route_strange_number(self):
+        """Ensure that edit adventure adventures_id is not wierd"""
+
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
+
+        # login user to system
+        self.login(email='john@example.com', password='a')
+
+        response = self.app.get('/adventures/edit/320392480213849032841024.asd.f.sdf.sadf.sadfasfd.803284103248712', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
+        response = self.app.get('/adventures/edit/-11111111', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
+        response = self.app.get('/adventures/edit/-111111111111112387912983712389172348723948231111', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
     def test_adventures_edit_route_no_adventure(self):
         """Ensure that edit adventure requires existing adventure"""
 
@@ -427,7 +499,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that edit adventure requires creator of the adventure"""
 
         # add adventure to database
-        a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        a = Adventure(creator_id=2, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
         db.session.add(a)
         db.session.commit()
 
@@ -443,11 +515,33 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('all.html')
 
+
+    def test_adventures_edit_route_no_active_adventure(self):
+        """Ensure that edit adventure requires active adventure"""
+
+        # add adventure to database
+        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(a)
+        db.session.commit()
+
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
+
+        # login user to system
+        self.login(email='john@example.com', password='a')
+
+        response = self.app.get('/adventures/edit/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('all.html')
+
+
     def test_adventures_edit_route_edit(self):
         """Ensure that edit adventure redirect user to editing page"""
 
         # add adventure to database
-        a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
         db.session.add(a)
         db.session.commit()
 
@@ -485,6 +579,26 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('all.html')
 
+    def test_adventures_delete_route_strange_number(self):
+        """Ensure that delete adventure adventures_id is not wierd"""
+
+        # add user to database
+        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
+
+        # login user to system
+        self.login(email='john@example.com', password='a')
+
+        response = self.app.get('/adventures/delete/320392480213849032841024.asd.f.sdf.sadf.sadfasfd.803284103248712', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
+        response = self.app.get('/adventures/delete/-11111111', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
+        response = self.app.get('/adventures/delete/-111111111111112387912983712389172348723948231111', follow_redirects=True)
+        self.assertTrue(response.status_code == 404)
+
     def test_adventures_delete_route_no_adventure(self):
         """Ensure that delete adventure requires adventure to exists"""
 
@@ -512,7 +626,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         self.login(email='john@example.com', password='a')
 
         # add adventure to database
-        a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        a = Adventure(creator_id=2, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
         db.session.add(a)
         db.session.commit()
 

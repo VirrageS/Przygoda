@@ -193,7 +193,7 @@ def leave_adventure():
 		return make_response(jsonify({'error': 'User id not provided'}), 400)
 
 	if 'adventure_id' not in request.args:
-		return make_response(jsonify({'error': 'Adventure id not provied'}), 400)
+		return make_response(jsonify({'error': 'Adventure id not provided'}), 400)
 
 	# check if there is no input error
 	user_id = None
@@ -225,7 +225,7 @@ def leave_adventure():
 
 	# check if user joined adventure
 	if (participant is None) or (not participant.is_active()):
-		return make_response(jsonify({'error': 'User has not joined this adventure'}), 200)
+		return make_response(jsonify({'error': 'User has not joined this adventure'}), 400)
 
 	# delete user from adventure participants from database
 	participant.left_on = datetime.now()
@@ -239,7 +239,7 @@ def join_adventure():
 		return make_response(jsonify({'error': 'User id not provided'}), 400)
 
 	if 'adventure_id' not in request.args:
-		return make_response(jsonify({'error': 'Adventure id not provied'}), 400)
+		return make_response(jsonify({'error': 'Adventure id not provided'}), 400)
 
 	# check if there is no input error
 	user_id = None
@@ -293,7 +293,7 @@ def delete_adventure():
 		return make_response(jsonify({'error': 'User id not provided'}), 400)
 
 	if 'adventure_id' not in request.args:
-		return make_response(jsonify({'error': 'Adventure id not provied'}), 400)
+		return make_response(jsonify({'error': 'Adventure id not provided'}), 400)
 
 	# check if there is no input error
 	user_id = None

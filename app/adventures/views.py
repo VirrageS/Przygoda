@@ -228,7 +228,7 @@ def edit(adventure_id=0):
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 
 	# check if adventure exists
-	if adventure is None:
+	if (adventure is None) or (not adventure.is_active()):
 		flash('Adventure not found', 'danger')
 		return redirect(url_for('simple_page.index'))
 
