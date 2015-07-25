@@ -205,15 +205,20 @@ def leave_adventure():
 	if a is None:
 		return make_response(jsonify({'error': 'Adventure does not exists'}), 400)
 
-	# check if is in adventure
-
 	# check if creator_id match with user_id
-	if a.creator_id == user_id:
-		return make_response(jsonify({'error': 'User is creator and cannot leave this adventure'}), 400)
+	if a.creator_id == request.args['user_id']:
+		return make_response(jsonify({'error': 'User cannot leave this adventure'}), 400)
 
-	# update leaving
+	# get participant
+	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
 
-	# make response
+	# check if user joined adventure
+	if (participant is None) or (not participant.is_active()):
+		return make_response(jsonify({'error': 'User has not joined this adventure'}), 200)
+
+	# delete user from adventure participants from database
+	participant.left_on = datetime.now()
+	db.session.commit()
 	return make_response(jsonify({'success': 'User has left the adventure'}), 200)
 
 @mod.route('/adventure/join', methods=['GET'])
