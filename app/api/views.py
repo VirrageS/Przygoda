@@ -11,6 +11,7 @@ from app import app, db
 from app.users.models import User
 from app.users.forms import RegisterForm, LoginForm
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
+from app.adventures import constants as ADVENTURES
 
 mod = Blueprint('api', __name__, url_prefix='/api/v1.0')
 
@@ -92,36 +93,60 @@ def get_adventure(adventure_id):
 	if adventure_id >= 9223372036854775807:
 		return make_response(jsonify({'error': 'Adventure id is too large'}), 400)
 
-	a = Adventure.query.filter_by(id=adventure_id).first()
-	if (a is None) or (not a.is_active()):
+	adventure = Adventure.query.filter_by(id=adventure_id).first()
+	if (adventure is None) or (not adventure.is_active()):
 		return make_response(jsonify({'error': 'Adventure does not exists'}), 400)
 
 	# check if creator of the adventure exists
-	u = User.query.filter_by(id=a.creator_id).first()
-	if u is None:
-		return make_response(jsonify({'error': 'Adventure\'s creator does not exists'}), 400)
+	creator = User.query.filter_by(id=adventure.creator_id).first()
+	if creator is None:
+		return make_response(jsonify({'error': 'Creator of adventure does not exists'}), 400)
 
 	# get joined participants
-	final_participants = []
-	participants = AdventureParticipant.query.filter_by(adventure_id=a.id).all()
+	final_participants = {}
+	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
 	participants = list(filter(lambda ap: ap.is_active(), participants))
 
 	for participant in participants:
 		user = User.query.filter_by(id=participant.user_id).first()
 
 		if user is not None:
-			final_participants.append(user)
+			final_participants[user.id] = {
+				'id': user.id,
+				'username': user.username,
+				'joined_on': int(participant.joined_on.strftime('%s'))
+			}
 
-	response_adventure = {
-		'id': a.id,
-		'creator_id': a.creator_id,
-		'date': int(a.date.strftime('%s')),
-		'mode': a.mode,
-		'info': a.info,
-		'joined': len(final_participants)
+	# get static image url
+	static_image_url = 'https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off&style=feature:road|element:labels.text.fill|color:0x959595&style=feature:poi|element:all|visibility:off&style=feature:administrative|element:all|visiblity:off&path=color:0x0000ff|weight:5'
+
+	# get all coordinates
+	final_coordinates = {}
+	coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
+	for coordinate in coordinates:
+		final_coordinates[coordinate.path_point] = {
+			'latitude': coordinate.latitude,
+			'longitude': coordinate.longitude
+		}
+
+		# add coordinates to static map url
+		static_image_url += '|' + str(coordinate.latitude) + ',' + str(coordinate.longitude)
+
+	final_adventure = {
+		'id': adventure.id,
+		'creator_id': creator.id,
+		'creator_username': creator.username,
+		'date': int(adventure.date.strftime('%s')),
+		'mode': adventure.mode,
+		'mode_name': ADVENTURES.MODES[adventure.mode],
+		'info': adventure.info,
+		'joined': len(final_participants),
+		'participants': final_participants,
+		'coordinates': final_coordinates,
+		'static_image_url': static_image_url
 	}
 
-	return jsonify(response_adventure)
+	return make_response(jsonify(final_adventure), 200)
 
 @mod.route('/adventure/get/all/')
 def get_all_adventures():
@@ -172,9 +197,10 @@ def get_all_adventures():
 		final_adventures[adventure.id] = {
 			'id': adventure.id,
 			'creator_id': creator.id,
-			'creator_name': creator.username,
+			'creator_username': creator.username,
 			'date': int(adventure.date.strftime('%s')),
 			'mode': adventure.mode,
+			'mode_name': ADVENTURES.MODES[adventure.mode],
 			'info': adventure.info,
 			'joined': len(final_participants),
 			'participants': final_participants,
@@ -182,7 +208,7 @@ def get_all_adventures():
 			'static_image_url': static_image_url
 		}
 
-	return jsonify(final_adventures)
+	return make_response(jsonify(final_adventures), 200)
 
 
 @mod.route('/adventure/leave', methods=['GET'])

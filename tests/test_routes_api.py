@@ -15,7 +15,11 @@ from app.users.models import User
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 
-class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
+# TODO: add tests [test_api_adventure_get_route...]
+# TODO: add tests [test_api_adventure_get_all_route...]
+
+
+class RoutesApiTestCase(TestCase, unittest.TestCase):
 	def setUp(self):
 		app.config.from_object('config.TestingConfig')
 		self.app = app.test_client()
