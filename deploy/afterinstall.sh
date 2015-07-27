@@ -4,7 +4,7 @@
 # sudo apt-get install git;
 # git clone https://github.com/VirrageS/przygoda;
 
-WORKERS=3
+WORKERS=4
 PROJECT_NAME=przygoda
 USER=ubuntu
 IP=przygoda-1532623138.eu-west-1.elb.amazonaws.com

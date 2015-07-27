@@ -7,6 +7,8 @@ from flask import Blueprint, request, render_template, flash, redirect, url_for,
 from flask.ext.login import current_user, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
+from app.miscellaneous import api_key_required
+
 from app import app, db
 from app.users.models import User
 from app.users.forms import RegisterForm, LoginForm
@@ -50,8 +52,6 @@ def login():
 		'registered_on': int(u.registered_on.strftime('%s'))
 	}
 
-	# curl -i http://127.0.0.1:5000/api/v1.0/login?username=tomek\&password=t
-
 	return jsonify(response_user)
 
 # User register
@@ -89,6 +89,7 @@ def register():
 
 # Adventure get
 @mod.route('/adventure/get/<int:adventure_id>', methods=['GET'])
+# @api_key_required
 def get_adventure(adventure_id):
 	if adventure_id >= 9223372036854775807:
 		return make_response(jsonify({'error': 'Adventure id is too large'}), 400)

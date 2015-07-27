@@ -3,8 +3,9 @@
 from datetime import datetime, timedelta
 from functools import wraps
 from flask.ext.login import current_user
-from flask import redirect, url_for, flash, abort
+from flask import redirect, url_for, flash, abort, make_response, jsonify, request
 from app.users import constants as USER
+from app import app
 
 def confirmed_email_required(f):
 	@wraps(f)
@@ -89,3 +90,13 @@ def execution_time(f):
 def daterange(start_date, end_date):
 	for n in range(int((end_date - start_date).days)):
 		yield start_date + timedelta(n)
+
+# decorator to filter no-api_key requests to api
+def api_key_required(f):
+	@wraps(f)
+	def wrapper(*args, **kwargs):
+		if ('key' not in request.args) or (request.args["key"] != app.config["API_KEY"]):
+			return make_response(jsonify({'error': 'No authenticated'}), 401)
+
+		return f(*args, **kwargs)
+	return wrapper
