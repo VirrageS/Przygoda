@@ -180,7 +180,7 @@ def my_adventures():
 	adventures = Adventure.query.filter_by(creator_id=current_user.id).order_by(Adventure.date.asc()).all()
 
 	# get all active adventures
-	adventures = list(filter(lambda x: x.is_active(), adventures))
+	adventures = list(filter(lambda a: a.is_active(), adventures))
 
 	for adventure in adventures:
 		# get joined participants
@@ -203,12 +203,8 @@ def my_adventures():
 		# get adventure
 		adventure = Adventure.query.filter_by(id=joined_adventure.adventure_id).first()
 
-		# check if adventure is active
-		if not adventure.is_active():
-			continue
-
-		# check if user is not creator (we do not want duplicates)
-		if (adventure is not None) and (adventure.creator_id != current_user.id):
+		# check if user is not creator (we do not want duplicates) and if the adventure is active
+		if (adventure is not None) and (adventure.is_active()) and (adventure.creator_id != current_user.id):
 			final_joined_adventures.append(adventure)
 
 	return render_template('adventures/my.html', adventures=final_adventures, joined_adventures=final_joined_adventures)
