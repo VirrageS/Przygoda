@@ -32,7 +32,14 @@ class Adventure(db.Model):
 		"""Checks if adventure is active"""
 		return (not self.deleted) and (self.date >= datetime.now()) and (not self.disabled)
 
-	# TODO: get_participants
+	def get_participants(self):
+		"""Returns active participants of the adventure"""
+
+		participants = AdventureParticipant.query.filter_by(adventure_id=self.id).all()
+		participants = [participant for participant in participants if participant.is_active()]
+
+		return participants
+
 
 class Coordinate(db.Model):
 	__tablename__ = 'coordinates'
@@ -47,6 +54,7 @@ class Coordinate(db.Model):
 		self.path_point = path_point
 		self.latitude = latitude
 		self.longitude = longitude
+
 
 class AdventureParticipant(db.Model):
 	__tablename__ = 'adventure_participants'

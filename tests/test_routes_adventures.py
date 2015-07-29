@@ -219,7 +219,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         # trigger user second joining (which should fail)
         self.app.get('/adventures/join/1', follow_redirects=True)
 
-        participants = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).all()
+        participants = AdventureParticipant.query.filter_by(adventure_id=1).all()
         self.assertTrue(participants is not None)
         self.assertTrue(len(participants) == 1)
 

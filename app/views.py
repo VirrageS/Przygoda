@@ -31,8 +31,7 @@ def show_all_adventures():
 			continue
 
 		# get joined participants
-		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-		participants = [participant for participant in participants if participant.is_active()]
+		participants = adventure.get_participants()
 
 		action = -1
 		if current_user.is_authenticated():

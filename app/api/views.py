@@ -125,8 +125,7 @@ def get_user_adventures():
 
 		# get joined participants
 		final_participants = {}
-		participants = AdventureParticipant.query.filter_by(adventure_id=created_adventure.id).all()
-		participants = [participant for participant in participants if participant.is_active()] # filter active
+		participants = created_adventure.get_participants()
 
 		for participant in participants:
 			user = User.query.filter_by(id=participant.user_id).first()
@@ -191,8 +190,7 @@ def get_user_adventures():
 
 		# get joined participants
 		final_participants = {}
-		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-		participants = [participant for participant in participants if participant.is_active()]
+		participants = adventure.get_participants()
 
 		for participant in participants:
 			user = User.query.filter_by(id=participant.user_id).first()
@@ -329,8 +327,7 @@ def get_all_adventures():
 
 		# get joined participants
 		final_participants = {}
-		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-		participants = [participant for participant in participants if participant.is_active()]
+		participants = adventure.get_participants()
 
 		for participant in participants:
 			user = User.query.filter_by(id=participant.user_id).first()

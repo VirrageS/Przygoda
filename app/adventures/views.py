@@ -57,8 +57,7 @@ def show(adventure_id):
 		return redirect(url_for('simple_page.index'))
 
 	# get joined participants
-	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-	participants = [participant for participant in participants if participant.is_active()]
+	participants = adventure.get_participants()
 
 	for participant in participants:
 		user = User.query.filter_by(id=participant.user_id).first()
@@ -179,10 +178,9 @@ def my_adventures():
 
 	for created_adventure in created_adventures:
 		# get joined participants
-		participants = AdventureParticipant.query.filter_by(adventure_id=created_adventure.id).all()
-		participants = [participant for participant in participants if participant.is_active()]
+		participants = created_adventure.get_participants()
 
-		if participants is None and len(participants) > 0:
+		if len(participants) > 0:
 			final_created_adventures.append({
 				'id': created_adventure.id,
 				'date': created_adventure.date,
@@ -228,17 +226,18 @@ def edit(adventure_id=0):
 		flash('You cannot edit this adventure!', 'danger')
 		return redirect(url_for('simple_page.index'))
 
-	# get form
-	form = EditForm(request.form, obj=adventure)
+	final_participants = []
 
 	# get joined participants
-	final_participants = []
-	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+	participants = adventure.get_participants()
 	for participant in participants:
 		user = User.query.filter_by(id=participant.user_id).first()
 
-		if (user is not None) and (user.id != current_user.id) and (participant.is_active()):
+		if (user is not None) and (user.id != current_user.id):
 			final_participants.append(user)
+
+	# get form
+	form = EditForm(request.form, obj=adventure)
 
 	# verify the edit form
 	if form.validate_on_submit():
@@ -455,8 +454,7 @@ def search():
 				user = User.query.filter_by(id=adventure.creator_id).first()
 
 				# get joined participants
-				participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-				participants = [participant for participant in participants if participant.is_active()]
+				participants = adventure.get_participants()
 
 				# add to all adventures
 				final_adventures.append({
@@ -480,9 +478,9 @@ def search():
 		final_adventures = sorted(final_adventures, key=(lambda a: a['date']))
 
 		if len(final_adventures) > 0:
-			flash('Poniżej znajdziesz wybrane dla Ciebie Przygody.', 'success')
+			flash(u'Poniżej znajdziesz wybrane dla Ciebie Przygody.', 'success')
 		else:
-			flash('Niestety nie udało się znaleźć żadnych Przygód. Spróbuj zmienić obszar lub kryteria', 'warning')
+			flash(u'Niestety nie udało się znaleźć żadnych Przygód. Spróbuj zmienić obszar lub kryteria', 'warning')
 
 	return render_template(
 		'adventures/search.html',
