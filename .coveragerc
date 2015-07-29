@@ -1,18 +1,9 @@
 [run]
 branch = True
-omit =
-    */migrations*
-    */deploy/*
-    */openshift/*
-    */config.py
-    */manager.py
-    */profile_app.py
-    */shell.py
-    */run.py
 concurrency = multiprocessing
 
 [paths]
-source = .
+source = app
 
 [report]
 # Regexes for lines to exclude from consideration
