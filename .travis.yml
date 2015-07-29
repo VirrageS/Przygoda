@@ -1,0 +1,13 @@
+language: python
+
+python:
+  - 3.4
+
+install:
+  - pip install codecov
+
+script:
+  - python3 -m unittest discover
+
+after_success:
+  - codecov

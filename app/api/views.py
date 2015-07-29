@@ -177,7 +177,7 @@ def get_user_adventures():
 		adventure = Adventure.query.filter_by(id=joined_adventure.adventure_id).first()
 
 		# check if user is not creator (we do not want duplicates)
-		if (adventure is None) or (not adventure.is_active()) or (adventure.creator_id == current_user.id):
+		if (adventure is None) or (not adventure.is_active()) or (adventure.creator_id == user_id):
 			continue
 
 		# get creator and check if exists
