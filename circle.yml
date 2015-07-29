@@ -8,8 +8,7 @@ dependencies:
 
 test:
   override:
-    - python3 -m unittest discover
-    - pip install codecov
+    - pip install coverage
     - pip install nose
     - nosetests --with-coverage --cover-erase --cover-package=app --cover-html --cover-xml
 
