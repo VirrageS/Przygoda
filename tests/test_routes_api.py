@@ -319,7 +319,7 @@ class RoutesApiTestCase(TestCase, unittest.TestCase):
 
 		# check proper response
 		self.assertEqual(response.status_code, 200)
-		self.assertEqual(response.data, b'\
+		self.assertEqual(response.data.replace(b", ", b","), b'\
 {\n\
   "coordinates": {\n\
     "1": {\n\
@@ -441,7 +441,7 @@ class RoutesApiTestCase(TestCase, unittest.TestCase):
 
 		# check proper response
 		self.assertEqual(response.status_code, 200)
-		self.assertEqual(response.data, b'\
+		self.assertEqual(response.data.replace(b", ", b","), b'\
 {\n\
   "' + str(adventure.id).encode('utf-8') + b'": {\n\
     "coordinates": {\n\
