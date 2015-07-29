@@ -71,7 +71,23 @@ Hurray! Our app is alive. Open [http://127.0.0.1:5000] in your browser and that'
 
 To run unit tests type:
 
-	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 -m unittest discover
+	(env)MacBook-Air-Janusz:przygoda VirrageS$ nosetests --with-coverage --cover-erase --cover-package=app --cover-html
+
+## Babel
+
+To run babel
+
+	pybabel extract -F babel.cfg -o messages.pot app
+	pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot app
+	pybabel init -i messages.pot -d app/translations -l pl
+	pybabel compile -d app/translations
+
+to update
+
+	pybabel extract -F babel.cfg -o messages.pot app
+	pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot app
+	pybabel update -i messages.pot -d app/translations
+	pybabel compile -d app/translations
 
 # Virtual Server
 

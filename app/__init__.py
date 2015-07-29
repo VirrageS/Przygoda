@@ -1,11 +1,12 @@
 import os
 import sys
 
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 from flask.ext.mail import Mail
 from flask.ext.cache import Cache
+from flask.ext.babel import Babel, lazy_gettext
 
 # set app
 app = Flask(__name__)
@@ -20,6 +21,9 @@ db = SQLAlchemy(app)
 
 # set mail
 mail = Mail(app)
+
+# set babel (language)
+babel = Babel(app)
 
 # cache
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
@@ -58,11 +62,28 @@ if not app.config['DEBUG']:
 	pass
 	# install_secret_key(app)
 
+from flask.json import JSONEncoder
+
+class CustomJSONEncoder(JSONEncoder):
+    """This class adds support for lazy translation texts to Flask's
+    JSON encoder. This is necessary when flashing translated texts."""
+    def default(self, obj):
+        from speaklater import is_lazy_string
+        if is_lazy_string(obj):
+            return str(obj)
+        return super(CustomJSONEncoder, self).default(obj)
+
+app.json_encoder = CustomJSONEncoder
+
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(['pl', 'en'])
+
 # login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'users.login'  # path to login (handel 'required_login')
-login_manager.login_message = 'Please log in to access this page'
+login_manager.login_message = lazy_gettext(u'Please log in to access this page')
 login_manager.login_message_category = 'warning'
 
 from app.users.models import User

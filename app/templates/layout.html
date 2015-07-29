@@ -1,6 +1,6 @@
 <!doctype html>
 <head>
-	<title>Przygoda</title>
+	<title>{{ _('Adventure') }}</title>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 	<!-- <meta charset="utf-8"> -->
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -58,7 +58,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="navbar-header">
-					<a class="navbar-brand" href="/"><i class="fa fa-bicycle"></i> Przygoda</a>
+					<a class="navbar-brand" href="/"><i class="fa fa-bicycle"></i> {{ _('Adventure') }}</a>
 					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 						<span class="fa fa-bars fa-inverse fa-2x"></span>
 						<span class="sr-only">Toggle navigation</span>
@@ -67,14 +67,14 @@
 				<div class="collapse navbar-collapse">
 				     <ul class="nav navbar-nav navbar-right">
 						{% if g.user.is_authenticated() %}
-					        <li><a href="{{ url_for('users.account') }}">Konto</a></li>
-					        <li><a href="{{ url_for('users.logout') }}">Wyloguj</a></li>
-					        <li><a href="{{ url_for('adventures.new') }}">Dodaj Przygodę</a></li>
-					        <li><a href="{{ url_for('adventures.my_adventures') }}">Moje Przygody</a></li>
+					        <li><a href="{{ url_for('users.account') }}">{{ _('Account') }}</a></li>
+					        <li><a href="{{ url_for('users.logout') }}">{{ _('Logout') }}</a></li>
+					        <li><a href="{{ url_for('adventures.new') }}">{{ _('Create Adventure') }}</a></li>
+					        <li><a href="{{ url_for('adventures.my_adventures') }}">{{ _('My Adventures') }}</a></li>
 						{% else %}
-							<li><a href="{{ url_for('simple_page.show_adventures') }}">Przejrzyj Przygody</a>
-							<li><a href="{{ url_for('users.login') }}">Logowanie</a></li>
-							<li><a href="{{ url_for('users.register') }}">Rejestracja</a></li>
+							<li><a href="{{ url_for('simple_page.show_adventures') }}">{{ _('Adventures')}}</a>
+							<li><a href="{{ url_for('users.login') }}">{{ _('Login') }}</a></li>
+							<li><a href="{{ url_for('users.register') }}">{{ _('Register') }}</a></li>
 						{% endif %}
 						<li><a href="{{ url_for('adventures.search') }}"><i class="fa fa-search" style="padding-right: 10px;"></i>Szukaj Przygód</a></li>
 				    </ul>

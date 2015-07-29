@@ -3,6 +3,7 @@
 from flask import Blueprint, request, render_template, flash, redirect, url_for
 from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
+from flask.ext.babel import gettext
 
 from datetime import datetime, timedelta # for current date
 
@@ -47,13 +48,13 @@ def show(adventure_id):
 	# get adventure and check if exists or is active
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	if (adventure is None) or (not adventure.is_active()):
-		flash(u'Przygoda nie istnieje', 'danger')
+		flash(gettext(u'Adventure does not exists'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# get adventures creator and check if exists
 	user = User.query.filter_by(id=adventure.creator_id).first()
 	if user is None:
-		flash(u'Założyciel Przygody nie istnieje', 'danger')
+		flash(gettext(u'Creator of this adventure does not exists'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# get joined participants
@@ -102,7 +103,7 @@ def join(adventure_id):
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	if (adventure is None) or (not adventure.is_active()):
-		flash(u'Przygoda nie istnieje', 'danger')
+		flash(gettext(u'Adventure does not exists'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
@@ -113,12 +114,12 @@ def join(adventure_id):
 		participant = AdventureParticipant(adventure_id=adventure_id, user_id=current_user.id)
 		db.session.add(participant)
 		db.session.commit()
-		flash(u'Dołączyłeś do Przygody', 'success')
+		flash(gettext(u'You have joined to the adventure'), 'success')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is rejoining
 	if participant.is_active():
-		flash(u'Dołączyłeś do tej Przygody wcześniej', 'warning')
+		flash(gettext(u'You have joined to the adventure before'), 'warning')
 		return redirect(url_for('simple_page.index'))
 
 	# join user again
@@ -127,7 +128,7 @@ def join(adventure_id):
 	db.session.add(participant)
 	db.session.commit()
 
-	flash(u'Dołączyłeś do Przygody', 'success')
+	flash(gettext(u'You have joined to the adventure'), 'success')
 	return redirect(url_for('simple_page.index'))
 
 @mod.route('/leave/<int:adventure_id>')

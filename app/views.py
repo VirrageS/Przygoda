@@ -3,6 +3,7 @@
 from flask import Blueprint, request, render_template, flash, redirect, url_for
 
 from flask.ext.login import current_user
+from flask.ext.babel import gettext
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 from app.users.models import User
@@ -99,7 +100,7 @@ def contact():
 		db.session.add(report)
 		db.session.commit()
 
-		flash('Wiadomość wysłana. Dziękujęmy za kontakt', 'success')
+		flash(gettext(u'Message sent. Thank you for contact. We really appreciate it!'), 'success')
 		return redirect(url_for('simple_page.index'))
 
 	return render_template(
