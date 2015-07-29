@@ -11,7 +11,7 @@ test:
     - python3 -m unittest discover
     - pip install codecov
     - pip install nose
-    - nosetests --with-coverage --cover-erase --cover-package=app --cover-html
+    - nosetests --with-coverage --cover-erase --cover-package=app --cover-html --xunit-file=coverage.xml
 
 test:
   post:
