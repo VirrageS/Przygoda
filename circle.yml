@@ -8,11 +8,7 @@ dependencies:
 
 test:
   override:
-    - pip install coverage
-    - pip install nose
-    - nosetests --with-coverage --cover-erase --cover-package=app --cover-html --cover-xml
-
-test:
-  post:
     - pip install codecov
+    - pip install nose
+    - nosetests --with-coverage --cover-erase --cover-package=app --cover-html
     - codecov --token=aba004e6-24be-4b6c-b040-e3aeec697515
