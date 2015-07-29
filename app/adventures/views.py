@@ -170,7 +170,7 @@ def leave(adventure_id):
 def my_adventures():
 	"""Show logged user's adventures"""
 
-	final_adventures = []
+	final_created_adventures = []
 	final_joined_adventures = []
 
 	# get all adventures which created user
@@ -182,8 +182,8 @@ def my_adventures():
 		participants = AdventureParticipant.query.filter_by(adventure_id=created_adventure.id).all()
 		participants = [participant for participant in participants if participant.is_active()]
 
-		if participants is not None:
-			final_adventures.append({
+		if participants is None and len(participants) > 0:
+			final_created_adventures.append({
 				'id': created_adventure.id,
 				'date': created_adventure.date,
 				'info': created_adventure.info,
@@ -191,18 +191,18 @@ def my_adventures():
 			})
 
 	# get all adventures to which user joined
-	joined_adventures = AdventureParticipant.query.filter_by(user_id=current_user.id).all()
-	joined_adventures = [adventure for adventure in joined_adventures if adventure.is_active()]
+	adventures_participant = AdventureParticipant.query.filter_by(user_id=current_user.id).all()
+	joined_adventures_ids = [adventure.id for adventure in adventures_participant if adventure.is_active()]
 
-	for joined_adventure in joined_adventures:
+	for joined_adventure_id in joined_adventures_ids:
 		# get adventure
-		adventure = Adventure.query.filter_by(id=joined_adventure.adventure_id).first()
+		adventure = Adventure.query.filter_by(id=joined_adventure_id).first()
 
 		# check if user is not creator (we do not want duplicates) and if the adventure is active
 		if (adventure is not None) and (adventure.is_active()) and (adventure.creator_id != current_user.id):
 			final_joined_adventures.append(adventure)
 
-	return render_template('adventures/my.html', adventures=final_adventures, joined_adventures=final_joined_adventures)
+	return render_template('adventures/my.html', created_adventures=final_created_adventures, joined_adventures=final_joined_adventures)
 
 # Edit adventure
 @mod.route('/edit/<int:adventure_id>', methods=['GET', 'POST'])

@@ -11,7 +11,7 @@
 			<th>Dołączyło</th>
 			<th>Akcja</th>
 		</tr>
-		{% for adventure in adventures %}
+		{% for adventure in created_adventures %}
 			<tr>
 				<td>{{ adventure.id|safe }}</td>
 				<td>{{ adventure.date.strftime('%d %m %Y')|safe }}</td>

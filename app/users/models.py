@@ -68,8 +68,5 @@ class User(UserMixin, db.Model):
 
 		return self.last_login + delta >= datetime.now()
 
-	# TODO: add get_joined_adventures
-	# TODO: add get_created_adventures
-
 	def __repr__(self):
 		return '<User %r>' % (self.username)
