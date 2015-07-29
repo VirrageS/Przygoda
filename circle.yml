@@ -9,6 +9,8 @@ dependencies:
 test:
   override:
     - python3 -m unittest discover
+
+test:
   post:
     - pip install codecov
     - codecov --token=aba004e6-24be-4b6c-b040-e3aeec697515
