@@ -30,7 +30,7 @@ def after_request(response):
 	return response
 
 # Login
-@mod.route('/login/', methods=['GET','POST'])
+@mod.route('/login/', methods=['GET', 'POST'])
 @not_login_required
 def login():
 	"""Handels user login"""
@@ -103,7 +103,7 @@ def logout():
 	# everything okay so back
 	return redirect(url_for('simple_page.index'))
 
-@mod.route('/account/', methods=['GET','POST'])
+@mod.route('/account/', methods=['GET', 'POST'])
 @login_required
 def account():
 	"""Show users informations"""
@@ -141,7 +141,7 @@ def account():
 	return render_template('users/account.html', form=form)
 
 # Lost password
-@mod.route('/lost/', methods=['GET','POST'])
+@mod.route('/lost/', methods=['GET', 'POST'])
 @not_login_required
 def lost():
 	"""Allow for user to get lost password"""
@@ -208,7 +208,7 @@ def resend_confirmation_email():
 	return redirect(url_for('simple_page.index'))
 
 # Confirm email
-@mod.route('/confirm/<token>', methods=['GET','POST'])
+@mod.route('/confirm/<token>', methods=['GET', 'POST'])
 @login_required
 def confirm_email(token):
 	try:
@@ -232,7 +232,7 @@ def confirm_email(token):
 	return redirect(url_for('simple_page.index'))
 
 # Change lost password
-@mod.route('/lost/<token>', methods=['GET','POST'])
+@mod.route('/lost/<token>', methods=['GET', 'POST'])
 def change_password(token):
 	try:
 		email = confirm_token(token)

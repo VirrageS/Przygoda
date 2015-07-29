@@ -1,5 +1,4 @@
 import ast
-from flask import flash, request
 
 # check if value is float
 def is_float(value):

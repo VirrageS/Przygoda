@@ -64,12 +64,12 @@ class FacebookSignIn(OAuthSignIn):
 			'redirect_uri': self.get_callback_url()
 		})
 
-		me = oauth_session.get('me').json()
+		facebook_me = oauth_session.get('me').json()
 		# Facebook does not provide username, so the email's user is used instead
 		return (
-			'facebook$' + me['id'], # id
-			me.get('email').split('@')[0], # username (email)
-			me.get('email') # email
+			'facebook$' + facebook_me['id'], # id
+			facebook_me.get('email').split('@')[0], # username (email)
+			facebook_me.get('email') # email
 		)
 
 class TwitterSignIn(OAuthSignIn):
@@ -101,7 +101,11 @@ class TwitterSignIn(OAuthSignIn):
 			request_token[1],
 			data={'oauth_verifier': request.args['oauth_verifier']}
 		)
-		me = oauth_session.get('account/verify_credentials.json').json()
-		social_id = 'twitter$' + str(me.get('id'))
-		username = me.get('screen_name')
-		return social_id, username, None   # Twitter does not provide email
+
+		twitter_me = oauth_session.get('account/verify_credentials.json').json()
+		# Twitter does not provide email
+		return (
+			'twitter$' + str(twitter_me.get('id')),
+			twitter_me.get('screen_name'),
+			None
+		)

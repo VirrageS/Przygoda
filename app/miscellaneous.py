@@ -29,7 +29,7 @@ def not_login_required(f):
 def ssl_required(f):
 	@wraps(f)
 	def wrapper(*args, **kwargs):
-		if current_app.config.get("SSL"):
+		if app.config.get("SSL"):
 			if request.is_secure:
 				return f(*args, **kwargs)
 			else:
@@ -39,7 +39,7 @@ def ssl_required(f):
 	return wrapper
 
 # Usage @rule_required('admin', 'user')
-def rule_required(*roles):
+def rule_required(f, *roles):
 	@wraps(f)
 	def wrapper(*args, **kwargs):
 		if str(current_user.role) not in roles:
@@ -63,33 +63,32 @@ def add_admin():
 	# add admin
 	from app.users.models import User
 	from werkzeug import generate_password_hash
-	from app.users import constants as USER
 	from app import db
 
-	u = User.query.filter_by(username="admin").first()
-	if u is None:
-		u = User("admin", generate_password_hash("supertajnehaslo"), "email@email.com", social_id=None)
-		u.role = USER.ADMIN
-		u.confirmed = True
-		db.session.add(u)
+	admin = User.query.filter_by(username="admin").first()
+	if admin is None:
+		new_admin = User("admin", generate_password_hash("supertajnehaslo"), "email@email.com", social_id=None)
+		new_admin.role = USER.ADMIN
+		new_admin.confirmed = True
+		db.session.add(new_admin)
 		db.session.commit()
 
 # decorator to compute time of the fuction
 def execution_time(f):
 	@wraps(f)
 	def wrapper(*args, **kwargs):
-		ts = datetime.now()
+		time_start = datetime.now()
 		result = f(*args, **kwargs)
-		te = datetime.now()
+		time_stop = datetime.now()
 
-		flash('%r (%r, %r) %s sec' % (f.__name__, args, kwargs, str(te-ts)), 'info')
+		flash('%r (%r, %r) %s sec' % (f.__name__, args, kwargs, str(time_stop-time_start)), 'info')
 		return result
 	return wrapper
 
 # compute days difference between two dates
 def daterange(start_date, end_date):
-	for n in range(int((end_date - start_date).days)):
-		yield start_date + timedelta(n)
+	for day in range(int((end_date - start_date).days)):
+		yield start_date + timedelta(day)
 
 # decorator to filter no-api_key requests to api
 def api_key_required(f):

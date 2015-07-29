@@ -32,6 +32,8 @@ class Adventure(db.Model):
 		"""Checks if adventure is active"""
 		return (not self.deleted) and (self.date >= datetime.now()) and (not self.disabled)
 
+	# TODO: get_participants
+
 class Coordinate(db.Model):
 	__tablename__ = 'coordinates'
 	id = db.Column(db.Integer, primary_key=True)
@@ -60,4 +62,4 @@ class AdventureParticipant(db.Model):
 		self.joined_on = datetime.now()
 
 	def is_active(self):
-		return (self.left_on is None)
+		return self.left_on is None

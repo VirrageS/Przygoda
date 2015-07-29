@@ -72,7 +72,7 @@
 					        <li><a href="{{ url_for('adventures.new') }}">Dodaj Przygodę</a></li>
 					        <li><a href="{{ url_for('adventures.my_adventures') }}">Moje Przygody</a></li>
 						{% else %}
-							<li><a href="{{ url_for('simple_page.all') }}">Przejrzyj Przygody</a>
+							<li><a href="{{ url_for('simple_page.show_adventures') }}">Przejrzyj Przygody</a>
 							<li><a href="{{ url_for('users.login') }}">Logowanie</a></li>
 							<li><a href="{{ url_for('users.register') }}">Rejestracja</a></li>
 						{% endif %}

@@ -66,7 +66,10 @@ class User(UserMixin, db.Model):
 		if self.last_login is None:
 			return False
 
-		return (self.last_login + delta >= datetime.now())
+		return self.last_login + delta >= datetime.now()
+
+	# TODO: add get_joined_adventures
+	# TODO: add get_created_adventures
 
 	def __repr__(self):
 		return '<User %r>' % (self.username)

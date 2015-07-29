@@ -4,11 +4,10 @@ from flask import Blueprint, request, render_template, flash, redirect, url_for
 from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
 
-import ast # for convering string to double
-from datetime import datetime, date, timedelta # for current date
+from datetime import datetime, timedelta # for current date
 
 from app import app, db
-from app.miscellaneous import confirmed_email_required
+#from app.miscellaneous import confirmed_email_required
 from app.adventures import constants as ADVENTURES
 from app.adventures.miscellaneous import get_bounds, get_waypoints
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
@@ -59,7 +58,7 @@ def show(adventure_id):
 
 	# get joined participants
 	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-	participants = list(filter(lambda ap: ap.is_active(), participants))
+	participants = [participant for participant in participants if participant.is_active()]
 
 	for participant in participants:
 		user = User.query.filter_by(id=participant.user_id).first()
@@ -67,15 +66,13 @@ def show(adventure_id):
 		if user is not None:
 			final_participants.append(user)
 
-	# check if creator exists
-	if user is not None:
-		final_adventure = {
-			'id': adventure.id,
-			'username': user.username,
-			'date': adventure.date,
-			'info': adventure.info,
-			'joined': len(participants)
-		}
+	final_adventure = {
+		'id': adventure.id,
+		'username': user.username,
+		'date': adventure.date,
+		'info': adventure.info,
+		'joined': len(participants)
+	}
 
 	# update adventure views
 	views = AdventureViews(adventure_id=adventure.id)
@@ -177,27 +174,25 @@ def my_adventures():
 	final_joined_adventures = []
 
 	# get all adventures which created user
-	adventures = Adventure.query.filter_by(creator_id=current_user.id).order_by(Adventure.date.asc()).all()
+	created_adventures = Adventure.query.filter_by(creator_id=current_user.id).order_by(Adventure.date.asc()).all()
+	created_adventures = [adventure for adventure in created_adventures if adventure.is_active()]
 
-	# get all active adventures
-	adventures = list(filter(lambda a: a.is_active(), adventures))
-
-	for adventure in adventures:
+	for created_adventure in created_adventures:
 		# get joined participants
-		joined = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-		joined = list(filter(lambda ap: ap.is_active(), joined))
+		participants = AdventureParticipant.query.filter_by(adventure_id=created_adventure.id).all()
+		participants = [participant for participant in participants if participant.is_active()]
 
-		if joined is not None:
+		if participants is not None:
 			final_adventures.append({
-				'id': adventure.id,
-				'date': adventure.date,
-				'info': adventure.info,
-				'joined': len(joined)
+				'id': created_adventure.id,
+				'date': created_adventure.date,
+				'info': created_adventure.info,
+				'joined': len(participants)
 			})
 
 	# get all adventures to which user joined
 	joined_adventures = AdventureParticipant.query.filter_by(user_id=current_user.id).all()
-	joined_adventures = list(filter(lambda ap: ap.is_active(), joined_adventures))
+	joined_adventures = [adventure for adventure in joined_adventures if adventure.is_active()]
 
 	for joined_adventure in joined_adventures:
 		# get adventure
@@ -259,7 +254,9 @@ def edit(adventure_id=0):
 			directions_result = gmaps.directions(
 				origin=waypoints[0],
 				destination=waypoints[-1],
-	            waypoints=list(filter(lambda w: (w is not waypoints[0]) and (w is not waypoints[-1]), waypoints)),
+	            waypoints=[
+					waypoint for waypoint in waypoints if ((waypoint is not waypoint[0]) and (waypoint is not waypoint[-1]))
+				],
 	            mode="bicycling"
 			)
 
@@ -273,7 +270,12 @@ def edit(adventure_id=0):
 
 			for i, waypoint in enumerate(waypoints):
 				# add coordinates of adventure to database
-				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=waypoint['lat'], longitude=waypoint['lng'])
+				coordinate = Coordinate(
+					adventure_id=adventure.id,
+					path_point=i,
+					latitude=waypoint['lat'],
+					longitude=waypoint['lng']
+				)
 				db.session.add(coordinate)
 				db.session.commit()
 
@@ -282,7 +284,7 @@ def edit(adventure_id=0):
 
 			# update adventure in database
 			db.session.commit()
-		except (googlemaps.exceptions.ApiError, googlemaps.exceptions.HTTPError, googlemaps.exceptions.TransportError) as e:
+		except (googlemaps.exceptions.ApiError, googlemaps.exceptions.HTTPError, googlemaps.exceptions.TransportError):
 			flash('Something went wrong try again', 'danger')
 			return redirect(url_for('simple_page.index'))
 
@@ -327,7 +329,9 @@ def new():
 			directions_result = gmaps.directions(
 				origin=waypoints[0],
 				destination=waypoints[-1],
-	            waypoints=list(filter(lambda w: (w is not waypoints[0]) and (w is not waypoints[-1]), waypoints)),
+	            waypoints=[
+					waypoint for waypoint in waypoints if ((waypoint is not waypoint[0]) and (waypoint is not waypoint[-1]))
+				],
 	            mode="bicycling"
 			)
 
@@ -336,7 +340,12 @@ def new():
 				return redirect(url_for('adventures.new'))
 
 			# add adventure to database
-			adventure = Adventure(creator_id=current_user.id, date=form.date.data, mode=form.mode.data, info=form.info.data)
+			adventure = Adventure(
+				creator_id=current_user.id,
+				date=form.date.data,
+				mode=form.mode.data,
+				info=form.info.data
+			)
 			db.session.add(adventure)
 			db.session.commit()
 
@@ -347,11 +356,16 @@ def new():
 
 			# add coordinates of adventure to database
 			for i, waypoint in enumerate(waypoints):
-				coordinate = Coordinate(adventure_id=adventure.id, path_point=i, latitude=waypoint['lat'], longitude=waypoint['lng'])
+				coordinate = Coordinate(
+					adventure_id=adventure.id,
+					path_point=i,
+					latitude=waypoint['lat'],
+					longitude=waypoint['lng']
+				)
 				db.session.add(coordinate)
 				db.session.commit()
 
-		except (googlemaps.exceptions.ApiError, googlemaps.exceptions.HTTPError, googlemaps.exceptions.TransportError) as e:
+		except (googlemaps.exceptions.ApiError, googlemaps.exceptions.HTTPError, googlemaps.exceptions.TransportError):
 			flash('Something went wrong try again', 'danger')
 			return redirect(url_for('adventures.new'))
 
@@ -442,7 +456,7 @@ def search():
 
 				# get joined participants
 				participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-				participants = list(filter(lambda ap: ap.is_active(), participants))
+				participants = [participant for participant in participants if participant.is_active()]
 
 				# add to all adventures
 				final_adventures.append({

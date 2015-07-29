@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from datetime import timedelta, date, datetime
-from flask import Blueprint, request, render_template, flash, redirect, url_for, json
+from datetime import timedelta, datetime
+from flask import Blueprint, render_template, flash, redirect, url_for, json
 from sqlalchemy.sql import func
-from flask.ext.sqlalchemy import get_debug_queries
 
 from app import app, db, cache
 from app.users.models import User
@@ -32,12 +31,10 @@ def charts():
 				Adventure.created_on < single_date
 			).all()
 
-			active_adventures = list(filter(
-				lambda a:
-					((a.deleted_on is None) or (a.deleted_on > single_date)) and
-					((a.disabled_on is None) or (a.disabled_on > single_date))
-				, active_adventures
-			))
+			active_adventures = [adventure for adventure in active_adventures if
+				((adventure.deleted_on is None) or (adventure.deleted_on > single_date)) and
+				((adventure.disabled_on is None) or (adventure.disabled_on > single_date))
+			]
 
 			final_adventures.append({
 				'date': single_date,
@@ -146,20 +143,20 @@ def charts():
 # Reports
 @mod.route('/reports/')
 @admin_required
-def reports():
+def show_all_reports():
 	reports = UserReports.query.all()
-	reports = list(filter(lambda r: r.display, reports))
-	all_reports = sorted(reports, key=(lambda r: r.created_on))
+	reports = [report for report in reports if report.display]
+	sorted_reports = sorted(reports, key=(lambda r: r.created_on))
 
 	return render_template(
 		'admin/reports.html',
-		reports=all_reports
+		reports=sorted_reports
 	)
 
 # Hide report
 @mod.route('/reports/hide/<int:report_id>')
 @admin_required
-def hide(report_id):
+def hide_report(report_id):
 	report = UserReports.query.filter_by(id=report_id).first()
 	if report is not None:
 		report.display = False
@@ -175,7 +172,7 @@ def hide(report_id):
 # Users
 @mod.route('/users/')
 @admin_required
-def users():
+def show_all_users():
 	all_users = User.query.all()
 
 	return render_template(
@@ -186,7 +183,7 @@ def users():
 # Adventures
 @mod.route('/adventures/')
 @admin_required
-def adventures():
+def show_all_adventures():
 	all_adventures = Adventure.query.all()
 
 	return render_template(

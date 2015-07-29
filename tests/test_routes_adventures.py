@@ -568,8 +568,8 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that delete adventure requires small adventure_id"""
 
         # add user to database
-        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-        db.session.add(u)
+        user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(user)
         db.session.commit()
 
         # login user to system

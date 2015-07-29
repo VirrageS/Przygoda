@@ -13,7 +13,7 @@ from app.mine.models import UserReports
 
 mod = Blueprint('simple_page', __name__, template_folder='templates')
 
-# @cache.cached(timeout=50)
+#@cache.cached(timeout=5)
 def show_all_adventures():
 	all_adventures = []
 	all_markers = []
@@ -22,7 +22,7 @@ def show_all_adventures():
 	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
 
 	# get all active adventures
-	adventures = list(filter(lambda a: a.is_active(), adventures))
+	adventures = [adventure for adventure in adventures if adventure.is_active()]
 
 	for adventure in adventures:
 		# get creator of the event and check if still exists
@@ -32,7 +32,7 @@ def show_all_adventures():
 
 		# get joined participants
 		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-		participants = list(filter(lambda ap: ap.is_active(), participants))
+		participants = [participant for participant in participants if participant.is_active()]
 
 		action = -1
 		if current_user.is_authenticated():
@@ -62,8 +62,6 @@ def show_all_adventures():
 			'markers': markers
 		})
 
-
-
 	return render_template('all.html', adventures=all_adventures, adventures_markers=all_markers)
 
 # Index - main path
@@ -76,7 +74,7 @@ def index():
 
 # Show all adventures (if not logged in)
 @mod.route("/all/")
-def all():
+def show_adventures():
 	return show_all_adventures()
 
 # About us

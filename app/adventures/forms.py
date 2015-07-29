@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask import flash
 from flask.ext.wtf import Form
-from wtforms import DateTimeField, TextAreaField, HiddenField, SelectField, SelectMultipleField, widgets
+from wtforms import DateTimeField, TextAreaField, SelectField, SelectMultipleField
 from wtforms.validators import Required
 
 from app.adventures import constants as ADVENTURES
+
+# TODO: add HiddenField for markers on map
 
 #from wtforms_components import DateRange
 from datetime import datetime

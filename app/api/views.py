@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import time
 from datetime import datetime
 from werkzeug import check_password_hash, generate_password_hash
-from flask import Blueprint, request, render_template, flash, redirect, url_for, make_response, jsonify, json
-from flask.ext.login import current_user, login_user, logout_user, login_required
+from flask import Blueprint, request, make_response, jsonify
 from flask.ext.sqlalchemy import get_debug_queries
 
-from app.miscellaneous import api_key_required
+#from app.miscellaneous import api_key_required
 
 from app import app, db
 from app.users.models import User
-from app.users.forms import RegisterForm, LoginForm
+from app.users.forms import RegisterForm
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures import constants as ADVENTURES
 
@@ -37,19 +35,19 @@ def login():
 	if 'password' not in request.args:
 		return make_response(jsonify({'error': 'Password not provided'}), 400)
 
-	u = User.query.filter_by(email=request.args['email']).first()
-	if u is None:
+	user = User.query.filter_by(email=request.args['email']).first()
+	if user is None:
 		return make_response(jsonify({'error': 'User not found'}), 400)
 
-	if not check_password_hash(u.password, request.args['password']):
+	if not check_password_hash(user.password, request.args['password']):
 		return make_response(jsonify({'error': 'Password not correct'}), 400)
 
 	response_user = {
-		'id': u.id,
-		'social_id': u.social_id,
-		'username': u.username,
-		'email': u.email,
-		'registered_on': int(u.registered_on.strftime('%s'))
+		'id': user.id,
+		'social_id': user.social_id,
+		'username': user.username,
+		'email': user.email,
+		'registered_on': int(user.registered_on.strftime('%s'))
 	}
 
 	return jsonify(response_user)
@@ -81,8 +79,12 @@ def register():
 
 		return make_response(jsonify({'error': errors[0]}), 400)
 
-	u = User(username=request.args['username'], email=request.args['email'], password=generate_password_hash(request.args['password']))
-	db.session.add(u)
+	new_user = User(
+		username=request.args['username'],
+		email=request.args['email'],
+		password=generate_password_hash(request.args['password'])
+	)
+	db.session.add(new_user)
 	db.session.commit()
 	return make_response(jsonify({'success': 'User has been created'}), 201)
 
@@ -107,27 +109,24 @@ def get_user_adventures():
 	if user is None:
 		return make_response(jsonify({'error': 'User does not exists'}), 400)
 
-
 	final_adventures = {}
 	final_created_adventures = {}
 	final_joined_adventures = {}
 
 	# get adventures created by user_id
-	adventures = Adventure.query.filter_by(creator_id=user_id).order_by(Adventure.date.asc()).all()
+	created_adventures = Adventure.query.filter_by(creator_id=user_id).order_by(Adventure.date.asc()).all()
+	created_adventures = [adventure for adventure in created_adventures if adventure.is_active()] # filter active
 
-	# filter only active adventures
-	adventures = list(filter(lambda a: a.is_active(), adventures))
-
-	for adventure in adventures:
+	for created_adventure in created_adventures:
 		# get creator and check if exists
-		creator = User.query.filter_by(id=adventure.creator_id).first()
+		creator = User.query.filter_by(id=created_adventure.creator_id).first()
 		if creator is None:
 			continue
 
 		# get joined participants
 		final_participants = {}
-		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-		participants = list(filter(lambda ap: ap.is_active(), participants))
+		participants = AdventureParticipant.query.filter_by(adventure_id=created_adventure.id).all()
+		participants = [participant for participant in participants if participant.is_active()] # filter active
 
 		for participant in participants:
 			user = User.query.filter_by(id=participant.user_id).first()
@@ -140,11 +139,16 @@ def get_user_adventures():
 				}
 
 		# get static image url
-		static_image_url = 'https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off&style=feature:road|element:labels.text.fill|color:0x959595&style=feature:poi|element:all|visibility:off&style=feature:administrative|element:all|visiblity:off&path=color:0x0000ff|weight:5'
+		static_image_url = 'https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg' + \
+			'&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off' + \
+			'&style=feature:road|element:labels.text.fill|color:0x959595' + \
+			'&style=feature:poi|element:all|visibility:off' + \
+			'&style=feature:administrative|element:all|visiblity:off' + \
+			'&path=color:0x0000ff|weight:5'
 
 		# get all coordinates
 		final_coordinates = {}
-		coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
+		coordinates = Coordinate.query.filter_by(adventure_id=created_adventure.id).all()
 		for coordinate in coordinates:
 			final_coordinates[coordinate.path_point] = {
 				'latitude': coordinate.latitude,
@@ -154,14 +158,14 @@ def get_user_adventures():
 			static_image_url += '|' + str(coordinate.latitude) + ',' + str(coordinate.longitude)
 
 		# add everything
-		final_created_adventures[adventure.id] = {
-			'id': adventure.id,
+		final_created_adventures[created_adventure.id] = {
+			'id': created_adventure.id,
 			'creator_id': creator.id,
 			'creator_username': creator.username,
-			'date': int(adventure.date.strftime('%s')),
-			'mode': adventure.mode,
-			'mode_name': ADVENTURES.MODES[adventure.mode],
-			'info': adventure.info,
+			'date': int(created_adventure.date.strftime('%s')),
+			'mode': created_adventure.mode,
+			'mode_name': ADVENTURES.MODES[created_adventure.mode],
+			'info': created_adventure.info,
 			'joined': len(final_participants),
 			'participants': final_participants,
 			'coordinates': final_coordinates,
@@ -170,7 +174,7 @@ def get_user_adventures():
 
 	# get all adventures to which user joined
 	joined_adventures = AdventureParticipant.query.filter_by(user_id=user_id).all()
-	joined_adventures = list(filter(lambda ap: ap.is_active(), joined_adventures))
+	joined_adventures = [participant for participant in joined_adventures if participant.is_active()]
 
 	for joined_adventure in joined_adventures:
 		# get adventure
@@ -188,7 +192,7 @@ def get_user_adventures():
 		# get joined participants
 		final_participants = {}
 		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-		participants = list(filter(lambda ap: ap.is_active(), participants))
+		participants = [participant for participant in participants if participant.is_active()]
 
 		for participant in participants:
 			user = User.query.filter_by(id=participant.user_id).first()
@@ -201,7 +205,12 @@ def get_user_adventures():
 				}
 
 		# get static image url
-		static_image_url = 'https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off&style=feature:road|element:labels.text.fill|color:0x959595&style=feature:poi|element:all|visibility:off&style=feature:administrative|element:all|visiblity:off&path=color:0x0000ff|weight:5'
+		static_image_url = 'https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg' + \
+			'&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off' + \
+			'&style=feature:road|element:labels.text.fill|color:0x959595' + \
+			'&style=feature:poi|element:all|visibility:off' + \
+			'&style=feature:administrative|element:all|visiblity:off' + \
+			'&path=color:0x0000ff|weight:5'
 
 		# get all coordinates
 		final_coordinates = {}
@@ -256,7 +265,7 @@ def get_adventure(adventure_id):
 	# get joined participants
 	final_participants = {}
 	participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-	participants = list(filter(lambda ap: ap.is_active(), participants))
+	participants = [participant for participant in participants if participant.is_active()]
 
 	for participant in participants:
 		user = User.query.filter_by(id=participant.user_id).first()
@@ -269,7 +278,12 @@ def get_adventure(adventure_id):
 			}
 
 	# get static image url
-	static_image_url = 'https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off&style=feature:road|element:labels.text.fill|color:0x959595&style=feature:poi|element:all|visibility:off&style=feature:administrative|element:all|visiblity:off&path=color:0x0000ff|weight:5'
+	static_image_url = 'https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg' + \
+		'&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off' + \
+		'&style=feature:road|element:labels.text.fill|color:0x959595' + \
+		'&style=feature:poi|element:all|visibility:off' + \
+		'&style=feature:administrative|element:all|visiblity:off' + \
+		'&path=color:0x0000ff|weight:5'
 
 	# get all coordinates
 	final_coordinates = {}
@@ -305,9 +319,7 @@ def get_all_adventures():
 
 	# get all adventures
 	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
-
-	# filter only active adventures
-	adventures = list(filter(lambda a: a.is_active(), adventures))
+	adventures = [adventure for adventure in adventures if adventure.is_active()] # filter active
 
 	for adventure in adventures:
 		# get creator and check if exists
@@ -318,7 +330,7 @@ def get_all_adventures():
 		# get joined participants
 		final_participants = {}
 		participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-		participants = list(filter(lambda ap: ap.is_active(), participants))
+		participants = [participant for participant in participants if participant.is_active()]
 
 		for participant in participants:
 			user = User.query.filter_by(id=participant.user_id).first()
@@ -331,7 +343,12 @@ def get_all_adventures():
 				}
 
 		# get static image url
-		static_image_url = 'https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off&style=feature:road|element:labels.text.fill|color:0x959595&style=feature:poi|element:all|visibility:off&style=feature:administrative|element:all|visiblity:off&path=color:0x0000ff|weight:5'
+		static_image_url = 'https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg' + \
+			'&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off' + \
+			'&style=feature:road|element:labels.text.fill|color:0x959595' + \
+			'&style=feature:poi|element:all|visibility:off' + \
+			'&style=feature:administrative|element:all|visiblity:off' + \
+			'&path=color:0x0000ff|weight:5'
 
 		# get all coordinates
 		final_coordinates = {}
@@ -384,16 +401,16 @@ def leave_adventure():
 		return make_response(jsonify({'error': 'Input error'}), 400)
 
 	# check if adventure exists
-	a = Adventure.query.filter_by(id=adventure_id).first()
-	if (a is None) or (not a.is_active()):
+	adventure = Adventure.query.filter_by(id=adventure_id).first()
+	if (adventure is None) or (not adventure.is_active()):
 		return make_response(jsonify({'error': 'Adventure does not exists'}), 400)
 
-	u = User.query.filter_by(id=user_id).first()
-	if u is None:
+	user = User.query.filter_by(id=user_id).first()
+	if user is None:
 		return make_response(jsonify({'error': 'User does not exists'}), 400)
 
 	# check if creator_id match with user_id
-	if a.creator_id == user_id:
+	if adventure.creator_id == user_id:
 		return make_response(jsonify({'error': 'User cannot leave this adventure'}), 400)
 
 	# get participant
@@ -430,12 +447,12 @@ def join_adventure():
 		return make_response(jsonify({'error': 'Input error'}), 400)
 
 	# check if adventure exists
-	a = Adventure.query.filter_by(id=adventure_id).first()
-	if (a is None) or (not a.is_active()):
+	adventure = Adventure.query.filter_by(id=adventure_id).first()
+	if (adventure is None) or (not adventure.is_active()):
 		return make_response(jsonify({'error': 'Adventure does not exists'}), 400)
 
-	u = User.query.filter_by(id=user_id).first()
-	if u is None:
+	user = User.query.filter_by(id=user_id).first()
+	if user is None:
 		return make_response(jsonify({'error': 'User does not exists'}), 400)
 
 	# get participant
@@ -484,21 +501,21 @@ def delete_adventure():
 		return make_response(jsonify({'error': 'Input error'}), 400)
 
 	# check if adventure exists
-	a = Adventure.query.filter_by(id=adventure_id).first()
-	if (a is None) or (not a.is_active()):
+	adventure = Adventure.query.filter_by(id=adventure_id).first()
+	if (adventure is None) or (not adventure.is_active()):
 		return make_response(jsonify({'error': 'Adventure does not exists'}), 400)
 
-	u = User.query.filter_by(id=user_id).first()
-	if u is None:
+	user = User.query.filter_by(id=user_id).first()
+	if user is None:
 		return make_response(jsonify({'error': 'User does not exists'}), 400)
 
 	# check if creator_id match with user_id
-	if a.creator_id != user_id:
+	if adventure.creator_id != user_id:
 		return make_response(jsonify({'error': 'User is not creator of adventure'}), 400)
 
 	# delete adventure
-	a.deleted = True
-	a.deleted_on = datetime.now()
+	adventure.deleted = True
+	adventure.deleted_on = datetime.now()
 	db.session.commit()
 
 	# make response

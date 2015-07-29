@@ -11,7 +11,7 @@ from app.users.models import User
 import re # for checking username
 
 def validate_username_characters(username):
-	return username == re.sub('[^a-zA-Z0-9_\.]', '', username)
+	return username == re.sub("[^a-zA-Z0-9_\.]", "", username)
 
 def validate_username_blocked(username):
 	# blocked names
