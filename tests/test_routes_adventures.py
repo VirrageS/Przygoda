@@ -106,18 +106,22 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that show adventure redirect us to the right place"""
 
         # add adventure to database
-        a = Adventure(
+        adventure = Adventure(
             creator_id=1,
             date=datetime.now() + timedelta(minutes=9),
             mode=ADVENTURES.RECREATIONAL,
             info='Some info today'
         )
-        db.session.add(a)
+        db.session.add(adventure)
         db.session.commit()
 
         # add user to database
-        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-        db.session.add(u)
+        user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(user)
+        db.session.commit()
+
+        participant = AdventureParticipant(user_id=user.id, adventure_id=adventure.id)
+        db.session.add(participant)
         db.session.commit()
 
         response = self.app.get('/adventures/1', follow_redirects=True)
@@ -135,8 +139,8 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that join adventure requires small adventure_id"""
 
         # add user to database
-        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-        db.session.add(u)
+        user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(user)
         db.session.commit()
 
         # login user to system
@@ -251,7 +255,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that join adventure create adventure participant"""
 
         # add adventure to database
-        a = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        a = Adventure(creator_id=2, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
         db.session.add(a)
         db.session.commit()
 
@@ -265,14 +269,60 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
 
         # trigger user joining
         response = self.app.get('/adventures/join/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('all.html')
 
         # check if user has been added to adventure
         participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
         self.assertTrue(participant is not None)
 
-        # check proper response
+    def test_adventures_join_route_join_after_leaving(self):
+        """Ensure that join adventure updates adventure participant after leaving adventure"""
+
+        # add adventure to database
+        adventure = Adventure(
+            creator_id=2,
+            date=datetime.now() + timedelta(minutes=9),
+            mode=ADVENTURES.RECREATIONAL,
+            info='Some info today'
+        )
+        db.session.add(adventure)
+        db.session.commit()
+
+        # add user to database
+        user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(user)
+        db.session.commit()
+
+        # login user to system
+        self.login(email='john@example.com', password='a')
+
+        # trigger user joining
+        response = self.app.get('/adventures/join/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('all.html')
+
+        # check if user has been added to adventure
+        participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
+        self.assertTrue(participant is not None)
+        self.assertTrue(participant.is_active())
+
+        # trigger leaving
+        self.app.get('/adventures/leave/1', follow_redirects=True)
+        participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
+        self.assertTrue(participant is not None)
+        self.assertFalse(participant.is_active())
+
+        # trigger user joining
+        response = self.app.get('/adventures/join/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('all.html')
+
+        # check if user has been added to adventure
+        participant = AdventureParticipant.query.filter_by(adventure_id=1, user_id=1).first()
+        self.assertTrue(participant is not None)
+        self.assertTrue(participant.is_active())
+
 
     def test_adventures_leave_route_requires_login(self):
         """Ensure that leave adventures requires login"""
@@ -375,23 +425,27 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that leave adventure do not allow leaving if the adventure is not active"""
 
         # add adventure to database
-        a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
-        db.session.add(a)
+        adventure = Adventure(creator_id=2, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(adventure)
         db.session.commit()
 
         # add user to database
-        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-        db.session.add(u)
+        user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(user)
         db.session.commit()
 
         # login user to system
         self.login(email='john@example.com', password='a')
 
-        # add user to adventure participants
-        ap = AdventureParticipant(user_id=1, adventure_id=1)
-        db.session.add(ap)
+        # join the adventure
+        self.app.get('/adventures/join/1', follow_redirects=True)
+
+        # change adventure to not active
+        adventure.date = datetime.now() + timedelta(minutes=-9)
+        db.session.add(adventure)
         db.session.commit()
 
+        # trigger leaving
         response = self.app.get('/adventures/leave/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('all.html')
@@ -417,10 +471,7 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         # login user to system
         self.login(email='john@example.com', password='a')
 
-        # add user to adventure participants
-        ap = AdventureParticipant(user_id=1, adventure_id=1)
-        db.session.add(ap)
-        db.session.commit()
+        self.app.get('/adventures/join/1', follow_redirects=True)
 
         response = self.app.get('/adventures/leave/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)

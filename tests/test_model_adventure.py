@@ -13,21 +13,23 @@ class AdventureTestCase(unittest.TestCase):
 		self.app = app.test_client()
 
 	def test_adventure_creator_id(self):
-		a = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.AMATEURISH, info='Some info today')
-		assert a.creator_id == 1
+		adventure = Adventure(creator_id=1, date=datetime.now(), mode=ADVENTURES.AMATEURISH, info='Some info today')
+		assert adventure.creator_id == 1
 
 	def test_adventure_date(self):
 		date = datetime.now()
-		a = Adventure(creator_id=1, date=date, mode=ADVENTURES.AMATEURISH, info='Some info today')
-		assert a.date == date
+		adventure = Adventure(creator_id=1, date=date, mode=ADVENTURES.AMATEURISH, info='Some info today')
+		assert adventure.date == date
 
 	def test_adventure_mode(self):
-		a = Adventure(creator_id=3, date=datetime.now(), mode=ADVENTURES.AMATEURISH, info='Some info today')
-		assert a.mode == ADVENTURES.AMATEURISH
+		adventure = Adventure(creator_id=3, date=datetime.now(), mode=ADVENTURES.AMATEURISH, info='Some info today')
+		assert adventure.mode == ADVENTURES.AMATEURISH
+
+		self.assertEqual(adventure.get_mode(), ADVENTURES.MODES[ADVENTURES.AMATEURISH])
 
 	def test_adventure_info(self):
-		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.AMATEURISH, info='Some info today')
-		assert a.info == 'Some info today'
+		adventure = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.AMATEURISH, info='Some info today')
+		assert adventure.info == 'Some info today'
 
 
 class CoordinateTestCase(unittest.TestCase):
@@ -64,7 +66,3 @@ class AdventureParticipantTestCase(unittest.TestCase):
 	def test_coordinate_path_point(self):
 		a = AdventureParticipant(adventure_id=1, user_id=1)
 		assert a.user_id == 1
-
-
-if __name__ == '__main__':
-	unittest.main()
