@@ -206,6 +206,189 @@ class RoutesApiTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(check_password_hash(u.password, '1'))
 
 
+
+
+
+
+	def test_api_user_get_adventures_route_no_data(self):
+		"""Ensure that user get adventures route requires data"""
+
+		response = self.app.get('/api/v1.0/user/get/adventures', follow_redirects=True)
+		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.data, b'{\n  "error": "User id not provided"\n}')
+
+	def test_api_user_get_adventures_route_strange_data(self):
+		"""Ensure that user get adventures route requires normal data"""
+
+		response = self.app.get('/api/v1.0/user/get/adventures?user_id=sdfw234', follow_redirects=True)
+		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.data, b'{\n  "error": "Input error"\n}')
+
+		response = self.app.get('/api/v1.0/user/get/adventures?user_id=23.2', follow_redirects=True)
+		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.data, b'{\n  "error": "Input error"\n}')
+
+		response = self.app.get('/api/v1.0/user/get/adventures?user_id=-1123', follow_redirects=True)
+		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.data, b'{\n  "error": "Input error"\n}')
+
+		response = self.app.get('/api/v1.0/user/get/adventures?user_id=124124124124124124124124124124124', follow_redirects=True)
+		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.data, b'{\n  "error": "Input error"\n}')
+
+	def test_api_user_get_adventures_route_user_no_exists(self):
+		"""Ensure that user get adventures route requires existing"""
+
+		response = self.app.get('/api/v1.0/user/get/adventures?user_id=1', follow_redirects=True)
+		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.data, b'{\n  "error": "User does not exists"\n}')
+
+	def test_api_user_get_adventures_route_get(self):
+		"""Ensure that user get adventures route returns good format adventure"""
+
+		# add adventure to database
+		adventure_first = Adventure(creator_id=1, date=datetime.now() + timedelta(minutes=10), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+		db.session.add(adventure_first)
+		db.session.commit()
+
+		# add user to database
+		creator = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(creator)
+		db.session.commit()
+
+		# add user to adventure participants
+		ap11 = AdventureParticipant(user_id=1, adventure_id=1)
+		db.session.add(ap11)
+		db.session.commit()
+
+		ap12 = AdventureParticipant(user_id=2, adventure_id=1)
+		db.session.add(ap12)
+		db.session.commit()
+
+		# add some coordinates to database
+		c = Coordinate(adventure_id=1, path_point=1, latitude=50.24324242, longitude=50.24324242)
+		db.session.add(c)
+		db.session.commit()
+
+		c = Coordinate(adventure_id=1, path_point=2, latitude=51.24324242, longitude=51.24324242)
+		db.session.add(c)
+		db.session.commit()
+
+		# SECOND ADVENTURE
+
+		# add adventure to database
+		adventure_second = Adventure(creator_id=2, date=datetime.now() + timedelta(minutes=11), mode=ADVENTURES.AMATEURISH, info='Some info sadfstoday')
+		db.session.add(adventure_second)
+		db.session.commit()
+
+		# add user to database
+		creator_dummy = User(username='johner', password=generate_password_hash('a'), email='johner@example.com')
+		db.session.add(creator_dummy)
+		db.session.commit()
+
+		# add user to adventure participants
+		ap21 = AdventureParticipant(user_id=1, adventure_id=2)
+		db.session.add(ap21)
+		db.session.commit()
+
+		ap22 = AdventureParticipant(user_id=2, adventure_id=2)
+		db.session.add(ap22)
+		db.session.commit()
+
+		# add some coordinates to database
+		c = Coordinate(adventure_id=2, path_point=1, latitude=50.24324242, longitude=50.24324242)
+		db.session.add(c)
+		db.session.commit()
+
+		c = Coordinate(adventure_id=2, path_point=2, latitude=52.24324242, longitude=52.24324242)
+		db.session.add(c)
+		db.session.commit()
+
+		response = self.app.get('/api/v1.0/user/get/adventures?user_id=1', follow_redirects=True)
+
+		# check proper response
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data.replace(b", ", b","), b'\
+{\n\
+  "created": {\n\
+    "' + str(adventure_first.id).encode('utf-8') + b'": {\n\
+      "coordinates": {\n\
+        "1": {\n\
+          "latitude": 50.24324242,\n\
+          "longitude": 50.24324242\n\
+        },\n\
+        "2": {\n\
+          "latitude": 51.24324242,\n\
+          "longitude": 51.24324242\n\
+        }\n\
+      },\n\
+      "creator_id": ' + str(creator.id).encode('utf-8') + b',\n\
+      "creator_username": "' + str(creator.username).encode('utf-8') + b'",\n\
+      "date": ' + str(int(adventure_first.date.strftime("%s"))).encode('utf-8') + b',\n\
+      "id": ' + str(adventure_first.id).encode('utf-8') + b',\n\
+      "info": "' + str(adventure_first.info).encode('utf-8') + b'",\n\
+      "joined": 2,\n\
+      "mode": ' + str(adventure_first.mode).encode('utf-8') + b',\n\
+      "mode_name": "' + str(ADVENTURES.MODES[adventure_first.mode]).encode('utf-8') + b'",\n\
+      "participants": {\n\
+        "' + str(creator.id).encode('utf-8') + b'": {\n\
+          "id": ' + str(creator.id).encode('utf-8') + b',\n\
+          "joined_on": ' + str(ap11.joined_on.strftime("%s")).encode('utf-8') + b',\n\
+          "username": "' + str(creator.username).encode('utf-8') + b'"\n\
+        },\n\
+        "' + str(creator_dummy.id).encode('utf-8') + b'": {\n\
+          "id": ' + str(creator_dummy.id).encode('utf-8') + b',\n\
+          "joined_on": ' + str(ap12.joined_on.strftime("%s")).encode('utf-8') + b',\n\
+          "username": "' + str(creator_dummy.username).encode('utf-8') + b'"\n\
+        }\n\
+      },\n\
+      "static_image_url": "https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off&style=feature:road|element:labels.text.fill|color:0x959595&style=feature:poi|element:all|visibility:off&style=feature:administrative|element:all|visiblity:off&path=color:0x0000ff|weight:5|50.24324242,50.24324242|51.24324242,51.24324242"\n\
+    }\n\
+  },\n\
+  "joined": {\n\
+    "' + str(adventure_second.id).encode('utf-8') + b'": {\n\
+      "coordinates": {\n\
+        "1": {\n\
+          "latitude": 50.24324242,\n\
+          "longitude": 50.24324242\n\
+        },\n\
+        "2": {\n\
+          "latitude": 52.24324242,\n\
+          "longitude": 52.24324242\n\
+        }\n\
+      },\n\
+      "creator_id": ' + str(creator_dummy.id).encode('utf-8') + b',\n\
+      "creator_username": "' + str(creator_dummy.username).encode('utf-8') + b'",\n\
+      "date": ' + str(int(adventure_second.date.strftime("%s"))).encode('utf-8') + b',\n\
+      "id": ' + str(adventure_second.id).encode('utf-8') + b',\n\
+      "info": "' + str(adventure_second.info).encode('utf-8') + b'",\n\
+      "joined": 2,\n\
+      "mode": ' + str(adventure_second.mode).encode('utf-8') + b',\n\
+      "mode_name": "' + str(ADVENTURES.MODES[adventure_second.mode]).encode('utf-8') + b'",\n\
+      "participants": {\n\
+        "' + str(creator.id).encode('utf-8') + b'": {\n\
+          "id": ' + str(creator.id).encode('utf-8') + b',\n\
+          "joined_on": ' + str(ap21.joined_on.strftime("%s")).encode('utf-8') + b',\n\
+          "username": "' + str(creator.username).encode('utf-8') + b'"\n\
+        },\n\
+        "' + str(creator_dummy.id).encode('utf-8') + b'": {\n\
+          "id": ' + str(creator_dummy.id).encode('utf-8') + b',\n\
+          "joined_on": ' + str(ap22.joined_on.strftime("%s")).encode('utf-8') + b',\n\
+          "username": "' + str(creator_dummy.username).encode('utf-8') + b'"\n\
+        }\n\
+      },\n\
+      "static_image_url": "https://maps.googleapis.com/maps/api/staticmap?size=160x160&scale=2&format=jpg&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off&style=feature:road|element:labels.text.fill|color:0x959595&style=feature:poi|element:all|visibility:off&style=feature:administrative|element:all|visiblity:off&path=color:0x0000ff|weight:5|50.24324242,50.24324242|52.24324242,52.24324242"\n\
+    }\n\
+  }\n\
+}')
+
+
+
+
+	###
+	### ADVENTURES
+	###
+
 	def test_api_adventure_get_route_no_data(self):
 		"""Ensure that get route requires data"""
 

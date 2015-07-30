@@ -190,7 +190,7 @@ def my_adventures():
 
 	# get all adventures to which user joined
 	adventures_participant = AdventureParticipant.query.filter_by(user_id=current_user.id).all()
-	joined_adventures_ids = [adventure.id for adventure in adventures_participant if adventure.is_active()]
+	joined_adventures_ids = [participant.adventure_id for participant in adventures_participant if participant.is_active()]
 
 	for joined_adventure_id in joined_adventures_ids:
 		# get adventure
@@ -246,10 +246,10 @@ def edit(adventure_id=0):
 			directions_result = gmaps.directions(
 				origin=waypoints[0],
 				destination=waypoints[-1],
-	            waypoints=[
-					waypoint for waypoint in waypoints if ((waypoint is not waypoint[0]) and (waypoint is not waypoint[-1]))
+				waypoints=[
+					waypoint for waypoint in waypoints if ((waypoint is not waypoints[0]) and (waypoint is not waypoints[-1]))
 				],
-	            mode="bicycling"
+				mode="bicycling"
 			)
 
 			if (directions_result is None) or (len(directions_result) <= 0):
@@ -321,10 +321,10 @@ def new():
 			directions_result = gmaps.directions(
 				origin=waypoints[0],
 				destination=waypoints[-1],
-	            waypoints=[
-					waypoint for waypoint in waypoints if ((waypoint is not waypoint[0]) and (waypoint is not waypoint[-1]))
+				waypoints=[
+					waypoint for waypoint in waypoints if ((waypoint is not waypoints[0]) and (waypoint is not waypoints[-1]))
 				],
-	            mode="bicycling"
+				mode="bicycling"
 			)
 
 			if (directions_result is None) or (len(directions_result) <= 0):

@@ -569,6 +569,10 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         created_adventures = self.get_context_variable("created_adventures")
         joined_adventures = self.get_context_variable("joined_adventures")
 
+        self.assertEqual(created_adventures_ids, [1, 2])
+        self.assertEqual(joined_adventures_ids, [3, 4])
+        self.assertEqual(bad_joined_adventures_ids, [5, 10])
+
         for adventure in created_adventures:
             self.assertIn(adventure['id'], created_adventures_ids)
 

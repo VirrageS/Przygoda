@@ -118,22 +118,17 @@ def get_user_adventures():
 	created_adventures = [adventure for adventure in created_adventures if adventure.is_active()] # filter active
 
 	for created_adventure in created_adventures:
-		# get creator and check if exists
-		creator = User.query.filter_by(id=created_adventure.creator_id).first()
-		if creator is None:
-			continue
-
 		# get joined participants
 		final_participants = {}
 		participants = created_adventure.get_participants()
 
 		for participant in participants:
-			user = User.query.filter_by(id=participant.user_id).first()
+			user_participant = User.query.filter_by(id=participant.user_id).first()
 
 			if user is not None:
-				final_participants[user.id] = {
-					'id': user.id,
-					'username': user.username,
+				final_participants[user_participant.id] = {
+					'id': user_participant.id,
+					'username': user_participant.username,
 					'joined_on': int(participant.joined_on.strftime('%s'))
 				}
 
@@ -159,8 +154,8 @@ def get_user_adventures():
 		# add everything
 		final_created_adventures[created_adventure.id] = {
 			'id': created_adventure.id,
-			'creator_id': creator.id,
-			'creator_username': creator.username,
+			'creator_id': user.id,
+			'creator_username': user.username,
 			'date': int(created_adventure.date.strftime('%s')),
 			'mode': created_adventure.mode,
 			'mode_name': ADVENTURES.MODES[created_adventure.mode],
@@ -172,12 +167,12 @@ def get_user_adventures():
 		}
 
 	# get all adventures to which user joined
-	joined_adventures = AdventureParticipant.query.filter_by(user_id=user_id).all()
-	joined_adventures = [participant for participant in joined_adventures if participant.is_active()]
+	adventures_participant = AdventureParticipant.query.filter_by(user_id=user_id).all()
+	joined_adventures_ids = [participant.adventure_id for participant in adventures_participant if participant.is_active()]
 
-	for joined_adventure in joined_adventures:
+	for joined_adventure_id in joined_adventures_ids:
 		# get adventure
-		adventure = Adventure.query.filter_by(id=joined_adventure.adventure_id).first()
+		adventure = Adventure.query.filter_by(id=joined_adventure_id).first()
 
 		# check if user is not creator (we do not want duplicates)
 		if (adventure is None) or (not adventure.is_active()) or (adventure.creator_id == user_id):
@@ -193,12 +188,12 @@ def get_user_adventures():
 		participants = adventure.get_participants()
 
 		for participant in participants:
-			user = User.query.filter_by(id=participant.user_id).first()
+			user_participant = User.query.filter_by(id=participant.user_id).first()
 
 			if user is not None:
-				final_participants[user.id] = {
-					'id': user.id,
-					'username': user.username,
+				final_participants[user_participant.id] = {
+					'id': user_participant.id,
+					'username': user_participant.username,
 					'joined_on': int(participant.joined_on.strftime('%s'))
 				}
 
