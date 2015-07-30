@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-07-29 21:07+0200\n"
+"POT-Creation-Date: 2015-07-30 16:54+0200\n"
 "PO-Revision-Date: 2015-07-29 20:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: pl <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: app/__init__.py:86
 msgid "Please log in to access this page"
-msgstr "Zaloguj się, aby mieć dostęp do tej strony\""
+msgstr "Zaloguj się, aby mieć dostęp do tej strony"
 
 #: app/views.py:103
 msgid "Message sent. Thank you for contact. We really appreciate it!"
@@ -72,5 +72,48 @@ msgstr "Logowanie"
 
 #: app/templates/layout.html:77
 msgid "Register"
-msgstr "Przejrzyj Przygody"
+msgstr "Rejestracja"
 
+#: app/users/views.py:56
+msgid "Incorrect email or password"
+msgstr "Nieprawidłowe hasło lub email"
+
+#: app/users/views.py:90 app/users/views.py:130 app/users/views.py:208
+msgid "Confirmation email has been sent"
+msgstr "Email potwierdzający został wysłany"
+
+#: app/users/views.py:128
+msgid "Confirm your account - Adventure"
+msgstr "Potwierdź swój email - Przygoda"
+
+#: app/users/views.py:139
+msgid "Changes has been saved"
+msgstr "Zmiany zostały zapisane"
+
+#: app/users/views.py:158
+msgid "New password request - Adventure"
+msgstr "Prośba o hasło - Przygoda"
+
+#: app/users/views.py:160
+msgid "Follow the instructions in sent email"
+msgstr "Email z dalszymi instrukcjami został wysłany"
+
+#: app/users/views.py:205
+msgid "Please confirm your email"
+msgstr "Potwierdź swój email"
+
+#: app/users/views.py:218 app/users/views.py:241
+msgid "The confirmation link is invalid or has expired"
+msgstr "Link potwierdzający jest nieprawidłowy lub wygasł"
+
+#: app/users/views.py:223
+msgid "Account already confirmed"
+msgstr "Konto jest już potwierdzone"
+
+#: app/users/views.py:232
+msgid "You have confirmed your account. Enjoy"
+msgstr "Konto zostało potwierdzone. Dziękujemy"
+
+#: app/users/views.py:257
+msgid "Your password has been successfully changed"
+msgstr "Twoje hasło zostało zmienione"

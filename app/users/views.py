@@ -5,6 +5,7 @@ from werkzeug import check_password_hash, generate_password_hash
 from flask import Blueprint, request, render_template, flash, redirect, url_for
 from flask.ext.login import current_user, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
+from flask.ext.babel import gettext
 
 from app import app, db
 from app.users.models import User
@@ -52,7 +53,7 @@ def login():
 
 			return redirect(request.args.get('next') or url_for('simple_page.index'))
 
-		flash(u'Nieprawidłowe hasło lub email', 'danger')
+		flash(gettext(u'Incorrect email or password'), 'danger')
 
 	return render_template('users/login.html', form=form)
 
@@ -86,7 +87,7 @@ def register():
 		#login_user(user)
 
 		# everything okay so far
-		flash(u'Email potwierdzający został wysłany', 'info')
+		flash(gettext(u'Confirmation email has been sent'), 'info')
 		return redirect(url_for('users.login'))
 
 	return render_template('users/register.html', form=form)
@@ -124,9 +125,9 @@ def account():
 			token = generate_confirmation_token(new_email)
 			confirm_url = url_for('users.confirm_email', token=token, _external=True)
 			html = render_template('users/activate.html', confirm_url=confirm_url)
-			subject = u"Potwierdź swój email - Przygoda"
+			subject = gettext(u'Confirm your account - Adventure')
 			send_email(new_email, subject, html)
-			flash(u'Email potwierdzający został wysłany', 'info')
+			flash(gettext(u'Confirmation email has been sent'), 'info')
 
 		# update user
 		form.populate_obj(current_user)
@@ -135,7 +136,7 @@ def account():
 		db.session.commit()
 
 		# everything is okay
-		flash(u'Zmiany zostały zapisane', 'success')
+		flash(gettext(u'Changes has been saved'), 'success')
 		return redirect(url_for('users.account'))
 
 	return render_template('users/account.html', form=form)
@@ -154,9 +155,9 @@ def lost():
 		token = generate_lost_password_token(form.email.data)
 		confirm_url = url_for('users.change_password', token=token, _external=True)
 		html = render_template('users/lost_email.html', confirm_url=confirm_url)
-		subject = u"Przygoda - Prośba o hasło"
+		subject = gettext(u'New password request - Adventure')
 		send_email(form.email.data, subject, html)
-		flash(u'Email z dalszymi instrukcjami został wysłany', 'info')
+		flash(gettext(u'Follow the instructions in sent email'), 'info')
 
 		return redirect(url_for('simple_page.index'))
 
@@ -179,7 +180,7 @@ def oauth_callback(provider):
 	oauth = OAuthSignIn.get_provider(provider)
 	social_id, username, email = oauth.callback()
 	if social_id is None:
-		flash('Authentication failed', 'danger')
+		flash(getttext(u'Authentication failed'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user exists and if no creates new
@@ -201,10 +202,10 @@ def resend_confirmation_email():
 	token = generate_confirmation_token(current_user.email)
 	confirm_url = url_for('users.confirm_email', token=token, _external=True)
 	html = render_template('users/activate.html', confirm_url=confirm_url)
-	subject = "Please confirm your email"
+	subject = gettext(u'Please confirm your email')
 	send_email(current_user.email, subject, html)
 
-	flash(u'Email potwierdzający został wysłany', 'info')
+	flash(gettext(u'Confirmation email has been sent'), 'info')
 	return redirect(url_for('simple_page.index'))
 
 # Confirm email
@@ -214,12 +215,12 @@ def confirm_email(token):
 	try:
 		email = confirm_token(token)
 	except:
-		flash('The confirmation link is invalid or has expired', 'warning')
+		flash(gettext(u'The confirmation link is invalid or has expired'), 'warning')
 
 	# check if user with decoded email exists
 	user = User.query.filter_by(email=email).first_or_404()
 	if user.confirmed:
-		flash('Account already confirmed', 'info')
+		flash(gettext(u'Account already confirmed'), 'info')
 		return redirect(url_for('simple_page.index'))
 
 	# update user informations and add to database
@@ -228,7 +229,7 @@ def confirm_email(token):
 	db.session.add(user)
 	db.session.commit()
 
-	flash('You have confirmed your account. Thanks', 'success')
+	flash(gettext(u'You have confirmed your account. Enjoy'), 'success')
 	return redirect(url_for('simple_page.index'))
 
 # Change lost password
@@ -237,7 +238,7 @@ def change_password(token):
 	try:
 		email = confirm_token(token)
 	except:
-		flash('The confirmation link is invalid or has expired', 'warning')
+		flash(gettext(u'The confirmation link is invalid or has expired'), 'warning')
 
 	# check if user with decoded email exists
 	user = User.query.filter_by(email=email).first_or_404()
@@ -253,7 +254,7 @@ def change_password(token):
 		db.session.commit()
 
 		# everything is okay
-		flash('Your password has been successfully changed', 'success')
+		flash(gettext(u'Your password has been successfully changed'), 'success')
 		return redirect(url_for('users.login'))
 
 	return render_template('users/change_password.html', form=form)

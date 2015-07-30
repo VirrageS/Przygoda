@@ -482,6 +482,101 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         self.assertTrue(ap is not None)
         self.assertTrue(not ap.is_active())
 
+
+    def test_adventures_my_route_requires_login(self):
+        """Ensure adventures my route requires a logged in user"""
+
+        response = self.app.get('/adventures/my', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('users/login.html')
+
+    def test_adventures_my_route_shows_adventures(self):
+        """Ensure adventures my route shows good adventures"""
+
+        # add user to database
+        checked_user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(checked_user)
+        db.session.commit()
+
+        # login user to system
+        self.login(email='john@example.com', password='a')
+
+        response = self.app.get('/adventures/my', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('adventures/my.html')
+
+        self.assertContext("created_adventures", [])
+        self.assertContext("joined_adventures", [])
+
+        # add adventure to database
+        adventure_created_first = Adventure(
+            creator_id=1,
+            date=datetime.now() + timedelta(minutes=9),
+            mode=ADVENTURES.RECREATIONAL,
+            info='Some info today'
+        )
+        db.session.add(adventure_created_first)
+        db.session.commit()
+
+        adventure_created_second = Adventure(
+            creator_id=1,
+            date=datetime.now() + timedelta(minutes=9),
+            mode=ADVENTURES.RECREATIONAL,
+            info='Some info today'
+        )
+        db.session.add(adventure_created_second)
+        db.session.commit()
+
+        created_adventures_ids = [adventure_created_first.id, adventure_created_second.id]
+
+
+        # JOINED ADVENTURES
+        adventure_joined_first = Adventure(creator_id=2, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(adventure_joined_first)
+        db.session.commit()
+
+        adventure_joined_second = Adventure(creator_id=2, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(adventure_joined_second)
+        db.session.commit()
+
+        adventure_joined_third = Adventure(creator_id=2, date=datetime.now() + timedelta(minutes=9), mode=ADVENTURES.RECREATIONAL, info='Some info today')
+        db.session.add(adventure_joined_third)
+        db.session.commit()
+
+        joined_adventures_ids = [adventure_joined_first.id, adventure_joined_second.id]
+        bad_joined_adventures_ids = [adventure_joined_third.id]
+
+        self.app.get('/adventures/join/3', follow_redirects=True)
+        self.app.get('/adventures/join/4', follow_redirects=True)
+        self.app.get('/adventures/join/5', follow_redirects=True)
+
+        # mark as not active
+        adventure_joined_third.date = datetime.now() + timedelta(minutes=-9)
+        db.session.add(adventure_joined_third)
+        db.session.commit()
+
+        # add participant without adventure
+        adventure_participant = AdventureParticipant(adventure_id=10, user_id=1)
+        db.session.add(adventure_participant)
+        db.session.commit()
+
+        bad_joined_adventures_ids.append(adventure_participant.adventure_id)
+
+        response = self.app.get('/adventures/my', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('adventures/my.html')
+
+        created_adventures = self.get_context_variable("created_adventures")
+        joined_adventures = self.get_context_variable("joined_adventures")
+
+        for adventure in created_adventures:
+            self.assertIn(adventure['id'], created_adventures_ids)
+
+        for adventure in joined_adventures:
+            self.assertIn(adventure.id, joined_adventures_ids)
+            self.assertNotIn(adventure.id, bad_joined_adventures_ids)
+
+
     def test_adventures_new_route_requires_login(self):
         """Ensure adventures new route requires a logged in user"""
 
@@ -500,8 +595,8 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that edit adventure requires small adventure_id"""
 
         # add user to database
-        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-        db.session.add(u)
+        user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        db.session.add(user)
         db.session.commit()
 
         # login user to system

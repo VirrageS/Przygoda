@@ -181,13 +181,12 @@ def my_adventures():
 		# get joined participants
 		participants = created_adventure.get_participants()
 
-		if len(participants) > 0:
-			final_created_adventures.append({
-				'id': created_adventure.id,
-				'date': created_adventure.date,
-				'info': created_adventure.info,
-				'joined': len(participants)
-			})
+		final_created_adventures.append({
+			'id': created_adventure.id,
+			'date': created_adventure.date,
+			'info': created_adventure.info,
+			'joined': len(participants)
+		})
 
 	# get all adventures to which user joined
 	adventures_participant = AdventureParticipant.query.filter_by(user_id=current_user.id).all()
@@ -227,15 +226,8 @@ def edit(adventure_id=0):
 		flash('You cannot edit this adventure!', 'danger')
 		return redirect(url_for('simple_page.index'))
 
-	final_participants = []
-
 	# get joined participants
-	participants = adventure.get_participants()
-	for participant in participants:
-		user = User.query.filter_by(id=participant.user_id).first()
-
-		if (user is not None) and (user.id != current_user.id):
-			final_participants.append(user)
+	final_participants = adventure.get_participants()
 
 	# get form
 	form = EditForm(request.form, obj=adventure)

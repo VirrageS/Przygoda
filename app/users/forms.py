@@ -58,7 +58,7 @@ class RegisterForm(Form):
 	username = StringField('Username', [Length(min=4, max=25)])
 	email = StringField('Email Address', [Email(), Length(min=6, max=35)])
 	password = PasswordField('Password', [Required()])
-	confirm = PasswordField('Repeat Password', [Required(), EqualTo('password', message='Passwords must match')])
+	confirm = PasswordField('Repeat Password', [Required(), EqualTo('password', message='Passwords must match.')])
 
 	def validate(self):
 		if not Form.validate(self):
@@ -66,11 +66,11 @@ class RegisterForm(Form):
 
 		# check if username has valid characters
 		if not validate_username_characters(self.username.data):
-			self.username.errors.append('Username contains illegal characters')
+			self.username.errors.append('Username contains illegal characters.')
 			return False
 
 		if not validate_username_blocked(self.username.data):
-			self.username.errors.append('This username is blocked')
+			self.username.errors.append('This username is blocked.')
 			return False
 
 		# check username
@@ -91,7 +91,7 @@ class AccountForm(Form):
 	username = StringField('Username', [Length(min=4, max=25)])
 	email = StringField('Email Address', [Email(), Length(min=6, max=35)])
 	password = PasswordField('Password', [Optional()])
-	confirm = PasswordField('Repeat Password', [Optional(), EqualTo('password', message='Passwords must match')])
+	confirm = PasswordField('Repeat Password', [Optional(), EqualTo('password', message='Passwords must match.')])
 	old_password = PasswordField('Old Password', [RequiredIf('password')])
 
 	def validate(self):
@@ -100,32 +100,31 @@ class AccountForm(Form):
 
 		# check if username has valid characters
 		if not validate_username_characters(self.username.data):
-			self.username.errors.append('Username contains illegal characters')
+			self.username.errors.append('Username contains illegal characters.')
 			return False
 
 		if not validate_username_blocked(self.username.data):
-			self.username.errors.append('This username is blocked')
+			self.username.errors.append('This username is blocked.')
 			return False
 
 		# check username
 		user = User.query.filter_by(username=self.username.data).first()
 		if (user is not None) and (user.id != current_user.id):
-			self.username.errors.append('This username is already in use. Please choose another one')
+			self.username.errors.append('This username is already in use. Please choose another one.')
 			return False
 
 		# email check
 		user = User.query.filter_by(email=self.email.data.lower()).first()
 		if (user is not None) and (user.id != current_user.id):
-			self.email.errors.append('This email is already in use')
+			self.email.errors.append('This email is already in use.')
 			return False
 
 		# check old password
-		if (
-			(self.old_password.data is not None) and
+		if ((self.old_password.data is not None) and
 			(self.old_password.data is not '') and
 			(not check_password_hash(current_user.password, self.old_password.data))
 		):
-			self.old_password.errors.append('Old password is not correct')
+			self.old_password.errors.append('Old password is not correct.')
 			return False
 
 		self.password.data = generate_password_hash(self.password.data)

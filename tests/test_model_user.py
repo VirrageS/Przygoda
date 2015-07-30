@@ -3,7 +3,7 @@ import unittest
 from app import app
 from werkzeug import check_password_hash, generate_password_hash
 from app.users.models import User
-
+from app.users import constants as USER
 
 class UserTestCase(unittest.TestCase):
     def setUp(self):
@@ -22,6 +22,18 @@ class UserTestCase(unittest.TestCase):
         u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
         assert u.email == 'john@example.com'
 
+    def test_user_social_id(self):
+        user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        self.assertEqual(user.social_id, 'facebook$john')
+
+        user = User(
+            username='john',
+            password=generate_password_hash('a'),
+            email='john@example.com',
+            social_id='facebok$sadfaksdfjasd'
+        )
+        self.assertEqual(user.social_id, 'facebok$sadfaksdfjasd')
+
     def test_user_confirmed(self):
         u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
         assert u.confirmed == False
@@ -33,3 +45,14 @@ class UserTestCase(unittest.TestCase):
     def test_user_registered_on(self):
         u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
         assert u.registered_on is not None
+
+    def test_user_role(self):
+        user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        self.assertEqual(user.role, USER.USER)
+
+        self.assertEqual(user.get_role(), USER.ROLE[USER.USER])
+        self.assertFalse(user.is_admin())
+
+        user.role = USER.ADMIN
+        self.assertEqual(user.get_role(), USER.ROLE[USER.ADMIN])
+        self.assertTrue(user.is_admin())

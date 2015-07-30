@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from config import base_dir
 from werkzeug import check_password_hash, generate_password_hash
 
@@ -20,6 +20,15 @@ class DatabaseTestCase(unittest.TestCase):
 		db.session.remove()
 		db.drop_all()
 
+	def login(self, email, password):
+		return self.app.post('/users/login/', data=dict(
+			email=email,
+			password=password
+		), follow_redirects=True)
+
+	def logout(self):
+		return self.app.get('/users/logout/', follow_redirects=True)
+
 	def test_add_adventure_to_database(self):
 		a = Adventure(creator_id=2, date=datetime.now(), mode=ADVENTURES.RECREATIONAL, info='Some info today')
 		db.session.add(a)
@@ -37,26 +46,53 @@ class DatabaseTestCase(unittest.TestCase):
 		assert len(b) == 2
 
 	def test_add_user_to_database(self):
-		u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-		db.session.add(u)
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
 		db.session.commit()
-		u = User.query.filter_by(username='john').first()
-		assert u.id == 1
-		assert u.username == 'john'
-		assert check_password_hash(u.password, 'a')
-		assert u.email == 'john@example.com'
-		assert u.social_id == ("facebook$" + u.username)
-		assert u.registered_on is not None
-		assert u.confirmed is False
-		assert u.confirmed_on is None
 
-		u = User(username='johner', password=generate_password_hash('a'), email='susan@examplee.com')
-		db.session.add(u)
+		user = User.query.filter_by(username='john').first()
+		assert user.id == 1
+		assert user.username == 'john'
+		assert check_password_hash(user.password, 'a')
+		assert user.email == 'john@example.com'
+		assert user.social_id == ("facebook$" + user.username)
+		assert user.registered_on is not None
+		assert user.confirmed is False
+		assert user.confirmed_on is None
+		self.assertTrue(user.first_login is None)
+		self.assertTrue(user.last_login is None)
+		self.assertFalse(user.is_active_login())
+
+		user.update_login_info()
+		login_date = datetime.now()
+
+		self.assertTrue(user.first_login is not None)
+		self.assertLess(user.first_login, login_date)
+		self.assertTrue(user.last_login is not None)
+		self.assertLess(user.last_login, login_date)
+
+		self.assertTrue(user.is_active_login())
+		user.last_login = datetime.now() + timedelta(days=-10)
+		db.session.add(user)
 		db.session.commit()
-		u = User.query.filter_by(username='johner').first()
-		assert u.id == 2
-		assert u.username != 'john'
-		assert u.username == 'johner'
+		self.assertFalse(user.is_active_login())
+
+		# login again
+		user.update_login_info()
+
+		self.assertTrue(user.first_login is not None)
+		self.assertLess(user.first_login, login_date)
+		self.assertTrue(user.last_login is not None)
+		self.assertGreater(user.last_login, login_date)
+
+		user_second = User(username='johner', password=generate_password_hash('a'), email='susan@examplee.com')
+		db.session.add(user_second)
+		db.session.commit()
+
+		user_second = User.query.filter_by(username='johner').first()
+		assert user_second.id == 2
+		assert user_second.username != 'john'
+		assert user_second.username == 'johner'
 
 	def test_add_coordinate_to_database(self):
 		"""Testing adding cordinantes of adventure to database.

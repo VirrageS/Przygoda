@@ -56,6 +56,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		response = self.login(email='johner@example.com', password='a')
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
+		self.assertIn('Incorrect email or password', response.data)
 
 	def test_users_login_route_wrong_password(self):
 		"""Ensure users login does not accept wrong password"""
@@ -68,6 +69,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		response = self.login(email='john@example.com', password='ab')
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
+		self.assertIn('Incorrect email or password', response.data)
 
 	def test_users_login_route_login(self):
 		"""Ensure users login actually login the user"""
@@ -97,6 +99,10 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('all.html')
 
+	###
+	### LOGOUT FORM
+	###
+
 	def test_users_logout_route_requires_login(self):
 		"""Ensure users logout requires login"""
 
@@ -121,6 +127,10 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		response = self.logout()
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
+
+	###
+	### REGISTER FORM
+	###
 
 	def test_users_register_route_no_register_when_logged(self):
 		"""Ensure users register does not allow to register when user is logged in"""
@@ -147,6 +157,20 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
+		self.assertIn('Field must be between 4 and 25 characters long.', response.data)
+
+	def test_users_register_route_too_long_username(self):
+		"""Ensure users register does not allow to register when username is too long"""
+
+		response = self.app.post('/users/register/', data=dict(
+			username='adsfisudfioasdfhjlasdfhasjkfhsadjfkhsadfkjasdhfkasjdfhasdjkfa',
+			email='tomek@tomek.com',
+			password='aaa',
+			confirm='aaa'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/register.html')
+		self.assertIn('Field must be between 4 and 25 characters long.', response.data)
 
 	def test_users_register_route_wrong_email(self):
 		"""Ensure users register does not allow to register with wrong email address"""
@@ -159,6 +183,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
+		self.assertIn('Invalid email address.', response.data)
 
 	def test_users_register_route_wrong_confirm_password(self):
 		"""Ensure users register does not allow to register with wrong confirmed password"""
@@ -171,38 +196,69 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
+		self.assertIn('Passwords must match.', response.data)
+
+	def test_users_register_route_wrong_username(self):
+		"""Ensure users register does not allow to register with not correct username"""
+
+		response = self.app.post('/users/register/', data=dict(
+			username='(!_)@)#Z<:∆ń∆ń∆śń∆)))',
+			email='tomek@tomek.com',
+			password='aaa',
+			confirm='aaa'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/register.html')
+		self.assertIn('Username contains illegal characters.', response.data)
+
+	def test_users_register_route_blocked_username(self):
+		"""Ensure users register does not allow to register with blocked username"""
+
+		response = self.app.post('/users/register/', data=dict(
+			username='admin',
+			email='tomek@tomek.com',
+			password='aaa',
+			confirm='aaa'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/register.html')
+		self.assertIn('This username is blocked.', response.data)
 
 	def test_users_register_route_user_exists_with_username(self):
 		"""Ensure users register does not allow to register when someone exists with username"""
 
-		u = User(username='tomek', password=generate_password_hash('a'), email='tomeked@tomek.com')
-		db.session.add(u)
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
 		db.session.commit()
 
 		response = self.app.post('/users/register/', data=dict(
-			username='tomek',
+			username='john',
 			email='tomek@tomek.com',
 			password='aaa',
 			confirm='aaa'
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
+		self.assertIn('This username is already in use. Please choose another one.', response.data)
 
 	def test_users_register_route_user_exists_with_email(self):
 		"""Ensure users register does not allow to register when someone exists with email"""
 
-		u = User(username='tomeczek', password=generate_password_hash('a'), email='tomek@tomek.com')
-		db.session.add(u)
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
 		db.session.commit()
 
 		response = self.app.post('/users/register/', data=dict(
-			username='tomek',
-			email='tomek@tomek.com',
+			username='johner',
+			email='john@example.com',
 			password='aaa',
 			confirm='aaa'
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
+		self.assertIn('This email is already in use.', response.data)
 
 	def test_users_register_route_register(self):
 		"""Ensure users register actually create the user"""
@@ -217,7 +273,218 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
 
-		u = User.query.filter_by(username='tomeker').first()
-		self.assertTrue(u is not None)
-		self.assertTrue(u.email == 'tomeker@tomekads.com')
-		self.assertTrue(check_password_hash(u.password, 'aaaaaa'))
+		registered_user = User.query.filter_by(username='tomeker').first()
+		self.assertTrue(registered_user is not None)
+		self.assertTrue(registered_user.email == 'tomeker@tomekads.com')
+		self.assertTrue(check_password_hash(registered_user.password, 'aaaaaa'))
+
+	###
+	### ACCOUNT FORM
+	###
+
+	def test_users_account_route_requires_login(self):
+		"""Ensure users account requires login to be viewed"""
+
+		response = self.app.post('/users/account/', follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/login.html')
+		self.assertIn('Please log in to access this page', response.data)
+
+	def test_users_account_route_too_short_username(self):
+		"""Ensure users account does not allow to account when username is too short"""
+
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
+		db.session.commit()
+		self.login(email='john@example.com', password='a')
+
+		response = self.app.post('/users/account/', data=dict(
+			username='a'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/account.html')
+		self.assertIn('Field must be between 4 and 25 characters long.', response.data)
+
+	def test_users_account_route_too_long_username(self):
+		"""Ensure users account does not allow to account when username is too long"""
+
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
+		db.session.commit()
+		self.login(email='john@example.com', password='a')
+
+		response = self.app.post('/users/account/', data=dict(
+			username='adsfisudfioasdfhjlasdfhasjkfhsadjfkhsadfkjasdhfkasjdfhasdjkfa'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/account.html')
+		self.assertIn('Field must be between 4 and 25 characters long.', response.data)
+
+	def test_users_account_route_wrong_email(self):
+		"""Ensure users account does not allow to account with wrong email address"""
+
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
+		db.session.commit()
+		self.login(email='john@example.com', password='a')
+
+		response = self.app.post('/users/account/', data=dict(
+			email='tomektomek.com'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/account.html')
+		self.assertIn('Invalid email address.', response.data)
+
+	def test_users_account_route_wrong_confirm_password(self):
+		"""Ensure users account does not allow to account with wrong confirmed password"""
+
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
+		db.session.commit()
+		self.login(email='john@example.com', password='a')
+
+		response = self.app.post('/users/account/', data=dict(
+			username='john',
+			email='john@example.com',
+			password='aaa',
+			confirm='aaaa'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/account.html')
+		self.assertIn('Passwords must match.', response.data)
+
+	def test_users_account_route_wrong_confirm_password(self):
+		"""Ensure users account does not allow to account with wrong confirmed password"""
+
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
+		db.session.commit()
+		self.login(email='john@example.com', password='a')
+
+		response = self.app.post('/users/account/', data=dict(
+			username='john',
+			email='john@example.com',
+			password='aaa',
+			confirm='aaa',
+			old_password='aaa'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/account.html')
+		self.assertIn('Old password is not correct.', response.data)
+
+	def test_users_account_route_wrong_username(self):
+		"""Ensure users account does not allow to account with not correct username"""
+
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
+		db.session.commit()
+		self.login(email='john@example.com', password='a')
+
+		response = self.app.post('/users/account/', data=dict(
+			username='(!_)@)#Z<:∆ń∆ń∆śń∆)))',
+			email='john@example.com'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/account.html')
+		self.assertIn('Username contains illegal characters.', response.data)
+
+	def test_users_account_route_blocked_username(self):
+		"""Ensure users account does not allow to account with blocked username"""
+
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
+		db.session.commit()
+		self.login(email='john@example.com', password='a')
+
+		response = self.app.post('/users/account/', data=dict(
+			username='admin',
+			email='john@example.com'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/account.html')
+		self.assertIn('This username is blocked.', response.data)
+
+	def test_users_account_route_user_exists_with_username(self):
+		"""Ensure users account does not allow to account when someone exists with username"""
+
+		# register user
+		self.app.post('/users/register/', data=dict(
+			username='tomek',
+			email='tomek@tomek.com',
+			password='aaa',
+			confirm='aaa'
+		), follow_redirects=True)
+
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
+		db.session.commit()
+		self.login(email='john@example.com', password='a')
+
+		response = self.app.post('/users/account/', data=dict(
+			username='tomek',
+			email='john@example.com'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/account.html')
+		self.assertIn('This username is already in use. Please choose another one.', response.data)
+
+	def test_users_account_route_user_exists_with_email(self):
+		"""Ensure users account does not allow to account when someone exists with email"""
+
+		# register user
+		self.app.post('/users/register/', data=dict(
+			username='tomek',
+			email='tomek@tomek.com',
+			password='aaa',
+			confirm='aaa'
+		), follow_redirects=True)
+
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
+		db.session.commit()
+		self.login(email='john@example.com', password='a')
+
+		response = self.app.post('/users/account/', data=dict(
+			username='john',
+			email='tomek@tomek.com'
+		), follow_redirects=True)
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/account.html')
+		self.assertIn('This email is already in use.', response.data)
+
+	def test_users_account_route_account(self):
+		"""Ensure users account actually create the user"""
+
+		# add user to database
+		user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(user)
+		db.session.commit()
+		self.login(email='john@example.com', password='a')
+
+		response = self.app.post('/users/account/', data=dict(
+			username='tomeker',
+			email='tomeker@tomekads.com',
+			password='aaaaaa',
+			confirm='aaaaaa',
+			old_password='a'
+		), follow_redirects=True)
+
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/account.html')
+
+		updated_user = User.query.filter_by(username='tomeker').first()
+		self.assertTrue(updated_user is not None)
+		self.assertTrue(updated_user.email == 'tomeker@tomekads.com')
+		self.assertTrue(check_password_hash(updated_user.password, 'aaaaaa'))
+
+		old_user = User.query.filter_by(username='john').first()
+		self.assertTrue(old_user is None)

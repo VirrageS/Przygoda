@@ -34,6 +34,7 @@ class User(UserMixin, db.Model):
 		self.registered_on = datetime.now()
 		self.confirmed = False
 		self.confirmed_on = None
+		self.role = USER.USER
 		self.paid = False
 
 	def is_authenticated(self):

@@ -166,7 +166,7 @@ class RoutesApiTestCase(TestCase, unittest.TestCase):
 
 		response = self.app.get('/api/v1.0/user/register?username=sdfsdf&email=john@example.com&password=1&confirm=12', follow_redirects=True)
 		self.assertEqual(response.status_code, 400)
-		self.assertEqual(response.data, b'{\n  "error": "Passwords must match"\n}')
+		self.assertEqual(response.data, b'{\n  "error": "Passwords must match."\n}')
 
 
 	def test_api_user_register_route_user_exists_with_username(self):
