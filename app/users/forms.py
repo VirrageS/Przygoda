@@ -121,12 +121,17 @@ class AccountForm(Form):
 
 		# check old password
 		if ((self.old_password.data is not None) and
-			(self.old_password.data is not '') and
-			(not check_password_hash(current_user.password, self.old_password.data))
+			self.old_password.data and (not check_password_hash(current_user.password, self.old_password.data))
 		):
 			self.old_password.errors.append('Old password is not correct.')
 			return False
 
+		# if password has not changed we set it to previous
+		if ((self.password.data is None) or (not self.password.data)):
+			self.password.data = current_user.password
+			return True
+
+		# if password changed we must generate hash to insert it to user data
 		self.password.data = generate_password_hash(self.password.data)
 		return True
 

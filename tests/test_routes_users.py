@@ -480,6 +480,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
+		self.assertIn('Changes has been saved', response.data)
 
 		updated_user = User.query.filter_by(username='tomeker').first()
 		self.assertTrue(updated_user is not None)
@@ -488,3 +489,30 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 
 		old_user = User.query.filter_by(username='john').first()
 		self.assertTrue(old_user is None)
+
+
+		# SECOND USER - ONLY USERNAME
+		self.logout()
+
+		# add user to database
+		second_user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+		db.session.add(second_user)
+		db.session.commit()
+		self.login(email='john@example.com', password='a')
+
+		response = self.app.post('/users/account/', data=dict(
+			username='tomekerer',
+			email='john@example.com',
+			password='',
+			confirm='',
+			old_password=''
+		), follow_redirects=True)
+
+		self.assertTrue(response.status_code == 200)
+		self.assertTemplateUsed('users/account.html')
+		self.assertIn('Changes has been saved', response.data)
+
+		updated_user = User.query.filter_by(username='tomekerer').first()
+		self.assertTrue(updated_user is not None)
+		self.assertTrue(updated_user.email == 'john@example.com')
+		self.assertTrue(check_password_hash(updated_user.password, 'a'))

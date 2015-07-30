@@ -1,3 +1,6 @@
+import string
+import random
+
 from datetime import datetime, timedelta
 
 from flask.ext.login import UserMixin
@@ -26,6 +29,7 @@ class User(UserMixin, db.Model):
 	def __init__(self, username, password, email, social_id=None):
 		if social_id is None:
 			social_id = "facebook$" + username
+			social_id += "".join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(80))
 
 		self.social_id = social_id
 		self.username = username
