@@ -70,5 +70,5 @@ sudo chmod 777 /home/$USER/$PROJECT_NAME/logs
 # update translations
 sudo chmod -R 777 /home/$USER/$PROJECT_NAME/app/translations
 . ./env/bin/activate;
-sudo pybabel compile -d app/translations;
+pybabel compile -d app/translations;
 deactivate;
