@@ -24,7 +24,7 @@ class UserTestCase(unittest.TestCase):
 
     def test_user_social_id(self):
         user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
-        self.assertIn(b'facebook$john', user.social_id)
+        self.assertIn('facebook$john', user.social_id)
 
         user = User(
             username='john',
