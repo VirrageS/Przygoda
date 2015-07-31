@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-07-30 16:54+0200\n"
+"POT-Creation-Date: 2015-07-31 11:58+0200\n"
 "PO-Revision-Date: 2015-07-29 20:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: pl <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.0\n"
 
-#: app/__init__.py:86
+#: app/__init__.py:90
 msgid "Please log in to access this page"
 msgstr "Zaloguj się, aby mieć dostęp do tej strony"
 
@@ -73,6 +73,38 @@ msgstr "Logowanie"
 #: app/templates/layout.html:77
 msgid "Register"
 msgstr "Rejestracja"
+
+#: app/templates/layout.html:80
+msgid "Search for Adventures"
+msgstr "Szukaj Przygody"
+
+#: app/templates/layout.html:110
+msgid "Contact"
+msgstr "Kontakt"
+
+#: app/templates/users/register.html:20
+msgid "Join to Adventure"
+msgstr "Dołącz to Przygody"
+
+#: app/templates/users/register.html:29
+msgid "Username"
+msgstr "Nazwa użytkownika"
+
+#: app/templates/users/register.html:39
+msgid "Email"
+msgstr "Email"
+
+#: app/templates/users/register.html:49
+msgid "Password"
+msgstr "Hasło"
+
+#: app/templates/users/register.html:59
+msgid "Repeat password"
+msgstr "Powtórz hasło"
+
+#: app/templates/users/register.html:67
+msgid "Register to Adventure"
+msgstr "Zarejestruj się do Przygody"
 
 #: app/users/views.py:56
 msgid "Incorrect email or password"

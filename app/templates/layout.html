@@ -76,7 +76,9 @@
 							<li><a href="{{ url_for('users.login') }}">{{ _('Login') }}</a></li>
 							<li><a href="{{ url_for('users.register') }}">{{ _('Register') }}</a></li>
 						{% endif %}
-						<li><a href="{{ url_for('adventures.search') }}"><i class="fa fa-search" style="padding-right: 10px;"></i>Szukaj Przygód</a></li>
+						<li><a href="{{ url_for('adventures.search') }}">
+							<i class="fa fa-search" style="padding-right: 10px;"></i>{{ _('Search for Adventures') }}
+						</a></li>
 				    </ul>
 				</div>
 			</div>
@@ -105,7 +107,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-4 col-sm-6"><a href="#">Blog</a></div>
-				<div class="col-md-4 col-sm-6"><a href="{{ url_for('simple_page.contact') }}"><b>Kontakt</b></a></div>
+				<div class="col-md-4 col-sm-6"><a href="{{ url_for('simple_page.contact') }}"><b>{{ _('Contact') }}</b></a></div>
 				<div class="col-md-4 col-sm-6"><a href="#">O nas</a></div>
 				<div class="col-md-4 col-sm-6"><a href="#">Funkcje</a></div>
 				<div class="col-md-4 col-sm-6"><a href="#">Regulamin i prywatność</a></div>

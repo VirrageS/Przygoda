@@ -77,7 +77,11 @@ app.json_encoder = CustomJSONEncoder
 
 @babel.localeselector
 def get_locale():
-    return request.accept_languages.best_match(['pl', 'en'])
+	language = request.accept_languages.best_match(['pl', 'en'])
+	if (language is not None) and language:
+		app.config['BABEL_DEFAULT_LOCALE'] = language
+
+	return language
 
 # login setup
 login_manager = LoginManager()
