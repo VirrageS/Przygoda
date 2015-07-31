@@ -55,7 +55,7 @@ class DatabaseTestCase(unittest.TestCase):
 		assert user.username == 'john'
 		assert check_password_hash(user.password, 'a')
 		assert user.email == 'john@example.com'
-		self.assertIn("facebook$" + user.username, user.social_id)
+		self.assertIn(b"facebook$" + user.username, user.social_id)
 		assert user.registered_on is not None
 		assert user.confirmed is False
 		assert user.confirmed_on is None

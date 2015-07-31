@@ -56,7 +56,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		response = self.login(email='johner@example.com', password='a')
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
-		self.assertIn('Incorrect email or password', response.data)
+		self.assertIn(b'Incorrect email or password', response.data)
 
 	def test_users_login_route_wrong_password(self):
 		"""Ensure users login does not accept wrong password"""
@@ -69,7 +69,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		response = self.login(email='john@example.com', password='ab')
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
-		self.assertIn('Incorrect email or password', response.data)
+		self.assertIn(b'Incorrect email or password', response.data)
 
 	def test_users_login_route_login(self):
 		"""Ensure users login actually login the user"""
@@ -157,7 +157,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
-		self.assertIn('Field must be between 4 and 25 characters long.', response.data)
+		self.assertIn(b'Field must be between 4 and 25 characters long.', response.data)
 
 	def test_users_register_route_too_long_username(self):
 		"""Ensure users register does not allow to register when username is too long"""
@@ -170,7 +170,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
-		self.assertIn('Field must be between 4 and 25 characters long.', response.data)
+		self.assertIn(b'Field must be between 4 and 25 characters long.', response.data)
 
 	def test_users_register_route_wrong_email(self):
 		"""Ensure users register does not allow to register with wrong email address"""
@@ -183,7 +183,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
-		self.assertIn('Invalid email address.', response.data)
+		self.assertIn(b'Invalid email address.', response.data)
 
 	def test_users_register_route_wrong_confirm_password(self):
 		"""Ensure users register does not allow to register with wrong confirmed password"""
@@ -196,7 +196,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
-		self.assertIn('Passwords must match.', response.data)
+		self.assertIn(b'Passwords must match.', response.data)
 
 	def test_users_register_route_wrong_username(self):
 		"""Ensure users register does not allow to register with not correct username"""
@@ -209,7 +209,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
-		self.assertIn('Username contains illegal characters.', response.data)
+		self.assertIn(b'Username contains illegal characters.', response.data)
 
 	def test_users_register_route_blocked_username(self):
 		"""Ensure users register does not allow to register with blocked username"""
@@ -222,7 +222,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
-		self.assertIn('This username is blocked.', response.data)
+		self.assertIn(b'This username is blocked.', response.data)
 
 	def test_users_register_route_user_exists_with_username(self):
 		"""Ensure users register does not allow to register when someone exists with username"""
@@ -240,7 +240,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
-		self.assertIn('This username is already in use. Please choose another one.', response.data)
+		self.assertIn(b'This username is already in use. Please choose another one.', response.data)
 
 	def test_users_register_route_user_exists_with_email(self):
 		"""Ensure users register does not allow to register when someone exists with email"""
@@ -258,7 +258,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
-		self.assertIn('This email is already in use.', response.data)
+		self.assertIn(b'This email is already in use.', response.data)
 
 	def test_users_register_route_register(self):
 		"""Ensure users register actually create the user"""
@@ -288,7 +288,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		response = self.app.post('/users/account/', follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/login.html')
-		self.assertIn('Please log in to access this page', response.data)
+		self.assertIn(b'Please log in to access this page', response.data)
 
 	def test_users_account_route_too_short_username(self):
 		"""Ensure users account does not allow to account when username is too short"""
@@ -304,7 +304,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn('Field must be between 4 and 25 characters long.', response.data)
+		self.assertIn(b'Field must be between 4 and 25 characters long.', response.data)
 
 	def test_users_account_route_too_long_username(self):
 		"""Ensure users account does not allow to account when username is too long"""
@@ -320,7 +320,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn('Field must be between 4 and 25 characters long.', response.data)
+		self.assertIn(b'Field must be between 4 and 25 characters long.', response.data)
 
 	def test_users_account_route_wrong_email(self):
 		"""Ensure users account does not allow to account with wrong email address"""
@@ -336,7 +336,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn('Invalid email address.', response.data)
+		self.assertIn(b'Invalid email address.', response.data)
 
 	def test_users_account_route_wrong_confirm_password(self):
 		"""Ensure users account does not allow to account with wrong confirmed password"""
@@ -355,7 +355,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn('Passwords must match.', response.data)
+		self.assertIn(b'Passwords must match.', response.data)
 
 	def test_users_account_route_wrong_confirm_password(self):
 		"""Ensure users account does not allow to account with wrong confirmed password"""
@@ -375,7 +375,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn('Old password is not correct.', response.data)
+		self.assertIn(b'Old password is not correct.', response.data)
 
 	def test_users_account_route_wrong_username(self):
 		"""Ensure users account does not allow to account with not correct username"""
@@ -392,7 +392,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn('Username contains illegal characters.', response.data)
+		self.assertIn(b'Username contains illegal characters.', response.data)
 
 	def test_users_account_route_blocked_username(self):
 		"""Ensure users account does not allow to account with blocked username"""
@@ -409,7 +409,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn('This username is blocked.', response.data)
+		self.assertIn(b'This username is blocked.', response.data)
 
 	def test_users_account_route_user_exists_with_username(self):
 		"""Ensure users account does not allow to account when someone exists with username"""
@@ -434,7 +434,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn('This username is already in use. Please choose another one.', response.data)
+		self.assertIn(b'This username is already in use. Please choose another one.', response.data)
 
 	def test_users_account_route_user_exists_with_email(self):
 		"""Ensure users account does not allow to account when someone exists with email"""
@@ -459,7 +459,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn('This email is already in use.', response.data)
+		self.assertIn(b'This email is already in use.', response.data)
 
 	def test_users_account_route_account(self):
 		"""Ensure users account actually create the user"""
@@ -480,7 +480,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn('Changes has been saved', response.data)
+		self.assertIn(b'Changes has been saved', response.data)
 
 		updated_user = User.query.filter_by(username='tomeker').first()
 		self.assertTrue(updated_user is not None)
@@ -510,7 +510,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn('Changes has been saved', response.data)
+		self.assertIn(b'Changes has been saved', response.data)
 
 		updated_user = User.query.filter_by(username='tomekerer').first()
 		self.assertTrue(updated_user is not None)
