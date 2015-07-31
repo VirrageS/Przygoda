@@ -7,10 +7,9 @@
 		<div class="row text-center">
 			<div class="col-sm-8 col-sm-offset-2">
 				<p class="lead">
-					Nie ma jeszcze żadnych aktywnych Przygód <i class="fa fa-frown-o"></i><br>
-					Uprzedź innych i stwórz własną!
+					{{ _('There is not active Adventures <i class="fa fa-frown-o"></i><br> Be first and create ours')}}
 				</p>
-				<p><a class="hd-btn hd-btn-black" href="{{ url_for('adventures.new') }}">Stwórz Przygodę</a></p>
+				<p><a class="hd-btn hd-btn-black" href="{{ url_for('adventures.new') }}">{{ _('Create Adventure') }}</a></p>
 			</div>
 		</div>
 	{% else %}
@@ -41,14 +40,14 @@
 								<div class="right"><i class="fa fa-gear"></i>
 									{% if g.user.is_authenticated() %}
 										{% if adventure.action == -1 %}
-											Nie ma akcji
+											{{ _('No action') }}
 										{% elif adventure.action == 0 %}
-											<a href="/adventures/join/{{ adventure.id|safe }}">Dołącz</a>
+											<a href="/adventures/join/{{ adventure.id|safe }}">{{ _('Join') }}</a>
 										{% else %}
-											<a href="/adventures/leave/{{ adventure.id|safe }}">Wypisz się</a>
+											<a href="/adventures/leave/{{ adventure.id|safe }}">{{ _('Leave') }}</a>
 										{% endif %}
 									{% else %}
-										Nie ma akcji
+										{{ _('No action') }}
 									{% endif %}
 								</div>
 							</div>

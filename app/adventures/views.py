@@ -48,13 +48,13 @@ def show(adventure_id):
 	# get adventure and check if exists or is active
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	if (adventure is None) or (not adventure.is_active()):
-		flash(gettext(u'Adventure does not exists'), 'danger')
+		flash(gettext(u'Adventure not found'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# get adventures creator and check if exists
 	user = User.query.filter_by(id=adventure.creator_id).first()
 	if user is None:
-		flash(gettext(u'Creator of this adventure does not exists'), 'danger')
+		flash(gettext(u'Creator not found'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# get joined participants
@@ -103,7 +103,7 @@ def join(adventure_id):
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	if (adventure is None) or (not adventure.is_active()):
-		flash(gettext(u'Adventure does not exists'), 'danger')
+		flash(gettext(u'Adventure not found'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
@@ -114,12 +114,12 @@ def join(adventure_id):
 		participant = AdventureParticipant(adventure_id=adventure_id, user_id=current_user.id)
 		db.session.add(participant)
 		db.session.commit()
-		flash(gettext(u'You have joined to the adventure'), 'success')
+		flash(gettext(u'You successfully joined to Adventure'), 'success')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is rejoining
 	if participant.is_active():
-		flash(gettext(u'You have joined to the adventure before'), 'warning')
+		flash(gettext(u'You have joined to this Adventure before'), 'warning')
 		return redirect(url_for('simple_page.index'))
 
 	# join user again
@@ -128,7 +128,7 @@ def join(adventure_id):
 	db.session.add(participant)
 	db.session.commit()
 
-	flash(gettext(u'You have joined to the adventure'), 'success')
+	flash(gettext(u'You successfully joined to Adventure'), 'success')
 	return redirect(url_for('simple_page.index'))
 
 @mod.route('/leave/<int:adventure_id>')
@@ -143,25 +143,25 @@ def leave(adventure_id):
 	# get adventure and check if exists
 	adventure = Adventure.query.filter_by(id=adventure_id).first()
 	if (adventure is None) or (not adventure.is_active()):
-		flash(u'Przygoda nie istnieje', 'danger')
+		flash(gettext(u'Adventure not found'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is the creator of the adventure
 	if adventure.creator_id == current_user.id:
-		flash(u'Nie możesz opuścić tej Przygody', 'warning')
+		flash(gettext(u'You cannot leave this Adventure'), 'warning')
 		return redirect(url_for('simple_page.index'))
 
 	participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
 
 	# check if user joined adventure
 	if (participant is None) or (not participant.is_active()):
-		flash(u'Nie dołączyłeś do tej Przygody', 'warning')
+		flash(gettext(u'You have not joined this Adventure'), 'warning')
 		return redirect(url_for('simple_page.index'))
 
 	# delete user from adventure participants from database
 	participant.left_on = datetime.now()
 	db.session.commit()
-	flash(u'Opuściłeś Przygodę', 'success')
+	flash(gettext(u'You successfully left Adventure'), 'success')
 	return redirect(url_for('simple_page.index'))
 
 # Check all created and joined adventures
@@ -218,12 +218,12 @@ def edit(adventure_id=0):
 
 	# check if adventure exists
 	if (adventure is None) or (not adventure.is_active()):
-		flash('Adventure not found', 'danger')
+		flash(gettext(u'Adventure not found'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is creator of adventure
 	if adventure.creator_id != current_user.id:
-		flash('You cannot edit this adventure!', 'danger')
+		flash(gettext(u'You cannot edit this Adventure'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# get joined participants
@@ -239,7 +239,7 @@ def edit(adventure_id=0):
 			waypoints = get_waypoints(request.form)
 
 			if (waypoints is None) or (len(waypoints) < 2):
-				flash('You must place at least two markers', 'warning')
+				flash(gettext(u'You must place at least two markers'), 'warning')
 				return redirect(url_for('adventures.new'))
 
 			# check if directions are good
@@ -252,8 +252,8 @@ def edit(adventure_id=0):
 				mode="bicycling"
 			)
 
-			if (directions_result is None) or (len(directions_result) <= 0):
-				flash('Sorry, not supported adventure path', 'warning')
+			if (directions_result is None) or (not directions_result):
+				flash(gettext(u'Not supported Adventure path'), 'warning')
 				return redirect(url_for('simple_page.index'))
 
 			# delete existing coordinates for the adventure_id
@@ -277,11 +277,11 @@ def edit(adventure_id=0):
 			# update adventure in database
 			db.session.commit()
 		except (googlemaps.exceptions.ApiError, googlemaps.exceptions.HTTPError, googlemaps.exceptions.TransportError):
-			flash('Something went wrong try again', 'danger')
+			flash(gettext(u'Something went wrong'), 'danger')
 			return redirect(url_for('simple_page.index'))
 
 		# everything is okay
-		flash('Adventure item was successfully created', 'success')
+		flash(gettext(u'Adventure has been successfully created'), 'success')
 		return redirect(url_for('simple_page.index'))
 
 	# get coordinates of existing points
@@ -314,7 +314,7 @@ def new():
 			waypoints = get_waypoints(request.form)
 
 			if (waypoints is None) or (len(waypoints) < 2):
-				flash('You must place at least two markerss', 'warning')
+				flash(gettext(u'You must place at least two markers'), 'warning')
 				return redirect(url_for('adventures.new'))
 
 			# check if directions are good
@@ -327,8 +327,8 @@ def new():
 				mode="bicycling"
 			)
 
-			if (directions_result is None) or (len(directions_result) <= 0):
-				flash('Sorry, not supported adventure path', 'warning')
+			if (directions_result is None) or (not directions_result):
+				flash(gettext(u'Not supported Adventure path'), 'warning')
 				return redirect(url_for('adventures.new'))
 
 			# add adventure to database
@@ -358,11 +358,11 @@ def new():
 				db.session.commit()
 
 		except (googlemaps.exceptions.ApiError, googlemaps.exceptions.HTTPError, googlemaps.exceptions.TransportError):
-			flash('Something went wrong try again', 'danger')
+			flash(gettext(u'Something went wrong'), 'danger')
 			return redirect(url_for('adventures.new'))
 
 		# everything is okay
-		flash('Adventure item was successfully created', 'success')
+		flash(gettext(u'Adventure has been successfully created'), 'success')
 		return redirect(url_for('simple_page.index'))
 
 	return render_template(
@@ -388,12 +388,12 @@ def delete(adventure_id):
 
 	# check if adventure exists
 	if (adventure is None) or (not adventure.is_active()):
-		flash('Adventure not found', 'danger')
+		flash(gettext(u'Adventure not found'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# check if user is creator of adventure
 	if adventure.creator_id != current_user.id:
-		flash('You cannot delete this adventure!', 'danger')
+		flash(gettext(u'You cannot delete this Adventure'), 'danger')
 		return redirect(url_for('simple_page.index'))
 
 	# delete adventure
@@ -401,7 +401,7 @@ def delete(adventure_id):
 	adventure.deleted_on = datetime.now()
 	db.session.commit()
 
-	flash('Your adventure has been deleted', 'success')
+	flash(gettext(u'Adventure has been successfully deleted'), 'success')
 	return redirect(url_for('simple_page.index'))
 
 @mod.route('/search/', methods=['GET', 'POST'])
@@ -419,7 +419,7 @@ def search():
 
 		# check if bounds are good
 		if bounds is None:
-			flash('Something went wrong try again', 'danger')
+			flash(gettext(u'Something went wrong'), 'danger')
 			return redirect(url_for('adventures.search'))
 
 		# get adventures from area
@@ -440,7 +440,6 @@ def search():
 			for mode in form.modes.data:
 				if int(adventure.mode) == int(mode):
 					check = True
-					break
 
 			if check:
 				# get creator of the event
@@ -470,10 +469,10 @@ def search():
 		# sort adventures by date
 		final_adventures = sorted(final_adventures, key=(lambda a: a['date']))
 
-		if len(final_adventures) > 0:
-			flash(u'Poniżej znajdziesz wybrane dla Ciebie Przygody.', 'success')
+		if final_adventures:
+			flash(gettext(u'Below you can find some Adventures we have found for you'), 'success')
 		else:
-			flash(u'Niestety nie udało się znaleźć żadnych Przygód. Spróbuj zmienić obszar lub kryteria', 'warning')
+			flash(gettext(u'Unfortunately we have not found any Adventures for you. Try to change mode or area'), 'warning')
 
 	return render_template(
 		'adventures/search.html',

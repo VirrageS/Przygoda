@@ -102,13 +102,13 @@
 		}
 	</script>
 
-	<div class="alert alert-info" role="info"><b>Tip:</b> Aby dodać znacznik na mapę, kliknij w wybrane miejsce (możesz go także przesuwać)</div>
+	<div class="alert alert-info" role="info"><b>Tip:</b> {{ _('Click on the map to add marker (you can move it as well)') }}</div>
 	<br><br>
-	<h2>Stwórz Przygodę</h2>
+	<h2>{{ _('Create Adventure') }}</h2>
 	<br>
 	<div id="map-canvas"></div>
 	<br><br>
-	Aktualna długość trasy: <b><div id="total-distance" style="display: inline;">0 km</div></b>
+	{{ _('Current Adventure route length') }}: <b><div id="total-distance" style="display: inline;">0 km</div></b>
 	<br><br>
 	<form action="" method="post" name="new">
 		{{ form.hidden_tag() }}
@@ -118,7 +118,7 @@
 		<div class="form-group">
 			<div class="input-group date">
 				<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				{{ render_field(form.date, placeholder="Data Przygody", id="datetimepicker") }}
+				{{ render_field(form.date, placeholder=_('Adventure date'), id="datetimepicker") }}
 			</div>
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.date.errors[0] }}</small>
@@ -126,7 +126,7 @@
 		</div>
 
 		<div class="form-group">
-			{{ render_field(form.mode, class='selectpicker', title='Wybierz typ Przygody', **{'data-selected-text-format' : 'count>2', 'data-style' : 'btn-info'}) }}
+			{{ render_field(form.mode, class='selectpicker', title=_('Select Adventure mode'), **{'data-selected-text-format' : 'count>2', 'data-style' : 'btn-info'}) }}
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.mode.errors[0] }}</small>
 			</div>
@@ -140,7 +140,7 @@
 		</div>
 
 		<div class="form-group">
-			<button type="submit" class="btn btn-success">Stwórz nową Przygodę</button>
+			<button type="submit" class="btn btn-success">{{ _('Create new Adventure') }}</button>
 		</div>
 	</form>
 {% endblock %}

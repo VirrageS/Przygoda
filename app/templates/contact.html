@@ -15,15 +15,15 @@
     {% endmacro %}
 
     <div class="contact-box">
-        <div class="contact-title">Kontakt</div>
+        <div class="contact-title">{{ _('Contact') }}</div>
         <div class="contact-subtitle">
-            Jeżeli:
+            {{ _('If') }}:
             <ul>
-                <li>masz pomysł jak moglibyśmy poprawić naszą stronę?</li>
-                <li>zauważyłeś błąd na stronie?</li>
-                <li>masz do nas pytanie?</li>
+                <li>{{ _('you have an idea how we can improve site?') }}</li>
+                <li>{{ _('you have found a bug?') }}</li>
+                <li>{{ _('you have a question?') }}</li>
             </ul>
-            Napisz do nas!
+            {{ _('Do not hesitate and leave message!')}}
         </div>
         <div class="contact-content">
             <div class="contact-form">
@@ -33,7 +33,7 @@
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-envelope"></i></div>
-                            {{ render_field(form.email, placeholder="Email (opcjonalne)") }}
+                            {{ render_field(form.email, placeholder=_('Email (optional)')) }}
                         </div>
                         <div class="form-group has-error">
                             <small class="form-group has-error help-block">{{ form.email.errors[0] }}</small>
@@ -43,7 +43,7 @@
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-edit"></i></div>
-                            {{ render_field(form.subject, placeholder="Temat (opcjonalne)") }}
+                            {{ render_field(form.subject, placeholder=_('Subject (optional)')) }}
                         </div>
                         <div class="form-group has-error">
                             <small class="form-group has-error help-block">{{ form.subject.errors[0] }}</small>
@@ -51,18 +51,18 @@
                     </div>
 
                     <div class="form-group">
-                        {{ render_field(form.message, placeholder="Co chcesz nam przekazać?", rows="6", style="max-width: 100%") }}
+                        {{ render_field(form.message, placeholder=_('What do you want to share with us?'), rows="6", style="max-width: 100%") }}
                         <div class="form-group has-error">
                             <small class="form-group has-error help-block">{{ form.message.errors[0] }}</small>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <button type="submit" class="btn btn-success">Wyślij wiadomość</button>
+                        <button type="submit" class="btn btn-success">{{ _('Send message') }}</button>
                     </div>
                 </form>
             </div>
-            <div class="contact-footer">Za wszystkie wiadomości i uwagi bardzo dziękujemy!</div>
+            <div class="contact-footer">{{ _('We are grateful for every message and commen!t') }}</div>
         </div>
     </div>
 {% endblock %}

@@ -94,21 +94,21 @@
 		google.maps.event.addDomListener(window, 'load', initialize);
 	</script>
 
-	<h2>Przygoda #{{ adventure.id|safe }}</h2>
+	<h2>{{ _('Adventure') }} #{{ adventure.id|safe }}</h2>
 	<br><br>
 	<div id="map-canvas"></div>
 	<br>
 	<div class="panel panel-info">
-		<div class="panel-heading">Informacje</div>
+		<div class="panel-heading">{{ _('Informations') }}</div>
 		<ul class="list-group">
-			<li class="list-group-item">Długość trasy: <b><div id="total-distance" style="display: inline;">0 km</div></b></li>
-			<li class="list-group-item">Założyciel Przygody: <b>{{ adventure.username|safe }}</b></li>
-			<li class="list-group-item">Data: <b>{{ adventure.date|safe }}</b></li>
-			<li class="list-group-item" style="word-break: break-all;">Informacje: <b>{{ adventure.info|safe }}</b></li>
+			<li class="list-group-item">{{ _('Route length') }}: <b><div id="total-distance" style="display: inline;">0 km</div></b></li>
+			<li class="list-group-item">{{ _('Creator') }}: <b>{{ adventure.username|safe }}</b></li>
+			<li class="list-group-item">{{ _('Date') }}: <b>{{ adventure.date|safe }}</b></li>
+			<li class="list-group-item" style="word-break: break-all;">{{ _('Informations') }}: <b>{{ adventure.info|safe }}</b></li>
 		</ul>
 	</div>
 	<div class="panel panel-info">
-		<div class="panel-heading">Uczestnicy</div>
+		<div class="panel-heading">{{ _('Participants') }}</div>
 		<ul class="list-group">
 			{% if (participants is defined) and participants %}
 				{% for participant in participants %}
@@ -119,7 +119,7 @@
 			{% else %}
 				<li class="list-group-item">
 					<span class="glyphicon glyphicon-remove" style="color:#FF0000; padding-right: 15px;"></span>
-					Nikt jeszcze nie dołączył do przygody
+					{{ _('No one has joined this Adventure yet') }}
 				</li>
 			{% endif %}
 		</ul>

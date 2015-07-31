@@ -480,7 +480,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn(b'Changes has been saved', response.data)
+		self.assertIn(b'The changes have been saved', response.data)
 
 		updated_user = User.query.filter_by(username='tomeker').first()
 		self.assertTrue(updated_user is not None)
@@ -510,7 +510,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn(b'Changes has been saved', response.data)
+		self.assertIn(b'The changes have been saved', response.data)
 
 		updated_user = User.query.filter_by(username='tomekerer').first()
 		self.assertTrue(updated_user is not None)

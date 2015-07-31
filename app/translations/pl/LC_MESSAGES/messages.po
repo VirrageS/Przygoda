@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-07-31 11:58+0200\n"
+"POT-Creation-Date: 2015-07-31 19:14+0200\n"
 "PO-Revision-Date: 2015-07-29 20:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: pl <LL@li.org>\n"
@@ -26,23 +26,168 @@ msgstr "Zaloguj się, aby mieć dostęp do tej strony"
 msgid "Message sent. Thank you for contact. We really appreciate it!"
 msgstr "Wiadomość wysłana. Dziękujęmy za kontakt!"
 
+#: app/adventures/forms.py:30
+msgid "Date must be older than now"
+msgstr "Data musi być starsza od teraz"
+
+#: app/adventures/forms.py:50
+msgid "Invalid Adventure mode"
+msgstr "Nieprawidłowy typ Przygody"
+
 #: app/adventures/views.py:51 app/adventures/views.py:106
-msgid "Adventure does not exists"
+#: app/adventures/views.py:146 app/adventures/views.py:221
+#: app/adventures/views.py:391
+msgid "Adventure not found"
 msgstr "Przygoda nie istnieje"
 
 #: app/adventures/views.py:57
-msgid "Creator of this adventure does not exists"
-msgstr "Założyciel tej przygody nie istnieje"
+msgid "Creator not found"
+msgstr "Założyciel Przygody nie istnieje"
 
 #: app/adventures/views.py:117 app/adventures/views.py:131
-msgid "You have joined to the adventure"
+msgid "You successfully joined to Adventure"
 msgstr "Dołączyłeś do Przygody"
 
 #: app/adventures/views.py:122
-msgid "You have joined to the adventure before"
+msgid "You have joined to this Adventure before"
 msgstr "Dołączyłeś do tej Przygody wcześniej"
 
+#: app/adventures/views.py:151
+msgid "You cannot leave this Adventure"
+msgstr "Nie możesz opuścić tej Przygody"
+
+#: app/adventures/views.py:158
+msgid "You have not joined this Adventure"
+msgstr "Nie dołączyłeś do tej Przygody"
+
+#: app/adventures/views.py:164
+msgid "You successfully left Adventure"
+msgstr "Opuściłeś Przygodę"
+
+#: app/adventures/views.py:226
+msgid "You cannot edit this Adventure"
+msgstr "Nie możesz edytować tej Przygody"
+
+#: app/adventures/views.py:242 app/adventures/views.py:317
+msgid "You must place at least two markers"
+msgstr "Musisz umieścić co najmniej dwa znaczniki"
+
+#: app/adventures/views.py:256 app/adventures/views.py:331
+msgid "Not supported Adventure path"
+msgstr "Niepoprawna trasa Przygody"
+
+#: app/adventures/views.py:280 app/adventures/views.py:361
+#: app/adventures/views.py:422
+msgid "Something went wrong"
+msgstr "Coś poszło nie tak"
+
+#: app/adventures/views.py:284 app/adventures/views.py:365
+msgid "Adventure has been successfully created"
+msgstr "Przygoda została poprawnie stworzona"
+
+#: app/adventures/views.py:396
+msgid "You cannot delete this Adventure"
+msgstr "Nie możesz usunąć tej Przygody"
+
+#: app/adventures/views.py:404
+msgid "Adventure has been successfully deleted"
+msgstr "Przygoda została poprawnie usunięta"
+
+#: app/adventures/views.py:473
+msgid "Below you can find some Adventures we have found for you"
+msgstr "Poniżej znajdziesz wybrane dla Ciebie Przygody"
+
+#: app/adventures/views.py:475
+msgid ""
+"Unfortunately we have not found any Adventures for you. Try to change "
+"mode or area"
+msgstr ""
+"Niestety nie udało się znaleźć żadnych Przygód. Spróbuj zmienić obszar "
+"lub kryteria"
+
+#: app/templates/all.html:10
+msgid ""
+"There is not active Adventures <i class=\"fa fa-frown-o\"></i><br> Be "
+"first and create ours"
+msgstr ""
+"Nie ma jeszcze żadnych aktywnych Przygód <i class=\"fa fa-"
+"frown-o\"></i><br> Uprzedź innych i stwórz własną!"
+
+#: app/templates/all.html:12 app/templates/layout.html:72
+#: app/templates/adventures/new.html:107
+msgid "Create Adventure"
+msgstr "Stwórz Przygodę"
+
+#: app/templates/all.html:43 app/templates/all.html:50
+msgid "No action"
+msgstr "Nie ma akcji"
+
+#: app/templates/all.html:45
+msgid "Join"
+msgstr "Dołącz"
+
+#: app/templates/all.html:47
+msgid "Leave"
+msgstr "Wypisz się"
+
+#: app/templates/contact.html:18 app/templates/layout.html:110
+msgid "Contact"
+msgstr "Kontakt"
+
+#: app/templates/contact.html:20
+msgid "If"
+msgstr "Jeżeli"
+
+#: app/templates/contact.html:22
+msgid "you have an idea how we can improve site?"
+msgstr "masz pomysł jak moglibyśmy poprawić stronę?"
+
+#: app/templates/contact.html:23
+msgid "you have found a bug?"
+msgstr "znalazłeś błąd na stronie?"
+
+#: app/templates/contact.html:24
+msgid "you have a question?"
+msgstr "masz pytanie?"
+
+#: app/templates/contact.html:26
+msgid "Do not hesitate and leave message!"
+msgstr "Zostaw nam wiadomość!"
+
+#: app/templates/contact.html:36
+msgid "Email (optional)"
+msgstr "Email (opcjonalne)"
+
+#: app/templates/contact.html:46
+msgid "Subject (optional)"
+msgstr "Temat (opcjonalne)"
+
+#: app/templates/contact.html:54
+msgid "What do you want to share with us?"
+msgstr "O czym chciałbyś nam powiedzieć?"
+
+#: app/templates/contact.html:61
+msgid "Send message"
+msgstr "Wyślij wiadomość"
+
+#: app/templates/contact.html:65
+msgid "We are grateful for every message and commen!t"
+msgstr "Za wszystkie wiadomości i uwagi bardzo dziękujemy!"
+
+#: app/templates/landing.html:11
+msgid ""
+"Do you ride for fun, or you make your path a challange?<br>Find friends, "
+"company and go on Adventure!"
+msgstr ""
+"Rowerzysto! Śmigasz rekreacyjnie, wyczynowo a może nawet "
+"profesjonalnie?<br>Znajdź towarzystwo i ruszaj z nim na Przygodę!"
+
+#: app/templates/landing.html:13
+msgid "Register now"
+msgstr "Zarejestruj się"
+
 #: app/templates/layout.html:3 app/templates/layout.html:61
+#: app/templates/adventures/show.html:97
 msgid "Adventure"
 msgstr "Przygoda"
 
@@ -54,11 +199,7 @@ msgstr "Konto"
 msgid "Logout"
 msgstr "Wyloguj"
 
-#: app/templates/layout.html:72
-msgid "Create Adventure"
-msgstr "Stwórz Przygodę"
-
-#: app/templates/layout.html:73
+#: app/templates/layout.html:73 app/templates/adventures/my.html:4
 msgid "My Adventures"
 msgstr "Moje Przygody"
 
@@ -74,13 +215,130 @@ msgstr "Logowanie"
 msgid "Register"
 msgstr "Rejestracja"
 
-#: app/templates/layout.html:80
+#: app/templates/layout.html:80 app/templates/adventures/search.html:119
 msgid "Search for Adventures"
-msgstr "Szukaj Przygody"
+msgstr "Szukaj Przygód"
 
-#: app/templates/layout.html:110
-msgid "Contact"
-msgstr "Kontakt"
+#: app/templates/layout.html:109
+msgid "Blog"
+msgstr "Blog"
+
+#: app/templates/layout.html:111
+msgid "About"
+msgstr "O nas"
+
+#: app/templates/layout.html:112
+msgid "Features"
+msgstr "Funkcje"
+
+#: app/templates/layout.html:113
+msgid "Privacy"
+msgstr "Prywatność"
+
+#: app/templates/layout.html:114
+msgid "Help"
+msgstr "Pomoc"
+
+#: app/templates/adventures/edit.html:114
+msgid "Edit Adventure"
+msgstr "Edytuj Przygodę"
+
+#: app/templates/adventures/edit.html:118 app/templates/adventures/new.html:111
+msgid "Current Adventure route length"
+msgstr "Aktualna długość trasy"
+
+#: app/templates/adventures/edit.html:128 app/templates/adventures/new.html:121
+msgid "Adventure date"
+msgstr "Data Przygody"
+
+#: app/templates/adventures/edit.html:136 app/templates/adventures/new.html:129
+#: app/templates/adventures/search.html:112
+msgid "Select Adventure mode"
+msgstr "Wybierz typ Przygody"
+
+#: app/templates/adventures/edit.html:143
+msgid "Informations about Adventure"
+msgstr "Informacje o Przygodzie"
+
+#: app/templates/adventures/edit.html:151
+#: app/templates/adventures/show.html:111
+msgid "Participants"
+msgstr "Uczestnicy"
+
+#: app/templates/adventures/edit.html:163
+#: app/templates/adventures/show.html:122
+msgid "No one has joined this Adventure yet"
+msgstr "Nikt jeszcze nie dołączył do tej Przygody"
+
+#: app/templates/adventures/edit.html:170
+msgid "Save changes in Adventure"
+msgstr "Zapisz zmiany w Przygodzie"
+
+#: app/templates/adventures/my.html:8
+msgid "Created Adventures"
+msgstr "Stworzone Przygody"
+
+#: app/templates/adventures/my.html:13 app/templates/adventures/my.html:35
+#: app/templates/adventures/search.html:131
+#: app/templates/adventures/show.html:106
+msgid "Date"
+msgstr "Data"
+
+#: app/templates/adventures/my.html:14 app/templates/adventures/my.html:36
+#: app/templates/adventures/search.html:132
+#: app/templates/adventures/show.html:102
+#: app/templates/adventures/show.html:107
+msgid "Informations"
+msgstr "Informacje"
+
+#: app/templates/adventures/my.html:15 app/templates/adventures/search.html:133
+msgid "Joined"
+msgstr "Dołączyło"
+
+#: app/templates/adventures/my.html:16
+msgid "Action"
+msgstr "Akcja"
+
+#: app/templates/adventures/my.html:24
+msgid "Edit"
+msgstr "Edytuj"
+
+#: app/templates/adventures/my.html:24
+msgid "Delete"
+msgstr "Usuń"
+
+#: app/templates/adventures/my.html:30
+msgid "Joined Adventures"
+msgstr "Przygody, do których dołączyłeś"
+
+#: app/templates/adventures/new.html:105
+msgid "Click on the map to add marker (you can move it as well)"
+msgstr "Kliknij na mapę, aby dodać znacznik (możesz go także przesuwać)"
+
+#: app/templates/adventures/new.html:143
+msgid "Create new Adventure"
+msgstr "Stwórz nową Przygodę"
+
+#: app/templates/adventures/search.html:99
+msgid "You can pick more than one Adventure mode"
+msgstr "Możesz wybrać więcej niż jeden typ Przygody"
+
+#: app/templates/adventures/search.html:125
+msgid "Found Adventures"
+msgstr "Znalezione Przygody"
+
+#: app/templates/adventures/search.html:130
+#: app/templates/adventures/show.html:105
+msgid "Creator"
+msgstr "Założyciel"
+
+#: app/templates/adventures/search.html:134
+msgid "Mode"
+msgstr "Typ"
+
+#: app/templates/adventures/show.html:104
+msgid "Route length"
+msgstr "Długość trasy"
 
 #: app/templates/users/register.html:20
 msgid "Join to Adventure"
@@ -110,7 +368,7 @@ msgstr "Zarejestruj się do Przygody"
 msgid "Incorrect email or password"
 msgstr "Nieprawidłowe hasło lub email"
 
-#: app/users/views.py:90 app/users/views.py:130 app/users/views.py:208
+#: app/users/views.py:90 app/users/views.py:130 app/users/views.py:214
 msgid "Confirmation email has been sent"
 msgstr "Email potwierdzający został wysłany"
 
@@ -118,34 +376,34 @@ msgstr "Email potwierdzający został wysłany"
 msgid "Confirm your account - Adventure"
 msgstr "Potwierdź swój email - Przygoda"
 
-#: app/users/views.py:139
-msgid "Changes has been saved"
+#: app/users/views.py:145
+msgid "The changes have been saved"
 msgstr "Zmiany zostały zapisane"
 
-#: app/users/views.py:158
+#: app/users/views.py:164
 msgid "New password request - Adventure"
 msgstr "Prośba o hasło - Przygoda"
 
-#: app/users/views.py:160
+#: app/users/views.py:166
 msgid "Follow the instructions in sent email"
 msgstr "Email z dalszymi instrukcjami został wysłany"
 
-#: app/users/views.py:205
+#: app/users/views.py:211
 msgid "Please confirm your email"
 msgstr "Potwierdź swój email"
 
-#: app/users/views.py:218 app/users/views.py:241
+#: app/users/views.py:224 app/users/views.py:247
 msgid "The confirmation link is invalid or has expired"
 msgstr "Link potwierdzający jest nieprawidłowy lub wygasł"
 
-#: app/users/views.py:223
+#: app/users/views.py:229
 msgid "Account already confirmed"
 msgstr "Konto jest już potwierdzone"
 
-#: app/users/views.py:232
+#: app/users/views.py:238
 msgid "You have confirmed your account. Enjoy"
 msgstr "Konto zostało potwierdzone. Dziękujemy"
 
-#: app/users/views.py:257
+#: app/users/views.py:263
 msgid "Your password has been successfully changed"
 msgstr "Twoje hasło zostało zmienione"

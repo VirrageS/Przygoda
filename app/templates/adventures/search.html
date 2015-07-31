@@ -96,7 +96,7 @@
 		google.maps.event.addDomListener(window, 'load', initialize);
 	</script>
 
-	<div class="alert alert-info" role="info"><b>Tip:</b> Możesz wybrać więcej niż jeden typ Przygody</div>
+	<div class="alert alert-info" role="info"><b>Tip:</b> {{ _('You can pick more than one Adventure mode') }}</div>
 	<br><br>
 	<h2>Szukaj Przygody</h2>
 	<br>
@@ -109,29 +109,29 @@
 		<input type="hidden" name="tr_corner" id="tr_corner">
 
 		<div class="form-group">
-			{{ render_multiplechoice_field(form.modes, title='Wybierz typ Przygody', **{'data-selected-text-format' : 'count>2', 'data-style' : 'btn-info'}) }}
+			{{ render_multiplechoice_field(form.modes, class='selectpicker', title=_('Select Adventure mode'), **{'data-selected-text-format' : 'count>2', 'data-style' : 'btn-info'}) }}
 			<div class="form-group has-error">
 				<small class="form-group has-error help-block">{{ form.modes.errors[0] }}</small>
 			</div>
 		</div>
 
 		<div class="form-group">
-			<button type="submit" class="btn btn-success">Szukaj Przygody</button>
+			<button type="submit" class="btn btn-success">{{ _('Search for Adventures') }}</button>
 		</div>
 	</form>
 
 	{% if (adventures is defined) and adventures %}
 		<br><br>
-		<h2>Znalezione Przygody</h2>
+		<h2>{{ _('Found Adventures') }}Znalezione Przygody</h2>
 
 		<table class="table table-hover">
 			<tr>
 				<th>#</th>
-				<th>Założyciel</th>
-				<th>Data przygody</th>
-				<th>Informacje</th>
-				<th>Dołączyło</th>
-				<th>Typ</th>
+				<th>{{ _('Creator') }}</th>
+				<th>{{ _('Date') }}</th>
+				<th>{{ _('Informations') }}</th>
+				<th>{{ _('Joined') }}</th>
+				<th>{{ _('Mode') }}</th>
 			</tr>
 			{% for adventure in adventures %}
 				<tr>

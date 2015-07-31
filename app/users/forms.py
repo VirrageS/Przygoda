@@ -126,13 +126,6 @@ class AccountForm(Form):
 			self.old_password.errors.append('Old password is not correct.')
 			return False
 
-		# if password has not changed we set it to previous
-		if ((self.password.data is None) or (not self.password.data)):
-			self.password.data = current_user.password
-			return True
-
-		# if password changed we must generate hash to insert it to user data
-		self.password.data = generate_password_hash(self.password.data)
 		return True
 
 class LostForm(Form):
@@ -155,5 +148,5 @@ class LostForm(Form):
 		return True
 
 class ChangePasswordForm(Form):
-	password = PasswordField('Password', [Optional()])
-	confirm = PasswordField('Repeat Password', [Optional(), EqualTo('password', message='Passwords must match')])
+	password = PasswordField('Password', [Required()])
+	confirm = PasswordField('Repeat Password', [Required(), EqualTo('password', message='Passwords must match')])

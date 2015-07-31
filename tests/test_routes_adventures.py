@@ -72,13 +72,13 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that show adventure require to be active"""
 
         # add adventure to database
-        a = Adventure(
+        adventure = Adventure(
             creator_id=1,
             date=datetime.now() + timedelta(minutes=-9),
             mode=ADVENTURES.RECREATIONAL,
             info='Some info today'
         )
-        db.session.add(a)
+        db.session.add(adventure)
         db.session.commit()
 
         response = self.app.get('/adventures/1', follow_redirects=True)

@@ -129,6 +129,12 @@ def account():
 			send_email(new_email, subject, html)
 			flash(gettext(u'Confirmation email has been sent'), 'info')
 
+		# if password has not changed we set it to previous
+		if ((form.password.data is None) or (not form.password.data)):
+			form.password.data = current_user.password
+		else: # generate normal password
+			form.password.data = generate_password_hash(form.password.data)
+
 		# update user
 		form.populate_obj(current_user)
 
@@ -136,7 +142,7 @@ def account():
 		db.session.commit()
 
 		# everything is okay
-		flash(gettext(u'Changes has been saved'), 'success')
+		flash(gettext(u'The changes have been saved'), 'success')
 		return redirect(url_for('users.account'))
 
 	return render_template('users/account.html', form=form)

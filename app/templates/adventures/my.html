@@ -1,15 +1,19 @@
 {% extends "layout.html" %}
 
 {% block body %}
-	<h2>Moje Przygody</h2>
+	<h2>{{ _('My Adventures') }}</h2>
+	<br><br>
+
+	<br>
+	<h3>{{ _('Created Adventures') }}</h3>
 	<br><br>
 	<table class="table table-hover">
 		<tr>
 			<th>#</th>
-			<th>Data przygody</th>
-			<th>Informacje</th>
-			<th>Dołączyło</th>
-			<th>Akcja</th>
+			<th>{{ _('Date') }}</th>
+			<th>{{ _('Informations') }}</th>
+			<th>{{ _('Joined') }}</th>
+			<th>{{ _('Action') }}</th>
 		</tr>
 		{% for adventure in created_adventures %}
 			<tr>
@@ -17,19 +21,19 @@
 				<td>{{ adventure.date.strftime('%d %m %Y')|safe }}</td>
 				<td>{{ adventure.info|safe }}</td>
 				<td>{{ adventure.joined|safe }}</td>
-				<td><a href="/adventures/edit/{{ adventure.id|safe }}">Edytuj</a> | <a href="/adventures/delete/{{ adventure.id|safe }}">Usuń</a></td>
+				<td><a href="/adventures/edit/{{ adventure.id|safe }}">{{ _('Edit') }}</a> | <a href="/adventures/delete/{{ adventure.id|safe }}">{{ _('Delete') }}</a></td>
 			</tr>
 		{% endfor %}
 	</table>
 
-	<br>
-	<h2>Do tych Przygód dołączyłeś</h2>
+	<br><br>
+	<h3>{{ _('Joined Adventures') }}</h3>
 	<br><br>
 	<table class="table table-hover">
 		<tr>
 			<th>#</th>
-			<th>Data przygody</th>
-			<th>Informacje</th>
+			<th>{{ _('Date') }}</th>
+			<th>{{ _('Informations') }}</th>
 		</tr>
 		{% for adventure in joined_adventures %}
 			<tr>

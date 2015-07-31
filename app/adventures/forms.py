@@ -27,7 +27,7 @@ class NewForm(Form):
 		# check if date is 'up-to-date'
 		input_date = datetime.strptime(str(self.date.data), '%Y-%m-%d %H:%M:%S')
 		if input_date < datetime.now():
-			self.date.errors.append(u'Date must be older than now')
+			self.date.errors.append(gettext(u'Date must be older than now'))
 			return False
 
 		return True
@@ -47,7 +47,7 @@ class SearchForm(Form):
 			return False
 
 		if (self.modes.data is None) or (len(self.modes.data) <= 0):
-			self.modes.errors.append(u'Nieprawidłowy typ')
+			self.modes.errors.append(gettext(u'Invalid Adventure mode'))
 			return False
 
 		return True
