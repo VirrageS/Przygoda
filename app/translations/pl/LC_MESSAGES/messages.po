@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-07-31 19:14+0200\n"
+"POT-Creation-Date: 2015-08-01 12:44+0200\n"
 "PO-Revision-Date: 2015-07-29 20:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: pl <LL@li.org>\n"
@@ -182,7 +182,7 @@ msgstr ""
 "Rowerzysto! Śmigasz rekreacyjnie, wyczynowo a może nawet "
 "profesjonalnie?<br>Znajdź towarzystwo i ruszaj z nim na Przygodę!"
 
-#: app/templates/landing.html:13
+#: app/templates/landing.html:13 app/templates/users/login.html:79
 msgid "Register now"
 msgstr "Zarejestruj się"
 
@@ -340,25 +340,101 @@ msgstr "Typ"
 msgid "Route length"
 msgstr "Długość trasy"
 
-#: app/templates/users/register.html:20
-msgid "Join to Adventure"
-msgstr "Dołącz to Przygody"
+#: app/templates/users/account.html:19
+msgid "Your account has not been activated yet."
+msgstr "Twoje konto nie zostało jeszcze aktywowane."
 
-#: app/templates/users/register.html:29
+#: app/templates/users/account.html:20
+msgid "Click here"
+msgstr "Kliknij tutaj"
+
+#: app/templates/users/account.html:20
+msgid "to resend confirmation email."
+msgstr "aby wysłać ponownie email potwierdzający."
+
+#: app/templates/users/account.html:25
+msgid "My account"
+msgstr "Moje konto"
+
+#: app/templates/users/account.html:33 app/templates/users/register.html:29
 msgid "Username"
 msgstr "Nazwa użytkownika"
 
-#: app/templates/users/register.html:39
+#: app/templates/users/account.html:43 app/templates/users/login.html:52
+#: app/templates/users/lost.html:28 app/templates/users/register.html:39
 msgid "Email"
 msgstr "Email"
 
+#: app/templates/users/account.html:53 app/templates/users/login.html:61
 #: app/templates/users/register.html:49
 msgid "Password"
 msgstr "Hasło"
 
+#: app/templates/users/account.html:63
+#: app/templates/users/change_password.html:35
 #: app/templates/users/register.html:59
 msgid "Repeat password"
 msgstr "Powtórz hasło"
+
+#: app/templates/users/account.html:73
+msgid "Old password"
+msgstr "Stare hasło"
+
+#: app/templates/users/account.html:81
+msgid "Save changes"
+msgstr "Zachowaj zmiany"
+
+#: app/templates/users/change_password.html:17
+msgid "Reset password"
+msgstr "Zresetuj hasło"
+
+#: app/templates/users/change_password.html:25
+msgid "New password"
+msgstr "Nowe hasło"
+
+#: app/templates/users/change_password.html:43
+msgid "Reset your password"
+msgstr "Zresetuj swoje hasło"
+
+#: app/templates/users/login.html:28
+msgid "Log in"
+msgstr "Zaloguj się"
+
+#: app/templates/users/login.html:33
+msgid "Log in using Facebook"
+msgstr "Zaloguj się przez Facebook"
+
+#: app/templates/users/login.html:42
+msgid "or"
+msgstr "lub"
+
+#: app/templates/users/login.html:69
+msgid "Remember me"
+msgstr "Zapamiętaj mnie"
+
+#: app/templates/users/login.html:73
+msgid "Log in into Adventure"
+msgstr "Zaloguj się do Przygody"
+
+#: app/templates/users/login.html:79
+msgid "New in Adventures?"
+msgstr "Nowy w Przygodach?"
+
+#: app/templates/users/login.html:81
+msgid "Forgot your password?"
+msgstr "Zapomniałeś hasła?"
+
+#: app/templates/users/lost.html:19
+msgid "Lost password"
+msgstr "Zapomniane hasło"
+
+#: app/templates/users/lost.html:36
+msgid "Submit"
+msgstr "Wyślij"
+
+#: app/templates/users/register.html:20
+msgid "Join to Adventure"
+msgstr "Dołącz to Przygody"
 
 #: app/templates/users/register.html:67
 msgid "Register to Adventure"

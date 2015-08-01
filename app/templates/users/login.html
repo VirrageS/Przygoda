@@ -25,12 +25,12 @@
 	{%- endmacro %}
 
 	<div class="auth-box">
-		<div class="auth-header">Zaloguj się</div>
+		<div class="auth-header">{{ _('Log in') }}</div>
 		<div class="auth-content">
 			<div class="auth-social">
 				<a href="{{ url_for('users.oauth_authorize', provider='facebook') }}" class="btn btn-block btn-sm btn-social btn-facebook">
 					<i class="fa fa-facebook"></i>
-					Zaloguj się przez Facebook
+					{{ _('Log in using Facebook') }}
 				</a>
 				<!-- <a href="{{ url_for('users.oauth_authorize', provider='twitter') }}" class="btn btn-block btn-sm btn-social btn-twitter">
 					<i class="fa fa-twitter"></i>
@@ -39,7 +39,7 @@
 			</div>
 
 			<div class="auth-separator">
-				lub
+				{{ _('or') }}
 			</div>
 
 			<div class="auth-form">
@@ -49,7 +49,7 @@
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-addon"><i class="fa fa-envelope"></i></div>
-							{{ render_field(form.email, placeholder="Email") }}
+							{{ render_field(form.email, placeholder=_('Email')) }}
 						</div>
 						<div class="form-group has-error">
 							<small class="form-group has-error help-block">{{ form.email.errors[0] }}</small>
@@ -58,7 +58,7 @@
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-addon"><i class="fa fa-lock"></i></div>
-							{{ render_field(form.password, placeholder="Hasło") }}
+							{{ render_field(form.password, placeholder=_('Password')) }}
 						</div>
 						<div class="form-group has-error">
 							<small class="help-block">{{ form.password.errors[0] }}</small>
@@ -66,19 +66,19 @@
 					</div>
 
 					<div class="form-group">
-						{{ render_checkbox_field(form.remember_me, text="Nie wylogowuj mnie") }}
+						{{ render_checkbox_field(form.remember_me, text=_('Remember me')) }}
 					</div>
 
 					<div class="form-group">
-						<button type="submit" class="btn btn-success">Zaloguj się do Przygody</button>
+						<button type="submit" class="btn btn-success">{{ _('Log in into Adventure') }}</button>
 					</div>
 				</form>
 			</div>
 
 			<div class="auth-footer">
-				Nowy w Przygodach? <a href="/users/register/">Zarejstruj się</a>
+				{{ _('New in Adventures?') }} <a href="/users/register/">{{ _('Register now') }}</a>
 				<br><br>
-				<a href="/users/lost/">Zapomniałeś hasła?</a>
+				<a href="/users/lost/">{{ _('Forgot your password?') }}</a>
 			</div>
 		</div>
 	</div>
