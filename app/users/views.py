@@ -81,7 +81,7 @@ def register():
 		token = generate_confirmation_token(user.email)
 		confirm_url = url_for('users.confirm_email', token=token, _external=True)
 		html = render_template('users/activate.html', confirm_url=confirm_url)
-		subject = "Please confirm your email"
+		subject = gettext(u"Please confirm your email")
 		send_email(user.email, subject, html)
 
 		#login_user(user)

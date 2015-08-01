@@ -178,7 +178,7 @@ class RoutesApiTestCase(TestCase, unittest.TestCase):
 
 		response = self.app.get('/api/v1.0/user/register?username=tomek&email=tomeaaked@tomek.com&password=1&confirm=1', follow_redirects=True)
 		self.assertEqual(response.status_code, 400)
-		self.assertEqual(response.data, b'{\n  "error": "This username is already in use. Please choose another one."\n}')
+		self.assertEqual(response.data, b'{\n  "error": "Username is already in use."\n}')
 
 
 	def test_api_user_register_route_user_exists_with_email(self):
@@ -190,7 +190,7 @@ class RoutesApiTestCase(TestCase, unittest.TestCase):
 
 		response = self.app.get('/api/v1.0/user/register?username=tomek&email=tomek@tomek.com&password=1&confirm=1', follow_redirects=True)
 		self.assertEqual(response.status_code, 400)
-		self.assertEqual(response.data, b'{\n  "error": "This email is already in use."\n}')
+		self.assertEqual(response.data, b'{\n  "error": "Email is already in use."\n}')
 
 
 	def test_api_user_register_route_register(self):

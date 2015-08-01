@@ -222,7 +222,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
-		self.assertIn(b'This username is blocked.', response.data)
+		self.assertIn(b'Username is blocked.', response.data)
 
 	def test_users_register_route_user_exists_with_username(self):
 		"""Ensure users register does not allow to register when someone exists with username"""
@@ -240,7 +240,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
-		self.assertIn(b'This username is already in use. Please choose another one.', response.data)
+		self.assertIn(b'Username is already in use.', response.data)
 
 	def test_users_register_route_user_exists_with_email(self):
 		"""Ensure users register does not allow to register when someone exists with email"""
@@ -258,7 +258,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/register.html')
-		self.assertIn(b'This email is already in use.', response.data)
+		self.assertIn(b'Email is already in use.', response.data)
 
 	def test_users_register_route_register(self):
 		"""Ensure users register actually create the user"""
@@ -409,7 +409,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn(b'This username is blocked.', response.data)
+		self.assertIn(b'Username is blocked.', response.data)
 
 	def test_users_account_route_user_exists_with_username(self):
 		"""Ensure users account does not allow to account when someone exists with username"""
@@ -434,7 +434,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn(b'This username is already in use. Please choose another one.', response.data)
+		self.assertIn(b'Username is already in use.', response.data)
 
 	def test_users_account_route_user_exists_with_email(self):
 		"""Ensure users account does not allow to account when someone exists with email"""
@@ -459,7 +459,7 @@ class RoutesUsersTestCase(TestCase, unittest.TestCase):
 		), follow_redirects=True)
 		self.assertTrue(response.status_code == 200)
 		self.assertTemplateUsed('users/account.html')
-		self.assertIn(b'This email is already in use.', response.data)
+		self.assertIn(b'Email is already in use.', response.data)
 
 	def test_users_account_route_account(self):
 		"""Ensure users account actually create the user"""

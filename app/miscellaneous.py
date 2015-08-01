@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 from functools import wraps
 from flask.ext.login import current_user
+from flask.ext.babel import gettext
 from flask import redirect, url_for, flash, abort, make_response, jsonify, request
 from app.users import constants as USER
 from app import app
@@ -11,7 +12,7 @@ def confirmed_email_required(f):
 	@wraps(f)
 	def wrapper(*args, **kwargs):
 		if (current_user is None) or (current_user.confirmed is False):
-			flash('Musisz potwierdzic swoj email zeby skorzystac z tej funkcji', 'danger')
+			flash(gettext(u'You have to confirm your email to use this feature'), 'danger')
 			return redirect(url_for('simple_page.index'))
 
 		return f(*args, **kwargs)

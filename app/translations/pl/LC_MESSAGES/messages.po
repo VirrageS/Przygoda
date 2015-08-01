@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-08-01 12:44+0200\n"
+"POT-Creation-Date: 2015-08-01 13:05+0200\n"
 "PO-Revision-Date: 2015-07-29 20:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: pl <LL@li.org>\n"
@@ -21,6 +21,10 @@ msgstr ""
 #: app/__init__.py:90
 msgid "Please log in to access this page"
 msgstr "Zaloguj się, aby mieć dostęp do tej strony"
+
+#: app/miscellaneous.py:15
+msgid "You have to confirm your email to use this feature"
+msgstr "Musisz potwierdzić swój email, żeby skorzystać z tej funkcji"
 
 #: app/views.py:103
 msgid "Message sent. Thank you for contact. We really appreciate it!"
@@ -440,9 +444,45 @@ msgstr "Dołącz to Przygody"
 msgid "Register to Adventure"
 msgstr "Zarejestruj się do Przygody"
 
+#: app/users/forms.py:64 app/users/forms.py:97 app/users/forms.py:155
+msgid "Passwords must match."
+msgstr "Hasła muszą być identyczne."
+
+#: app/users/forms.py:72 app/users/forms.py:106
+msgid "Username contains illegal characters."
+msgstr "Nazwa użytkownika zawiera zabronione znaki."
+
+#: app/users/forms.py:76 app/users/forms.py:110
+msgid "Username is blocked."
+msgstr "Ta nazwa użytkownika jest zablokowana."
+
+#: app/users/forms.py:82 app/users/forms.py:116
+msgid "Username is already in use."
+msgstr "Nazwa użytkownika jest już używana."
+
+#: app/users/forms.py:88 app/users/forms.py:122
+msgid "Email is already in use."
+msgstr "Email jest już używany."
+
+#: app/users/forms.py:129
+msgid "Old password is not correct."
+msgstr "Stare hasło jest niepoprawne."
+
+#: app/users/forms.py:144
+msgid "Email is not correct."
+msgstr "Email jest nie poprawny."
+
+#: app/users/forms.py:148
+msgid "User with this email is not confirmed."
+msgstr "Użytkownik z tym email nie ma potwierdzonego emaila."
+
 #: app/users/views.py:56
 msgid "Incorrect email or password"
 msgstr "Nieprawidłowe hasło lub email"
+
+#: app/users/views.py:84 app/users/views.py:211
+msgid "Please confirm your email"
+msgstr "Potwierdź swój email"
 
 #: app/users/views.py:90 app/users/views.py:130 app/users/views.py:214
 msgid "Confirmation email has been sent"
@@ -464,10 +504,6 @@ msgstr "Prośba o hasło - Przygoda"
 msgid "Follow the instructions in sent email"
 msgstr "Email z dalszymi instrukcjami został wysłany"
 
-#: app/users/views.py:211
-msgid "Please confirm your email"
-msgstr "Potwierdź swój email"
-
 #: app/users/views.py:224 app/users/views.py:247
 msgid "The confirmation link is invalid or has expired"
 msgstr "Link potwierdzający jest nieprawidłowy lub wygasł"
@@ -483,3 +519,4 @@ msgstr "Konto zostało potwierdzone. Dziękujemy"
 #: app/users/views.py:263
 msgid "Your password has been successfully changed"
 msgstr "Twoje hasło zostało zmienione"
+
