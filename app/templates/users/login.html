@@ -24,6 +24,24 @@
 		</div>
 	{%- endmacro %}
 
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyD9ryFHC07cVPEgeKlRG-wFHRgF9dTPPL8"></script>
+	<script>
+		if (navigator.geolocation) {
+			success = function(position) {
+				var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+				var date = new Date();
+        		date.setTime(date.getTime() + (7*24*60*60*1000));
+
+				document.cookie="latitude=" + pos.lat() + "; expires=" + date.toGMTString() + "; path=/";
+				document.cookie="longitude=" + pos.lng() + "; expires=" + date.toGMTString() + "; path=/";
+			};
+			error = function() {}
+
+			navigator.geolocation.getCurrentPosition(success, error);
+		}
+	</script>
+
 	<div class="auth-box">
 		<div class="auth-header">{{ _('Log in') }}</div>
 		<div class="auth-content">

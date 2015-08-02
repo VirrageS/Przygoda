@@ -24,7 +24,11 @@ def show_all_adventures():
 		'top_adventures': []
 	}
 
-	recommended_adventures = get_recommended_adventures(get_current_user_id())
+	position = {
+		'latitude': request.cookies.get('latitude'),
+		'longitude': request.cookies.get('longitude')
+	}
+	recommended_adventures = get_recommended_adventures(user_id=get_current_user_id(), user_position=position)
 
 	for sort_type, adventures in recommended_adventures.items():
 		for adventure in adventures:

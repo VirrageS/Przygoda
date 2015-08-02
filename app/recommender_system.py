@@ -177,10 +177,10 @@ def get_recommended_adventures(user_id, user_position=None):
 	# check if position has been fetcheds
 	adventures_by_position = {}
 	if (user_position is not None) and user_position['latitude'] and user_position['longitude']:
-		adventures_by_position = get_adventures_by_user_position(
-			user_id,
-			{'latitude': user_position['latitude'], 'longitude': user_position['longitude']}
-		)
+		adventures_by_position = get_adventures_by_user_position(user_id, {
+			'latitude': user_position['latitude'],
+			'longitude': user_position['longitude']
+		})
 
 	adventures_by_friends = get_adventures_by_friends(user_id)
 	adventures_by_participants_number = get_adventures_by_partcipants_number()
@@ -200,7 +200,7 @@ def get_recommended_adventures(user_id, user_position=None):
 		# get user_friends score
 		friends_score = 1
 		if adventure.id in adventures_by_friends.keys():
-			friends_score = expm1(1/adventures_by_friends[adventure.id])
+			friends_score = expm1(1/adventures_by_friends[adventure.id]) * 2
 
 		# get adventure_participants_number score:
 		participants_number_score = 1
