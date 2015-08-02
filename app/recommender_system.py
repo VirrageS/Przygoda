@@ -2,6 +2,7 @@ from app import app, db
 from app.miscellaneous import execution_time
 from app.users.models import User
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
+from app.mine.models import AdventureViews, AdventureSearches
 from math import expm1
 
 def get_adventures_by_user_position(user_id, current_position):
@@ -127,6 +128,62 @@ def get_adventures_by_partcipants_number():
 
 	return positions
 
+def get_adventures_by_views():
+	results = [] # final results
+
+	adventures = Adventure.query.all() # get all adventures
+	adventures = [adventure for adventure in adventures if adventure.is_active()] # get all active adventures
+
+	for adventure in adventures:
+		views = AdventureViews.query.filter_by(adventure_id=adventure.id).all()
+
+		counted_views = 0
+		for view in views:
+			counted_views += view.value
+
+		results.append({
+			'adventure_id': adventure.id,
+			'views': counted_views
+		})
+
+	# sort results by views
+	results = sorted(results, key=(lambda result: result['views']))
+
+	# get positions in ranking
+	positions = {}
+	for idx, result in enumerate(results, start=1):
+		positions[result['adventure_id']] = idx
+
+	return positions
+
+def get_adventures_by_searches():
+	results = [] # final results
+
+	adventures = Adventure.query.all() # get all adventures
+	adventures = [adventure for adventure in adventures if adventure.is_active()] # get all active adventures
+
+	for adventure in adventures:
+		searches = AdventureSearches.query.filter_by(adventure_id=adventure.id).all()
+
+		counted_searches = 0
+		for search in searches:
+			counted_searches += search.value
+
+		results.append({
+			'adventure_id': adventure.id,
+			'searches': counted_searches
+		})
+
+	# sort results by views
+	results = sorted(results, key=(lambda result: result['searches']))
+
+	# get positions in ranking
+	positions = {}
+	for idx, result in enumerate(results, start=1):
+		positions[result['adventure_id']] = idx
+
+	return positions
+
 def get_adventures_by_mode(user_id):
 	results = []
 	final_results = {}
@@ -184,6 +241,8 @@ def get_recommended_adventures(user_id, user_position=None):
 
 	adventures_by_friends = get_adventures_by_friends(user_id)
 	adventures_by_participants_number = get_adventures_by_partcipants_number()
+	adventures_by_views = get_adventures_by_views()
+	adventures_by_searches = get_adventures_by_searches()
 
 	# get all active adventures
 	adventures = Adventure.query.all()
@@ -195,7 +254,7 @@ def get_recommended_adventures(user_id, user_position=None):
 		# get user_position score
 		position_score = 1
 		if adventure.id in adventures_by_position.keys():
-			position_score = expm1(1/adventures_by_position[adventure.id])
+			position_score = expm1(1/adventures_by_position[adventure.id]) * 2
 
 		# get user_friends score
 		friends_score = 1
@@ -205,11 +264,21 @@ def get_recommended_adventures(user_id, user_position=None):
 		# get adventure_participants_number score:
 		participants_number_score = 1
 		if adventure.id in adventures_by_participants_number.keys():
-			participants_number_score = expm1(1/adventures_by_participants_number[adventure.id])
+			participants_number_score = expm1(1/adventures_by_participants_number[adventure.id]) * 1.5
+
+		# get views_score
+		views_score = 1
+		if adventure.id in adventures_by_views.keys():
+			views_score = expm1(1/adventures_by_views[adventure.id])
+
+		# get searches_score
+		searches_score = 1
+		if adventure.id in adventures_by_searches.keys():
+			searches_score = expm1(1/adventures_by_searches[adventure.id])
 
 		results.append({
 			'adventure': adventure,
-			'score': position_score + friends_score + participants_number_score
+			'score': position_score + friends_score + participants_number_score + views_score + searches_score
 		})
 
 	# sort by score
