@@ -23,6 +23,7 @@ def show_all_adventures():
 		'start_soon': [],
 		'top_adventures': []
 	}
+
 	recommended_adventures = get_recommended_adventures(get_current_user_id())
 
 	for sort_type, adventures in recommended_adventures.items():
@@ -59,8 +60,6 @@ def show_all_adventures():
 				'action': action,
 				'markers': markers
 			})
-
-	print(all_adventures['most_recent'])
 
 	return render_template(
 		'all.html',
