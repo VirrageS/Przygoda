@@ -18,8 +18,8 @@ def get_adventures_by_user_position(user_id, current_position):
 		average_distance = 0.0
 		for coordinate in coordinates:
 			# calculate distance
-			distance = abs(current_position['latitude'] - coordinate.latitude) ** 2
-			distance += abs(current_position['longitude'] - coordinate.longitude) ** 2
+			distance = abs(float(current_position['latitude']) - coordinate.latitude) ** 2
+			distance += abs(float(current_position['longitude']) - coordinate.longitude) ** 2
 			distance = distance ** (1/2)
 
 			average_distance += distance

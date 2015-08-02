@@ -6,7 +6,12 @@ from flask.ext.login import current_user
 from flask.ext.babel import gettext
 from flask import redirect, url_for, flash, abort, make_response, jsonify, request
 from app.users import constants as USER
-from app import app
+from app import app, db
+
+from app.users.models import User
+from app.adventures.models import Adventure, AdventureParticipant, Coordinate
+from random import randint, uniform, sample
+from werkzeug import generate_password_hash
 
 def confirmed_email_required(f):
 	@wraps(f)
@@ -62,10 +67,6 @@ def admin_required(f):
 # function to add admin to database
 def add_admin():
 	# add admin
-	from app.users.models import User
-	from werkzeug import generate_password_hash
-	from app import db
-
 	admin = User.query.filter_by(username="admin").first()
 	if admin is None:
 		new_admin = User("admin", generate_password_hash("supertajnehaslo"), "email@email.com", social_id=None)
@@ -106,3 +107,82 @@ def get_current_user_id():
 		return None
 
 	return current_user.id
+
+
+def add_fake_data():
+	# add users
+	users = [
+		{'username': 'tomek', 'email':'tomek@tomek.com', 'password': 't'},
+		{'username': 'tomek1', 'email':'tomek1@tomek.com', 'password': 't'},
+		{'username': 'tomek2', 'email':'tomek2@tomek.com', 'password': 't'},
+		{'username': 'atomek', 'email':'atomek@tomek.com', 'password': 'a'},
+		{'username': 'kolega', 'email':'kolega@tomek.com', 'password': 'k'},
+		{'username': 'ziomek', 'email':'ziomek@tomek.com', 'password': 'z'},
+		{'username': 'ziomek0', 'email':'ziomek0@tomek.com', 'password': 'z'},
+		{'username': 'ziomek1', 'email':'ziomek1@tomek.com', 'password': 'z'},
+		{'username': 'ziomek2', 'email':'ziomek2@tomek.com', 'password': 'z'},
+		{'username': 'ziomek3', 'email':'ziomek3@tomek.com', 'password': 'z'},
+		{'username': 'ziomek4', 'email':'ziomek4@tomek.com', 'password': 'z'},
+		{'username': 'ziomek5', 'email':'ziomek5@tomek.com', 'password': 'z'},
+		{'username': 'ziomek6', 'email':'ziomek6@tomek.com', 'password': 'z'},
+		{'username': 'romek', 'email':'romek@romek.com', 'password': 'r'}
+	]
+
+	for user in users:
+		# add user
+		new_user = User(
+			username=user['username'],
+			email=user['email'],
+			password=generate_password_hash(user['password'])
+		)
+		db.session.add(new_user)
+		db.session.commit()
+
+	# add adventures
+	for _ in range(1, 20):
+		# add adventure
+		creator = randint(1, len(users))
+		adventure = Adventure(
+			creator_id=creator,
+			date=datetime.now() + timedelta(days=randint(0, 10), hours=randint(0, 20)),
+			mode=randint(0, 2),
+			info='aaaaaa'
+		)
+		adventure.created_on = datetime.now() + timedelta(days=-randint(0, 3), hours=-randint(0, 23))
+		db.session.add(adventure)
+		db.session.commit()
+
+		# add creator
+		creator_participant = AdventureParticipant(adventure_id=adventure.id, user_id=creator)
+		db.session.add(creator_participant)
+		db.session.commit()
+
+		# add participants
+		available_participants = [number for number in range(1, len(users)) if number != creator]
+		random_participants = sample(available_participants, int(randint(0, 5)))
+
+		for participant in random_participants:
+			adventure_participant = AdventureParticipant(adventure_id=adventure.id, user_id=participant)
+			db.session.add(adventure_participant)
+			db.session.commit()
+
+
+		# add coordinates
+		i = 0
+		for _ in range(2, 7):
+			coordinate = Coordinate(
+				adventure_id=adventure.id,
+				path_point=i,
+				latitude=52.0 + uniform(-0.05, 0.05),
+				longitude=21.0 + uniform(-0.02, 0.02)
+			)
+			db.session.add(coordinate)
+			db.session.commit()
+
+			i += 1
+
+
+def db_init_with_data():
+	db.create_all()
+	add_admin()
+	add_fake_data()
