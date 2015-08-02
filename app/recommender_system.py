@@ -187,7 +187,7 @@ def get_recommended_adventures(user_id, user_position=None):
 
 	# get all active adventures
 	adventures = Adventure.query.all()
-	advetnures = [adventure for adventure in adventures if adventure.is_active()]
+	adventures = [adventure for adventure in adventures if adventure.is_active()]
 
 	# compute score
 	results = []
