@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-08-01 13:05+0200\n"
+"POT-Creation-Date: 2015-08-02 14:12+0200\n"
 "PO-Revision-Date: 2015-07-29 20:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: pl <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr "Zaloguj się, aby mieć dostęp do tej strony"
 msgid "You have to confirm your email to use this feature"
 msgstr "Musisz potwierdzić swój email, żeby skorzystać z tej funkcji"
 
-#: app/views.py:103
+#: app/views.py:107
 msgid "Message sent. Thank you for contact. We really appreciate it!"
 msgstr "Wiadomość wysłana. Dziękujęmy za kontakt!"
 
@@ -38,70 +38,70 @@ msgstr "Data musi być starsza od teraz"
 msgid "Invalid Adventure mode"
 msgstr "Nieprawidłowy typ Przygody"
 
-#: app/adventures/views.py:51 app/adventures/views.py:106
-#: app/adventures/views.py:146 app/adventures/views.py:221
-#: app/adventures/views.py:391
+#: app/adventures/views.py:52 app/adventures/views.py:107
+#: app/adventures/views.py:147 app/adventures/views.py:222
+#: app/adventures/views.py:392
 msgid "Adventure not found"
 msgstr "Przygoda nie istnieje"
 
-#: app/adventures/views.py:57
+#: app/adventures/views.py:58
 msgid "Creator not found"
 msgstr "Założyciel Przygody nie istnieje"
 
-#: app/adventures/views.py:117 app/adventures/views.py:131
+#: app/adventures/views.py:118 app/adventures/views.py:132
 msgid "You successfully joined to Adventure"
 msgstr "Dołączyłeś do Przygody"
 
-#: app/adventures/views.py:122
+#: app/adventures/views.py:123
 msgid "You have joined to this Adventure before"
 msgstr "Dołączyłeś do tej Przygody wcześniej"
 
-#: app/adventures/views.py:151
+#: app/adventures/views.py:152
 msgid "You cannot leave this Adventure"
 msgstr "Nie możesz opuścić tej Przygody"
 
-#: app/adventures/views.py:158
+#: app/adventures/views.py:159
 msgid "You have not joined this Adventure"
 msgstr "Nie dołączyłeś do tej Przygody"
 
-#: app/adventures/views.py:164
+#: app/adventures/views.py:165
 msgid "You successfully left Adventure"
 msgstr "Opuściłeś Przygodę"
 
-#: app/adventures/views.py:226
+#: app/adventures/views.py:227
 msgid "You cannot edit this Adventure"
 msgstr "Nie możesz edytować tej Przygody"
 
-#: app/adventures/views.py:242 app/adventures/views.py:317
+#: app/adventures/views.py:243 app/adventures/views.py:318
 msgid "You must place at least two markers"
 msgstr "Musisz umieścić co najmniej dwa znaczniki"
 
-#: app/adventures/views.py:256 app/adventures/views.py:331
+#: app/adventures/views.py:257 app/adventures/views.py:332
 msgid "Not supported Adventure path"
 msgstr "Niepoprawna trasa Przygody"
 
-#: app/adventures/views.py:280 app/adventures/views.py:361
-#: app/adventures/views.py:422
+#: app/adventures/views.py:281 app/adventures/views.py:362
+#: app/adventures/views.py:423
 msgid "Something went wrong"
 msgstr "Coś poszło nie tak"
 
-#: app/adventures/views.py:284 app/adventures/views.py:365
+#: app/adventures/views.py:285 app/adventures/views.py:366
 msgid "Adventure has been successfully created"
 msgstr "Przygoda została poprawnie stworzona"
 
-#: app/adventures/views.py:396
+#: app/adventures/views.py:397
 msgid "You cannot delete this Adventure"
 msgstr "Nie możesz usunąć tej Przygody"
 
-#: app/adventures/views.py:404
+#: app/adventures/views.py:405
 msgid "Adventure has been successfully deleted"
 msgstr "Przygoda została poprawnie usunięta"
 
-#: app/adventures/views.py:473
+#: app/adventures/views.py:474
 msgid "Below you can find some Adventures we have found for you"
 msgstr "Poniżej znajdziesz wybrane dla Ciebie Przygody"
 
-#: app/adventures/views.py:475
+#: app/adventures/views.py:476
 msgid ""
 "Unfortunately we have not found any Adventures for you. Try to change "
 "mode or area"
@@ -109,7 +109,11 @@ msgstr ""
 "Niestety nie udało się znaleźć żadnych Przygód. Spróbuj zmienić obszar "
 "lub kryteria"
 
-#: app/templates/all.html:10
+#: app/templates/all.html:88 app/templates/all.html:90
+msgid "No action"
+msgstr "Nie ma akcji"
+
+#: app/templates/all.html:111
 msgid ""
 "There is not active Adventures <i class=\"fa fa-frown-o\"></i><br> Be "
 "first and create ours"
@@ -117,22 +121,22 @@ msgstr ""
 "Nie ma jeszcze żadnych aktywnych Przygód <i class=\"fa fa-"
 "frown-o\"></i><br> Uprzedź innych i stwórz własną!"
 
-#: app/templates/all.html:12 app/templates/layout.html:72
+#: app/templates/all.html:113 app/templates/layout.html:72
 #: app/templates/adventures/new.html:107
 msgid "Create Adventure"
 msgstr "Stwórz Przygodę"
 
-#: app/templates/all.html:43 app/templates/all.html:50
-msgid "No action"
-msgstr "Nie ma akcji"
+#: app/templates/all.html:119
+msgid "Most Recent"
+msgstr "Ostatnio Dodane"
 
-#: app/templates/all.html:45
-msgid "Join"
-msgstr "Dołącz"
+#: app/templates/all.html:120
+msgid "Start Soon"
+msgstr "Niedługo Startują"
 
-#: app/templates/all.html:47
-msgid "Leave"
-msgstr "Wypisz się"
+#: app/templates/all.html:121
+msgid "Top Adventures"
+msgstr "Polecane Przygody"
 
 #: app/templates/contact.html:18 app/templates/layout.html:110
 msgid "Contact"
@@ -520,3 +524,8 @@ msgstr "Konto zostało potwierdzone. Dziękujemy"
 msgid "Your password has been successfully changed"
 msgstr "Twoje hasło zostało zmienione"
 
+#~ msgid "Join"
+#~ msgstr "Dołącz"
+
+#~ msgid "Leave"
+#~ msgstr "Wypisz się"
