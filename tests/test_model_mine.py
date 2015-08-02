@@ -14,15 +14,17 @@ class UserTestCase(unittest.TestCase):
     def test_adventure_searches(self):
         """Checks if model AdventureSearches init properly"""
 
-        search_first = AdventureSearches(adventure_id=1, value=1)
+        search_first = AdventureSearches(user_id=None, adventure_id=1, value=1)
 
+        self.assertTrue(search_first.user_id is None)
         self.assertEqual(search_first.adventure_id, 1)
         self.assertNotEqual(search_first.date, None)
         self.assertGreater(datetime.now(), search_first.date)
         self.assertEqual(search_first.value, 1)
 
-        search_second = AdventureSearches(adventure_id=2, value=10)
+        search_second = AdventureSearches(user_id=1, adventure_id=2, value=10)
 
+        self.assertEqual(search_second.user_id, 1)
         self.assertEqual(search_second.adventure_id, 2)
         self.assertNotEqual(search_second.date, None)
         self.assertGreater(datetime.now(), search_second.date)
@@ -31,15 +33,17 @@ class UserTestCase(unittest.TestCase):
     def test_adventure_views(self):
         """Checks if model AdventureViews init properly"""
 
-        view_first = AdventureViews(adventure_id=1, value=1)
+        view_first = AdventureViews(user_id=None, adventure_id=1, value=1)
 
+        self.assertTrue(view_first.user_id is None)
         self.assertEqual(view_first.adventure_id, 1)
         self.assertNotEqual(view_first.date, None)
         self.assertGreater(datetime.now(), view_first.date)
         self.assertEqual(view_first.value, 1)
 
-        view_second = AdventureViews(adventure_id=2, value=10)
+        view_second = AdventureViews(user_id=1, adventure_id=2, value=10)
 
+        self.assertTrue(view_second.user_id, 1)
         self.assertEqual(view_second.adventure_id, 2)
         self.assertNotEqual(view_second.date, None)
         self.assertGreater(datetime.now(), view_second.date)

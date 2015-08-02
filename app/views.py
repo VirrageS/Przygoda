@@ -6,6 +6,8 @@ from flask.ext.login import current_user
 from flask.ext.babel import gettext
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
+from app.miscellaneous import get_current_user_id
+from app.recommender_system import get_recommended_adventures
 from app.users.models import User
 from app import cache, db
 
@@ -16,53 +18,56 @@ mod = Blueprint('simple_page', __name__, template_folder='templates')
 
 #@cache.cached(timeout=5)
 def show_all_adventures():
-	all_adventures = []
-	all_markers = []
+	all_adventures = {
+		'most_recent': [],
+		'start_soon': [],
+		'top_adventures': []
+	}
+	recommended_adventures = get_recommended_adventures(get_current_user_id())
 
-	# get all adventures
-	adventures = Adventure.query.order_by(Adventure.date.asc()).all()
+	for sort_type, adventures in recommended_adventures.items():
+		for adventure in adventures:
+			# get creator of the event and check if still exists
+			user = User.query.filter_by(id=adventure.creator_id).first()
+			if user is None:
+				continue
 
-	# get all active adventures
-	adventures = [adventure for adventure in adventures if adventure.is_active()]
+			# get joined participants
+			participants = adventure.get_participants()
 
-	for adventure in adventures:
-		# get creator of the event and check if still exists
-		user = User.query.filter_by(id=adventure.creator_id).first()
-		if user is None:
-			continue
+			action = -1
+			if current_user.is_authenticated():
+				participant = AdventureParticipant.query.filter_by(adventure_id=adventure.id, user_id=current_user.id).first()
+				if (participant is None) or (not participant.is_active()):
+					action = 0
+				else:
+					action = 1
 
-		# get joined participants
-		participants = adventure.get_participants()
+				if adventure.creator_id == current_user.id:
+					action = -1
 
-		action = -1
-		if current_user.is_authenticated():
-			participant = AdventureParticipant.query.filter_by(adventure_id=adventure.id, user_id=current_user.id).first()
-			if (participant is None) or (not participant.is_active()):
-				action = 0
-			else:
-				action = 1
+			coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
+			markers = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]
 
-			if adventure.creator_id == current_user.id:
-				action = -1
+			all_adventures[sort_type].append({
+				'id': adventure.id,
+				'username': user.username,
+				'date': adventure.date.strftime('%d.%m.%Y %H:%M'),
+				'info': adventure.info,
+				'joined': len(participants),
+				'mode': ADVENTURES.MODES[int(adventure.mode)],
+				'action': action,
+				'markers': markers
+			})
 
-		coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
-		markers = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]
+	print(all_adventures['most_recent'])
 
-		if markers:
-			all_markers.append(markers)
-
-		all_adventures.append({
-			'id': adventure.id,
-			'username': user.username,
-			'date': adventure.date,
-			'info': adventure.info,
-			'joined': len(participants),
-			'mode': ADVENTURES.MODES[int(adventure.mode)],
-			'action': action,
-			'markers': markers
-		})
-
-	return render_template('all.html', adventures=all_adventures, adventures_markers=all_markers)
+	return render_template(
+		'all.html',
+		most_recent=all_adventures['most_recent'],
+		start_soon=all_adventures['start_soon'],
+		top_adventures=all_adventures['top_adventures']
+	)
 
 # Index - main path
 @mod.route("/")

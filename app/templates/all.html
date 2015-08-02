@@ -3,7 +3,106 @@
 {% block body %}
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyD9ryFHC07cVPEgeKlRG-wFHRgF9dTPPL8"></script>
 
-	{% if (adventures is not defined) or (not adventures) %}
+	<script>
+		function resetActive() {
+			$('button').each( function(index, element) {
+				$(this).removeClass("active")
+			});
+		}
+
+		function showMostRecent(button) {
+			// reset active buttons
+			resetActive();
+
+			// change button to active
+			$(button).addClass("active")
+
+			var mostRecent = []
+			{% for adventure in most_recent %}
+				mostRecent.push({{ adventure|tojson }})
+			{% endfor %}
+
+			show(mostRecent)
+		}
+
+		function showStartSoon(button) {
+			// reset active buttons
+			resetActive();
+
+			$(button).addClass("active")
+
+			var startSoon = []
+			{% for adventure in start_soon %}
+				startSoon.push({{ adventure|tojson }})
+			{% endfor %}
+
+			show(startSoon)
+		}
+
+		function showTopAdventures(button) {
+			// reset active buttons
+			resetActive();
+
+			$(button).addClass("active")
+
+			var topAdvenutres = []
+			{% for adventure in top_adventures %}
+				topAdvenutres.push({{ adventure|tojson }})
+			{% endfor %}
+
+			show(topAdvenutres)
+		}
+
+		function show(adventures) {
+			$("#adventures").empty();
+
+			for (var i = 0; i < adventures.length; i++) {
+				var adventureRow = '' +
+				'<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">' +
+					'<div class="adventure-box">' +
+						'<div class="adventure-image" style="background-image:url(\'';
+
+				var image_url = 'https://maps.googleapis.com/maps/api/staticmap?size=640x640&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off&style=feature:road|element:labels.text.fill|color:0x959595&style=feature:poi|element:all|visibility:off&style=feature:administrative|element:all|visiblity:off&path=color:0x0000ff|weight:5'
+				for (var j = 0; j < adventures[i].markers.length; j++) {
+					image_url += '|' + adventures[i].markers[j][0] + ',' + adventures[i].markers[j][1]
+				}
+
+				adventureRow += image_url;
+				adventureRow += '\');">' +
+							'<a href="/adventures/' + adventures[i].id + '" class="permacover"></a>' +
+							'<div href="/adventures/' + adventures[i].id + '" class="adventure-header-author">' + adventures[i].username + '</div>' +
+						'</div><!-- /.object-header -->' +
+						'<div class="adventure-meta">' +
+							'<div class="adventure-title">' +
+								'<a href="/adventures/' + adventures[i].id + '">' + adventures[i].info + '</a>' +
+							'</div>' +
+							'<div class="adventure-details clearfix">' +
+								'<div class="left"><i class="fa fa-user"></i> ' + adventures[i].joined + '</div>' +
+								'<div class="right"><i class="fa fa-bicycle"></i> ' + adventures[i].mode + '</div>' +
+								'<div style="clear:both"></div>' +
+								'<div class="left"><i class="fa fa-clock-o"></i> ' + adventures[i].date + '</div>' +
+								'<div class="right"><i class="fa fa-gear"></i> ' +
+									{% if g.user.is_authenticated() %}
+										'{{ _("No action") }}' +
+									{% else %}
+										'{{ _("No action") }}' +
+									{% endif %}
+								'</div>' +
+							'</div>' +
+						'</div>' +
+					'</div>' +
+				'</div>';
+
+				$("#adventures").append(adventureRow);
+			}
+		}
+
+		$(window).load( function() {
+			showMostRecent($("#most_recent").get());
+		});
+	</script>
+
+	{% if (most_recent is not defined) or (not most_recent) %}
 		<div class="row text-center">
 			<div class="col-sm-8 col-sm-offset-2">
 				<p class="lead">
@@ -13,9 +112,17 @@
 			</div>
 		</div>
 	{% else %}
-		<div class="row">
-			{% for adventure in adventures %}
-				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
+		<div class="text-center">
+			<div class="btn-group" role="group" aria-label="adventure feed">
+				<button id="most_recent" type="button" class="btn btn-info" onclick="showMostRecent(this)">Most Recent</button>
+				<button id="start_soon" type="button" class="btn btn-info" onclick="showStartSoon(this)">Start Soon</button>
+				<button id="top_adventures" type="button" class="btn btn-info" onclick="showTopAdventures(this)">Top Adventures</button>
+			</div>
+		</div>
+		<br><br><br>
+		<div id="adventures" class="row">
+			{% for adventure in most_recent %}
+				<!-- <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
 					<div class="adventure-box">
 						<div class="adventure-image" style="background-image:url(
 						'https://maps.googleapis.com/maps/api/staticmap?size=640x640&style=feature:road|element:all|visibility:on&style=feature:road|element:labels.icon|visibility:off&style=feature:road|element:labels.text.fill|color:0x959595&style=feature:poi|element:all|visibility:off&style=feature:administrative|element:all|visiblity:off&path=color:0x0000ff|weight:5
@@ -25,7 +132,7 @@
 						');">
 							<a href="/adventures/{{ adventure.id|safe }}" class="permacover"></a>
 							<div href="/adventures/{{ adventure.id|safe }}" class="adventure-header-author">{{ adventure.username|safe }}</div>
-						</div><!-- /.object-header -->
+						</div> /.object-header
 
 						<div class="adventure-meta">
 							<div class="adventure-title">
@@ -36,7 +143,7 @@
 								<div class="left"><i class="fa fa-user"></i> {{ adventure.joined|safe }}</div>
 								<div class="right"><i class="fa fa-bicycle"></i> {{ adventure.mode|safe }}</div>
 								<div style='clear:both'></div>
-								<div class="left"><i class="fa fa-clock-o"></i> {{ adventure.date.strftime('%d.%m.%Y %H:%M')|safe }}</div>
+								<div class="left"><i class="fa fa-clock-o"></i> {{ adventure.date|safe }}</div>
 								<div class="right"><i class="fa fa-gear"></i>
 									{% if g.user.is_authenticated() %}
 										{% if adventure.action == -1 %}
@@ -53,9 +160,8 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 			{% endfor %}
-		</div>
 		</div>
 	{% endif %}
 {% endblock %}

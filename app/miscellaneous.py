@@ -100,3 +100,9 @@ def api_key_required(f):
 
 		return f(*args, **kwargs)
 	return wrapper
+
+def get_current_user_id():
+	if (current_user is None) or (not current_user.is_authenticated()):
+		return None
+
+	return current_user.id

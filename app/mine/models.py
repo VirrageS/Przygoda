@@ -4,11 +4,13 @@ from datetime import datetime
 class AdventureSearches(db.Model):
 	__tablename__ = 'adventure_searches'
 	id = db.Column(db.Integer, primary_key=True)
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, default=None)
 	adventure_id = db.Column(db.Integer, db.ForeignKey('adventures.id'))
 	date = db.Column('date', db.DateTime)
 	value = db.Column('value', db.Integer)
 
-	def __init__(self, adventure_id, value=1):
+	def __init__(self, user_id, adventure_id, value=1):
+		self.user_id = user_id
 		self.adventure_id = adventure_id
 		self.date = datetime.now()
 		self.value = value
@@ -17,11 +19,13 @@ class AdventureSearches(db.Model):
 class AdventureViews(db.Model):
 	__tablename__ = 'adventure_views'
 	id = db.Column(db.Integer, primary_key=True)
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, default=None)
 	adventure_id = db.Column(db.Integer, db.ForeignKey('adventures.id'))
 	date = db.Column('date', db.DateTime)
 	value = db.Column('value', db.Integer)
 
-	def __init__(self, adventure_id, value=1):
+	def __init__(self, user_id, adventure_id, value=1):
+		self.user_id = user_id
 		self.adventure_id = adventure_id
 		self.date = datetime.now()
 		self.value = value

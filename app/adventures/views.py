@@ -11,6 +11,7 @@ from app import app, db
 #from app.miscellaneous import confirmed_email_required
 from app.adventures import constants as ADVENTURES
 from app.adventures.miscellaneous import get_bounds, get_waypoints
+from app.miscellaneous import get_current_user_id
 from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures.forms import NewForm, EditForm, SearchForm
 from app.users.models import User
@@ -75,7 +76,7 @@ def show(adventure_id):
 	}
 
 	# update adventure views
-	views = AdventureViews(adventure_id=adventure.id)
+	views = AdventureViews(user_id=get_current_user_id(), adventure_id=adventure.id)
 	db.session.add(views)
 	db.session.commit()
 
@@ -459,7 +460,7 @@ def search():
 				})
 
 				# update adventure search times
-				searches = AdventureSearches(adventure_id=adventure.id)
+				searches = AdventureSearches(user_id=get_current_user_id(), adventure_id=adventure.id)
 				db.session.add(searches)
 				db.session.commit()
 
