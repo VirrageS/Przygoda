@@ -105,6 +105,19 @@
 			<li class="list-group-item">{{ _('Creator') }}: <b>{{ adventure.username|safe }}</b></li>
 			<li class="list-group-item">{{ _('Date') }}: <b>{{ adventure.date|safe }}</b></li>
 			<li class="list-group-item" style="word-break: break-all;">{{ _('Informations') }}: <b>{{ adventure.info|safe }}</b></li>
+			<li class="list-group-item">{{ _('Action') }}:
+				<b style="text-transform: lowercase;">
+				{% if adventure.action == 'no-action' %}
+					{{ _('No action') }}
+				{% elif adventure.action == 'join' %}
+					<a href="/adventures/join/{{ adventure.id|safe }}">{{ _('Join') }}</a>
+				{% elif adventure.action == 'leave' %}
+					<a href="/adventures/leave/{{ adventure.id|safe }}">{{ _('Leave') }}</a>
+				{% elif adventure.action == 'manage' %}
+					<a href="/adventures/edit/{{ adventure.id|safe }}">{{ _('Edit') }}</a> | <a href="/adventures/delete/{{ adventure.id|safe }}">{{ _('Delete') }}</a>
+				{% endif %}
+				</b>
+			</li>
 		</ul>
 	</div>
 	<div class="panel panel-info">

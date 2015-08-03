@@ -69,6 +69,17 @@
 					image_url += '|' + adventures[i].markers[j][0] + ',' + adventures[i].markers[j][1]
 				}
 
+				action = '';
+				if (adventures[i].action == 'no-action')
+					action = 'No action';
+				else if (adventures[i].action == 'join') {
+					action = '<a href="/adventures/join/' + adventures[i].id + '">{{ _("Join") }}</a>';
+				} else if (adventures[i].action == 'leave') {
+					action = '<a href="/adventures/leave/' + adventures[i].id + '">{{ _("Leave") }}</a>';
+				} else if (adventures[i].action == 'manage') {
+					action = '<a href="/adventures/edit/' + adventures[i].id + '">{{ _("Edit") }}</a> | <a href="/adventures/delete/' + adventures[i].id + '" onclick="return confirm(\'{{ _("Are you sure you want to delete this Adventure?") }}\');">{{ _("Delete") }}</a>';
+				}
+
 				adventureRow += image_url;
 				adventureRow += '\');">' +
 							'<a href="/adventures/' + adventures[i].id + '" class="permacover"></a>' +
@@ -83,12 +94,9 @@
 								'<div class="right"><i class="fa fa-bicycle"></i> ' + adventures[i].mode + '</div>' +
 								'<div style="clear:both"></div>' +
 								'<div class="left"><i class="fa fa-clock-o"></i> ' + adventures[i].date + '</div>' +
-								'<div class="right"><i class="fa fa-gear"></i> ' +
-									{% if g.user.is_authenticated() %}
-										'{{ _("No action") }}' +
-									{% else %}
-										'{{ _("No action") }}' +
-									{% endif %}
+								'<div class="right"><i class="fa fa-gear"></i> ';
+									adventureRow += action;
+				adventureRow += '' +
 								'</div>' +
 							'</div>' +
 						'</div>' +

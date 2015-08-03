@@ -40,16 +40,16 @@ def show_all_adventures():
 			# get joined participants
 			participants = adventure.get_participants()
 
-			action = -1
+			action = 'no-action'
 			if current_user.is_authenticated():
 				participant = AdventureParticipant.query.filter_by(adventure_id=adventure.id, user_id=current_user.id).first()
 				if (participant is None) or (not participant.is_active()):
-					action = 0
+					action = 'join'
 				else:
-					action = 1
+					action = 'leave'
 
 				if adventure.creator_id == current_user.id:
-					action = -1
+					action = 'manage'
 
 			coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
 			markers = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]

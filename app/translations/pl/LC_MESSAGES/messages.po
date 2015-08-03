@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-08-03 20:28+0200\n"
+"POT-Creation-Date: 2015-08-03 21:17+0200\n"
 "PO-Revision-Date: 2015-07-29 20:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: pl <LL@li.org>\n"
@@ -38,9 +38,9 @@ msgstr "Data musi być starsza od teraz"
 msgid "Invalid Adventure mode"
 msgstr "Nieprawidłowy typ Przygody"
 
-#: app/adventures/views.py:52 app/adventures/views.py:107
-#: app/adventures/views.py:147 app/adventures/views.py:222
-#: app/adventures/views.py:392
+#: app/adventures/views.py:52 app/adventures/views.py:121
+#: app/adventures/views.py:161 app/adventures/views.py:236
+#: app/adventures/views.py:406
 msgid "Adventure not found"
 msgstr "Przygoda nie istnieje"
 
@@ -48,60 +48,60 @@ msgstr "Przygoda nie istnieje"
 msgid "Creator not found"
 msgstr "Założyciel Przygody nie istnieje"
 
-#: app/adventures/views.py:118 app/adventures/views.py:132
+#: app/adventures/views.py:132 app/adventures/views.py:146
 msgid "You successfully joined to Adventure"
 msgstr "Dołączyłeś do Przygody"
 
-#: app/adventures/views.py:123
+#: app/adventures/views.py:137
 msgid "You have joined to this Adventure before"
 msgstr "Dołączyłeś do tej Przygody wcześniej"
 
-#: app/adventures/views.py:152
+#: app/adventures/views.py:166
 msgid "You cannot leave this Adventure"
 msgstr "Nie możesz opuścić tej Przygody"
 
-#: app/adventures/views.py:159
+#: app/adventures/views.py:173
 msgid "You have not joined this Adventure"
 msgstr "Nie dołączyłeś do tej Przygody"
 
-#: app/adventures/views.py:165
+#: app/adventures/views.py:179
 msgid "You successfully left Adventure"
 msgstr "Opuściłeś Przygodę"
 
-#: app/adventures/views.py:227
+#: app/adventures/views.py:241
 msgid "You cannot edit this Adventure"
 msgstr "Nie możesz edytować tej Przygody"
 
-#: app/adventures/views.py:243 app/adventures/views.py:318
+#: app/adventures/views.py:257 app/adventures/views.py:332
 msgid "You must place at least two markers"
 msgstr "Musisz umieścić co najmniej dwa znaczniki"
 
-#: app/adventures/views.py:257 app/adventures/views.py:332
+#: app/adventures/views.py:271 app/adventures/views.py:346
 msgid "Not supported Adventure path"
 msgstr "Niepoprawna trasa Przygody"
 
-#: app/adventures/views.py:281 app/adventures/views.py:362
-#: app/adventures/views.py:423
+#: app/adventures/views.py:295 app/adventures/views.py:376
+#: app/adventures/views.py:437
 msgid "Something went wrong"
 msgstr "Coś poszło nie tak"
 
-#: app/adventures/views.py:285 app/adventures/views.py:366
+#: app/adventures/views.py:299 app/adventures/views.py:380
 msgid "Adventure has been successfully created"
 msgstr "Przygoda została poprawnie stworzona"
 
-#: app/adventures/views.py:397
+#: app/adventures/views.py:411
 msgid "You cannot delete this Adventure"
 msgstr "Nie możesz usunąć tej Przygody"
 
-#: app/adventures/views.py:405
+#: app/adventures/views.py:419
 msgid "Adventure has been successfully deleted"
 msgstr "Przygoda została poprawnie usunięta"
 
-#: app/adventures/views.py:474
+#: app/adventures/views.py:488
 msgid "Below you can find some Adventures we have found for you"
 msgstr "Poniżej znajdziesz wybrane dla Ciebie Przygody"
 
-#: app/adventures/views.py:476
+#: app/adventures/views.py:490
 msgid ""
 "Unfortunately we have not found any Adventures for you. Try to change "
 "mode or area"
@@ -109,11 +109,29 @@ msgstr ""
 "Niestety nie udało się znaleźć żadnych Przygód. Spróbuj zmienić obszar "
 "lub kryteria"
 
-#: app/templates/all.html:88 app/templates/all.html:90
-msgid "No action"
-msgstr "Nie ma akcji"
+#: app/templates/all.html:76 app/templates/adventures/show.html:113
+msgid "Join"
+msgstr "Dołącz"
 
-#: app/templates/all.html:111
+#: app/templates/all.html:78 app/templates/adventures/show.html:115
+msgid "Leave"
+msgstr "Wypisz się"
+
+#: app/templates/all.html:80 app/templates/adventures/my.html:24
+#: app/templates/adventures/show.html:117
+msgid "Edit"
+msgstr "Edytuj"
+
+#: app/templates/all.html:80
+msgid "Are you sure you want to delete this Adventure?"
+msgstr "Jesteś pewien, że chcesz usunąć tę Przygodę?"
+
+#: app/templates/all.html:80 app/templates/adventures/my.html:24
+#: app/templates/adventures/show.html:117
+msgid "Delete"
+msgstr "Usuń"
+
+#: app/templates/all.html:119
 msgid ""
 "There is not active Adventures <i class=\"fa fa-frown-o\"></i><br> Be "
 "first and create ours"
@@ -121,24 +139,24 @@ msgstr ""
 "Nie ma jeszcze żadnych aktywnych Przygód <i class=\"fa fa-"
 "frown-o\"></i><br> Uprzedź innych i stwórz własną!"
 
-#: app/templates/all.html:113 app/templates/layout.html:77
+#: app/templates/all.html:121 app/templates/layout.html:76
 #: app/templates/adventures/new.html:107
 msgid "Create Adventure"
 msgstr "Stwórz Przygodę"
 
-#: app/templates/all.html:119
+#: app/templates/all.html:127
 msgid "Most Recent"
 msgstr "Ostatnio Dodane"
 
-#: app/templates/all.html:120
+#: app/templates/all.html:128
 msgid "Start Soon"
 msgstr "Niedługo Startują"
 
-#: app/templates/all.html:121
+#: app/templates/all.html:129
 msgid "Top Adventures"
 msgstr "Polecane Przygody"
 
-#: app/templates/contact.html:18 app/templates/layout.html:115
+#: app/templates/contact.html:18 app/templates/layout.html:114
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -194,66 +212,64 @@ msgstr ""
 msgid "Register now"
 msgstr "Zarejestruj się"
 
-#: app/templates/layout.html:3 app/templates/layout.html:66
+#: app/templates/layout.html:3 app/templates/layout.html:65
 #: app/templates/adventures/show.html:97
 msgid "Adventure"
 msgstr "Przygoda"
-
-#: app/templates/layout.html:3
-msgid "Brings bikers together"
-msgstr "Łączy rowerzystów razem"
 
 #: app/templates/layout.html:5
 msgid ""
 "Adventure is a site which connects bikers and helps them to go on "
 "adventures."
-msgstr "Przygoda to portal, który łączy rowerzystów i pomaga im razem wyruszać na Przygody i odkrywać nieznane"
+msgstr ""
+"Przygoda to portal, który łączy rowerzystów i pomaga im razem wyruszać na"
+" Przygody i odkrywać nieznane"
 
-#: app/templates/layout.html:75
+#: app/templates/layout.html:74
 msgid "Account"
 msgstr "Konto"
 
-#: app/templates/layout.html:76
+#: app/templates/layout.html:75
 msgid "Logout"
 msgstr "Wyloguj"
 
-#: app/templates/layout.html:78 app/templates/adventures/my.html:4
+#: app/templates/layout.html:77 app/templates/adventures/my.html:4
 msgid "My Adventures"
 msgstr "Moje Przygody"
 
-#: app/templates/layout.html:80
+#: app/templates/layout.html:79
 msgid "Adventures"
 msgstr "Przejrzyj Przygody"
 
-#: app/templates/layout.html:81
+#: app/templates/layout.html:80
 msgid "Login"
 msgstr "Logowanie"
 
-#: app/templates/layout.html:82
+#: app/templates/layout.html:81
 msgid "Register"
 msgstr "Rejestracja"
 
-#: app/templates/layout.html:85 app/templates/adventures/search.html:119
+#: app/templates/layout.html:84 app/templates/adventures/search.html:119
 msgid "Search for Adventures"
 msgstr "Szukaj Przygód"
 
-#: app/templates/layout.html:114
+#: app/templates/layout.html:113
 msgid "Blog"
 msgstr "Blog"
 
-#: app/templates/layout.html:116
+#: app/templates/layout.html:115
 msgid "About"
 msgstr "O nas"
 
-#: app/templates/layout.html:117
+#: app/templates/layout.html:116
 msgid "Features"
 msgstr "Funkcje"
 
-#: app/templates/layout.html:118
+#: app/templates/layout.html:117
 msgid "Privacy"
 msgstr "Prywatność"
 
-#: app/templates/layout.html:119
+#: app/templates/layout.html:118
 msgid "Help"
 msgstr "Pomoc"
 
@@ -279,12 +295,12 @@ msgid "Informations about Adventure"
 msgstr "Informacje o Przygodzie"
 
 #: app/templates/adventures/edit.html:151
-#: app/templates/adventures/show.html:111
+#: app/templates/adventures/show.html:124
 msgid "Participants"
 msgstr "Uczestnicy"
 
 #: app/templates/adventures/edit.html:163
-#: app/templates/adventures/show.html:122
+#: app/templates/adventures/show.html:135
 msgid "No one has joined this Adventure yet"
 msgstr "Nikt jeszcze nie dołączył do tej Przygody"
 
@@ -313,17 +329,9 @@ msgstr "Informacje"
 msgid "Joined"
 msgstr "Dołączyło"
 
-#: app/templates/adventures/my.html:16
+#: app/templates/adventures/my.html:16 app/templates/adventures/show.html:108
 msgid "Action"
 msgstr "Akcja"
-
-#: app/templates/adventures/my.html:24
-msgid "Edit"
-msgstr "Edytuj"
-
-#: app/templates/adventures/my.html:24
-msgid "Delete"
-msgstr "Usuń"
 
 #: app/templates/adventures/my.html:30
 msgid "Joined Adventures"
@@ -357,6 +365,11 @@ msgstr "Typ"
 #: app/templates/adventures/show.html:104
 msgid "Route length"
 msgstr "Długość trasy"
+
+#: app/templates/adventures/show.html:111
+#, fuzzy
+msgid "No action"
+msgstr "Informacje"
 
 #: app/templates/users/account.html:19
 msgid "Your account has not been activated yet."
@@ -539,3 +552,10 @@ msgstr "Twoje hasło zostało zmienione"
 
 #~ msgid "Leave"
 #~ msgstr "Wypisz się"
+
+#~ msgid "No action"
+#~ msgstr "Nie ma akcji"
+
+#~ msgid "Brings bikers together"
+#~ msgstr "Łączy rowerzystów razem"
+

@@ -67,12 +67,26 @@ def show(adventure_id):
 		if user is not None:
 			final_participants.append(user)
 
+
+	# get avaiable action
+	action = 'no-action'
+	if current_user.is_authenticated():
+		participant = AdventureParticipant.query.filter_by(adventure_id=adventure.id, user_id=current_user.id).first()
+		if (participant is None) or (not participant.is_active()):
+			action = 'join'
+		else:
+			action = 'leave'
+
+		if adventure.creator_id == current_user.id:
+			action = 'manage'
+
 	final_adventure = {
 		'id': adventure.id,
 		'username': user.username,
 		'date': adventure.date,
 		'info': adventure.info,
-		'joined': len(participants)
+		'joined': len(participants),
+		'action': action
 	}
 
 	# update adventure views
