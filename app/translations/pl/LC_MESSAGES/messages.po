@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-08-02 14:12+0200\n"
+"POT-Creation-Date: 2015-08-03 20:28+0200\n"
 "PO-Revision-Date: 2015-07-29 20:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: pl <LL@li.org>\n"
@@ -22,11 +22,11 @@ msgstr ""
 msgid "Please log in to access this page"
 msgstr "Zaloguj się, aby mieć dostęp do tej strony"
 
-#: app/miscellaneous.py:15
+#: app/miscellaneous.py:20
 msgid "You have to confirm your email to use this feature"
 msgstr "Musisz potwierdzić swój email, żeby skorzystać z tej funkcji"
 
-#: app/views.py:107
+#: app/views.py:111
 msgid "Message sent. Thank you for contact. We really appreciate it!"
 msgstr "Wiadomość wysłana. Dziękujęmy za kontakt!"
 
@@ -121,7 +121,7 @@ msgstr ""
 "Nie ma jeszcze żadnych aktywnych Przygód <i class=\"fa fa-"
 "frown-o\"></i><br> Uprzedź innych i stwórz własną!"
 
-#: app/templates/all.html:113 app/templates/layout.html:72
+#: app/templates/all.html:113 app/templates/layout.html:77
 #: app/templates/adventures/new.html:107
 msgid "Create Adventure"
 msgstr "Stwórz Przygodę"
@@ -138,7 +138,7 @@ msgstr "Niedługo Startują"
 msgid "Top Adventures"
 msgstr "Polecane Przygody"
 
-#: app/templates/contact.html:18 app/templates/layout.html:110
+#: app/templates/contact.html:18 app/templates/layout.html:115
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -190,60 +190,70 @@ msgstr ""
 "Rowerzysto! Śmigasz rekreacyjnie, wyczynowo a może nawet "
 "profesjonalnie?<br>Znajdź towarzystwo i ruszaj z nim na Przygodę!"
 
-#: app/templates/landing.html:13 app/templates/users/login.html:79
+#: app/templates/landing.html:13 app/templates/users/login.html:97
 msgid "Register now"
 msgstr "Zarejestruj się"
 
-#: app/templates/layout.html:3 app/templates/layout.html:61
+#: app/templates/layout.html:3 app/templates/layout.html:66
 #: app/templates/adventures/show.html:97
 msgid "Adventure"
 msgstr "Przygoda"
 
-#: app/templates/layout.html:70
+#: app/templates/layout.html:3
+msgid "Brings bikers together"
+msgstr "Łączy rowerzystów razem"
+
+#: app/templates/layout.html:5
+msgid ""
+"Adventure is a site which connects bikers and helps them to go on "
+"adventures."
+msgstr "Przygoda to portal, który łączy rowerzystów i pomaga im razem wyruszać na Przygody i odkrywać nieznane"
+
+#: app/templates/layout.html:75
 msgid "Account"
 msgstr "Konto"
 
-#: app/templates/layout.html:71
+#: app/templates/layout.html:76
 msgid "Logout"
 msgstr "Wyloguj"
 
-#: app/templates/layout.html:73 app/templates/adventures/my.html:4
+#: app/templates/layout.html:78 app/templates/adventures/my.html:4
 msgid "My Adventures"
 msgstr "Moje Przygody"
 
-#: app/templates/layout.html:75
+#: app/templates/layout.html:80
 msgid "Adventures"
 msgstr "Przejrzyj Przygody"
 
-#: app/templates/layout.html:76
+#: app/templates/layout.html:81
 msgid "Login"
 msgstr "Logowanie"
 
-#: app/templates/layout.html:77
+#: app/templates/layout.html:82
 msgid "Register"
 msgstr "Rejestracja"
 
-#: app/templates/layout.html:80 app/templates/adventures/search.html:119
+#: app/templates/layout.html:85 app/templates/adventures/search.html:119
 msgid "Search for Adventures"
 msgstr "Szukaj Przygód"
 
-#: app/templates/layout.html:109
+#: app/templates/layout.html:114
 msgid "Blog"
 msgstr "Blog"
 
-#: app/templates/layout.html:111
+#: app/templates/layout.html:116
 msgid "About"
 msgstr "O nas"
 
-#: app/templates/layout.html:112
+#: app/templates/layout.html:117
 msgid "Features"
 msgstr "Funkcje"
 
-#: app/templates/layout.html:113
+#: app/templates/layout.html:118
 msgid "Privacy"
 msgstr "Prywatność"
 
-#: app/templates/layout.html:114
+#: app/templates/layout.html:119
 msgid "Help"
 msgstr "Pomoc"
 
@@ -368,12 +378,12 @@ msgstr "Moje konto"
 msgid "Username"
 msgstr "Nazwa użytkownika"
 
-#: app/templates/users/account.html:43 app/templates/users/login.html:52
+#: app/templates/users/account.html:43 app/templates/users/login.html:70
 #: app/templates/users/lost.html:28 app/templates/users/register.html:39
 msgid "Email"
 msgstr "Email"
 
-#: app/templates/users/account.html:53 app/templates/users/login.html:61
+#: app/templates/users/account.html:53 app/templates/users/login.html:79
 #: app/templates/users/register.html:49
 msgid "Password"
 msgstr "Hasło"
@@ -404,31 +414,31 @@ msgstr "Nowe hasło"
 msgid "Reset your password"
 msgstr "Zresetuj swoje hasło"
 
-#: app/templates/users/login.html:28
+#: app/templates/users/login.html:46
 msgid "Log in"
 msgstr "Zaloguj się"
 
-#: app/templates/users/login.html:33
+#: app/templates/users/login.html:51
 msgid "Log in using Facebook"
 msgstr "Zaloguj się przez Facebook"
 
-#: app/templates/users/login.html:42
+#: app/templates/users/login.html:60
 msgid "or"
 msgstr "lub"
 
-#: app/templates/users/login.html:69
+#: app/templates/users/login.html:87
 msgid "Remember me"
 msgstr "Zapamiętaj mnie"
 
-#: app/templates/users/login.html:73
+#: app/templates/users/login.html:91
 msgid "Log in into Adventure"
 msgstr "Zaloguj się do Przygody"
 
-#: app/templates/users/login.html:79
+#: app/templates/users/login.html:97
 msgid "New in Adventures?"
 msgstr "Nowy w Przygodach?"
 
-#: app/templates/users/login.html:81
+#: app/templates/users/login.html:99
 msgid "Forgot your password?"
 msgstr "Zapomniałeś hasła?"
 
