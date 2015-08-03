@@ -124,8 +124,18 @@ def add_fake_data():
 		{'username': 'ziomek3', 'email':'ziomek3@tomek.com', 'password': 'z'},
 		{'username': 'ziomek4', 'email':'ziomek4@tomek.com', 'password': 'z'},
 		{'username': 'ziomek5', 'email':'ziomek5@tomek.com', 'password': 'z'},
-		{'username': 'ziomek6', 'email':'ziomek6@tomek.com', 'password': 'z'},
-		{'username': 'romek', 'email':'romek@romek.com', 'password': 'r'}
+		{'username': 'ziosfdmek6', 'email':'ziomek6@tomek.com', 'password': 'z'},
+		{'username': 'ziosfmek11', 'email':'ziomek111ek6@tomek.com', 'password': 'z'},
+		{'username': 'zisdfsdfomek111', 'email':'ziom1ek6@tomek.co1m', 'password': 'z'},
+		{'username': 'zi1sdfsfsfomek6', 'email':'zi1om1ek6@tomek.co1m', 'password': 'z'},
+		{'username': 'zio1me1k6', 'email':'zio1m1ek6@tome1k.com', 'password': 'z'},
+		{'username': 'sfsdfsd', 'email':'ziomek1111ek6@tomek.com1', 'password': 'z'},
+		{'username': 'zassdfdfsfiom1ek6', 'email':'zio1mek6@tomek1.com1', 'password': 'z'},
+		{'username': 'ziom11ek6', 'email':'zio1mek6@tomek.co1m', 'password': 'z'},
+		{'username': 'zio111mek61iomek6', 'email':'zio111mek6@to1mek.com', 'password': 'z'},
+		{'username': 'ziom111111ek6', 'email':'zio11mek6@tomek.c1om', 'password': 'z'},
+		{'username': 'zsdfasio1mek6', 'email':'zi11111111o1mek6@tomek.com', 'password': 'z'},
+		{'username': 'romek', 'email':'romek@romek.com1', 'password': 'r'}
 	]
 
 	for user in users:
@@ -139,7 +149,7 @@ def add_fake_data():
 		db.session.commit()
 
 	# add adventures
-	for _ in range(1, 20):
+	for _ in range(1, 100):
 		# add adventure
 		creator = randint(1, len(users))
 		adventure = Adventure(
@@ -159,7 +169,7 @@ def add_fake_data():
 
 		# add participants
 		available_participants = [number for number in range(1, len(users)) if number != creator]
-		random_participants = sample(available_participants, int(randint(0, 5)))
+		random_participants = sample(available_participants, int(randint(0, 10)))
 
 		for participant in random_participants:
 			adventure_participant = AdventureParticipant(adventure_id=adventure.id, user_id=participant)
@@ -173,8 +183,8 @@ def add_fake_data():
 			coordinate = Coordinate(
 				adventure_id=adventure.id,
 				path_point=i,
-				latitude=52.0 + uniform(-0.05, 0.05),
-				longitude=21.0 + uniform(-0.02, 0.02)
+				latitude=52.2 + uniform(-0.02, 0.02),
+				longitude=21.1 + uniform(-0.02, 0.02)
 			)
 			db.session.add(coordinate)
 			db.session.commit()

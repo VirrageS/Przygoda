@@ -215,7 +215,7 @@ def get_adventures_by_mode(user_id):
 
 	return final_results
 
-# @execution_time
+@execution_time
 def get_recommended_adventures(user_id, user_position=None):
 	most_recent = Adventure.query.order_by(Adventure.created_on.desc()).all() # get all adventures
 	most_recent = [adventure for adventure in most_recent if adventure.is_active()] # get all active adventures
@@ -234,12 +234,12 @@ def get_recommended_adventures(user_id, user_position=None):
 	# check if position has been fetcheds
 	adventures_by_position = {}
 	if (user_position is not None) and user_position['latitude'] and user_position['longitude']:
-		adventures_by_position = get_adventures_by_user_position(user_id, {
+		adventures_by_position = get_adventures_by_user_position(user_id=user_id, current_position={
 			'latitude': user_position['latitude'],
 			'longitude': user_position['longitude']
 		})
 
-	adventures_by_friends = get_adventures_by_friends(user_id)
+	adventures_by_friends = get_adventures_by_friends(user_id=user_id)
 	adventures_by_participants_number = get_adventures_by_partcipants_number()
 	adventures_by_views = get_adventures_by_views()
 	adventures_by_searches = get_adventures_by_searches()
@@ -247,6 +247,20 @@ def get_recommended_adventures(user_id, user_position=None):
 	# get all active adventures
 	adventures = Adventure.query.all()
 	adventures = [adventure for adventure in adventures if adventure.is_active()]
+
+	# filter adventures which user has not created
+	adventures = [adventure for adventure in adventures if adventure.creator_id != user_id]
+
+	# get only adventures to which user has not joined
+	tmp_adventures = []
+	for adventure in adventures:
+		participant = AdventureParticipant.query.filter_by(adventure_id=adventure.id, user_id=user_id).first()
+
+		if participant is None:
+			tmp_adventures.append(adventure)
+
+	# assing filtered adventures
+	adventures = tmp_adventures
 
 	# compute score
 	results = []
@@ -264,17 +278,17 @@ def get_recommended_adventures(user_id, user_position=None):
 		# get adventure_participants_number score:
 		participants_number_score = 1
 		if adventure.id in adventures_by_participants_number.keys():
-			participants_number_score = expm1(1/adventures_by_participants_number[adventure.id]) * 1.5
+			participants_number_score = expm1(1/adventures_by_participants_number[adventure.id])
 
 		# get views_score
 		views_score = 1
 		if adventure.id in adventures_by_views.keys():
-			views_score = expm1(1/adventures_by_views[adventure.id])
+			views_score = expm1(1/adventures_by_views[adventure.id]) * 0.1
 
 		# get searches_score
 		searches_score = 1
 		if adventure.id in adventures_by_searches.keys():
-			searches_score = expm1(1/adventures_by_searches[adventure.id])
+			searches_score = expm1(1/adventures_by_searches[adventure.id]) * 0.1
 
 		results.append({
 			'adventure': adventure,

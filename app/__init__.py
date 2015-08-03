@@ -1,7 +1,7 @@
 import os
 import sys
 
-from flask import Flask, render_template, g, request
+from flask import Flask, render_template, g, request, send_from_directory
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 from flask.ext.mail import Mail
@@ -110,6 +110,13 @@ def not_found_error(error):
 def internal_error(error):
 	db.session.rollback()
 	return render_template('500.html', error=error), 500
+
+
+# robots
+@app.route('/robots.txt')
+@app.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
 
 # blueprint
 from app.users.views import mod as usersModule
