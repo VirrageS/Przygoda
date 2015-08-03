@@ -215,7 +215,7 @@ def get_adventures_by_mode(user_id):
 
 	return final_results
 
-@execution_time
+# @execution_time
 def get_recommended_adventures(user_id, user_position=None):
 	most_recent = Adventure.query.order_by(Adventure.created_on.desc()).all() # get all adventures
 	most_recent = [adventure for adventure in most_recent if adventure.is_active()] # get all active adventures
