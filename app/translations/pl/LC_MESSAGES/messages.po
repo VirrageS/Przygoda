@@ -134,7 +134,7 @@ msgstr "Usuń"
 #: app/templates/all.html:119
 msgid ""
 "There is not active Adventures <i class=\"fa fa-frown-o\"></i><br> Be "
-"first and create ours"
+"first and create yours"
 msgstr ""
 "Nie ma jeszcze żadnych aktywnych Przygód <i class=\"fa fa-"
 "frown-o\"></i><br> Uprzedź innych i stwórz własną!"
@@ -558,4 +558,3 @@ msgstr "Twoje hasło zostało zmienione"
 
 #~ msgid "Brings bikers together"
 #~ msgstr "Łączy rowerzystów razem"
-
