@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Blueprint, request, render_template, flash, redirect, url_for
+from flask import Blueprint, request, render_template, flash, redirect, url_for, jsonify, current_app
 
 from flask.ext.login import current_user
 from flask.ext.babel import gettext
@@ -9,26 +9,24 @@ from app.adventures import constants as ADVENTURES
 from app.miscellaneous import get_current_user_id
 from app.recommender_system import get_recommended_adventures
 from app.users.models import User
-from app import cache, db
+from app import app, cache, db, celery
 
 from app.mine.forms import ReportForm
 from app.mine.models import UserReports
 
 mod = Blueprint('simple_page', __name__, template_folder='templates')
 
-#@cache.cached(timeout=5)
-def show_all_adventures():
+@celery.task(bind=True)
+def get_all_adventures(self, user_id, position):
 	all_adventures = {
 		'most_recent': [],
 		'start_soon': [],
 		'top_adventures': []
 	}
 
-	position = {
-		'latitude': request.cookies.get('latitude'),
-		'longitude': request.cookies.get('longitude')
-	}
-	recommended_adventures = get_recommended_adventures(user_id=get_current_user_id(), user_position=position)
+	recommended_adventures = get_recommended_adventures(
+		user_id=user_id,
+		user_position=position)
 
 	for sort_type, adventures in recommended_adventures.items():
 		for adventure in adventures:
@@ -41,14 +39,18 @@ def show_all_adventures():
 			participants = adventure.get_participants()
 
 			action = 'no-action'
-			if current_user.is_authenticated():
-				participant = AdventureParticipant.query.filter_by(adventure_id=adventure.id, user_id=current_user.id).first()
+			if user_id:
+				participant = AdventureParticipant.query.filter_by(
+					adventure_id=adventure.id,
+					user_id=user_id
+				).first()
+
 				if (participant is None) or (not participant.is_active()):
 					action = 'join'
 				else:
 					action = 'leave'
 
-				if adventure.creator_id == current_user.id:
+				if adventure.creator_id == user_id:
 					action = 'manage'
 
 			coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
@@ -65,11 +67,62 @@ def show_all_adventures():
 				'markers': markers
 			})
 
+		self.update_state(state='PROGRESS',
+						  meta={'most_recent': all_adventures['most_recent'],
+						  		'start_soon': all_adventures['start_soon'],
+								'top_adventures': all_adventures['top_adventures']})
+
+	return {
+		'status': 'COMPLETED',
+		'most_recent': all_adventures['most_recent'],
+		'start_soon': all_adventures['start_soon'],
+		'top_adventures': all_adventures['top_adventures']
+	}
+
+@mod.route('/status/<task_id>')
+def taskstatus(task_id):
+	task = get_all_adventures.AsyncResult(task_id)
+
+	if task.state == 'PENDING':
+		# job did not start yet
+		response = {
+			'state': task.state,
+			'most_recent': [],
+			'start_soon': [],
+			'top_adventures': []
+		}
+	elif task.state != 'FAILURE':
+		response = {
+			'state': task.state,
+			'most_recent': task.info.get('most_recent', []),
+			'start_soon': task.info.get('start_soon', []),
+			'top_adventures': task.info.get('top_adventures', [])
+		}
+	else:
+		# something went wrong in the background job
+		response = {
+			'state': task.state,
+			'most_recent': [],
+			'start_soon': [],
+			'top_adventures': [],
+			'status': str(task.info),  # this is the exception raised
+		}
+
+	return jsonify(response)
+
+#@cache.cached(timeout=5)
+def show_all_adventures():
+	position = {
+		'latitude': request.cookies.get('latitude'),
+		'longitude': request.cookies.get('longitude')
+	}
+
+	user_id = get_current_user_id()
+	task = get_all_adventures.apply_async(args=(user_id, position))
+
 	return render_template(
 		'all.html',
-		most_recent=all_adventures['most_recent'],
-		start_soon=all_adventures['start_soon'],
-		top_adventures=all_adventures['top_adventures']
+		task_id=task.id
 	)
 
 # Index - main path

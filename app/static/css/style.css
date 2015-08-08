@@ -204,6 +204,13 @@
   background: #000000;
   color: #ffffff; }
 
+#spinner {
+  position: relative;
+  top: 30vh;
+  left: auto;
+  right: auto;
+  bottom: auto; }
+
 .adventure-box {
   margin-bottom: 25px;
   max-width: 100%; }

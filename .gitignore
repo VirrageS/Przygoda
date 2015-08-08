@@ -64,3 +64,4 @@ flaskenv/*
 cover
 tags
 .sass-cache
+redis-stable

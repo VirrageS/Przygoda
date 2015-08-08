@@ -7,6 +7,7 @@ from flask.ext.login import LoginManager, current_user
 from flask.ext.mail import Mail
 from flask.ext.cache import Cache
 from flask.ext.babel import Babel, lazy_gettext
+from celery import Celery
 
 # set app
 app = Flask(__name__)
@@ -27,6 +28,21 @@ babel = Babel(app)
 
 # cache
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+
+# celery
+def make_celery(app):
+    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+    class ContextTask(TaskBase):
+        abstract = True
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+    celery.Task = ContextTask
+    return celery
+
+celery = make_celery(app)
 
 # if not debuging we should keep log of our app
 if not app.config['DEBUG']:

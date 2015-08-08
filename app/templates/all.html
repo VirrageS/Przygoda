@@ -3,7 +3,14 @@
 {% block body %}
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?language=pl?key=AIzaSyD9ryFHC07cVPEgeKlRG-wFHRgF9dTPPL8"></script>
 
+	<!-- Activity indicator -->
+	<script src="/static/js/spin.js"></script>
 	<script>
+		var mostRecent = [];
+		var stortSoon = [];
+		var topAdvenutres = [];
+		var spinner = new Spinner({radius: 14, length: 12, width: 6, lines: 12});
+
 		function resetActive() {
 			$('button').each(function(index, element) {
 				$(this).removeClass("active")
@@ -16,12 +23,6 @@
 
 			// change button to active
 			$(button).addClass("active")
-
-			var mostRecent = []
-			{% for adventure in most_recent %}
-				mostRecent.push({{ adventure|tojson }})
-			{% endfor %}
-
 			show(mostRecent)
 		}
 
@@ -31,12 +32,6 @@
 
 			// change button to active
 			$(button).addClass("active")
-
-			var startSoon = []
-			{% for adventure in start_soon %}
-				startSoon.push({{ adventure|tojson }})
-			{% endfor %}
-
 			show(startSoon)
 		}
 
@@ -46,13 +41,33 @@
 
 			// change button to active
 			$(button).addClass("active")
-
-			var topAdvenutres = []
-			{% for adventure in top_adventures %}
-				topAdvenutres.push({{ adventure|tojson }})
-			{% endfor %}
-
 			show(topAdvenutres)
+		}
+
+		function updateMostRecent(button, newMostRecent) {
+			resetActive();
+
+			// change button to active
+			$(button).addClass("active");
+
+			var toUpdate = [];
+			for (var i = 0; i < newMostRecent.length; i++) {
+				var isNew = true;
+				for (var j = 0; j < mostRecent.length; j++) {
+					if (newMostRecent[i].id === mostRecent[j].id) {
+						console.log('true')
+						isNew = false;
+						break;
+					}
+				}
+
+				if (isNew) {
+					mostRecent.push(newMostRecent[i]);
+					toUpdate.push(newMostRecent[i]);
+				}
+			}
+
+			show(toUpdate, "update");
 		}
 
 		function show(adventures) {
@@ -107,16 +122,45 @@
 			}
 		}
 
+		function update_progress(status_url) {
+			// send GET request to status URL
+			$.getJSON(status_url, function(data) {
+				mostRecent = data['most_recent'];
+				startSoon = data['start_soon'];
+				topAdvenutres = data['top_adventures'];
+				// updateMostRecent($("#most_recent").get(), data['most_recent']);
+
+				if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+					// show adventures
+					showMostRecent($("#mostRecent").get());
+
+					// stop spinner
+					setTimeout(function() {
+						spinner.stop();
+					}, 500);
+				} else {
+					// rerun in 200 miliseconds
+					setTimeout(function() {
+						update_progress(status_url);
+					}, 200);
+				}
+			});
+		}
+
 		$(window).load(function() {
-			showMostRecent($("#most_recent").get());
+			// activate spinner
+			spinner.spin(document.getElementById('spinner'));
+
+			// get tasks
+			update_progress('/status/{{ task_id }}');
 		});
 	</script>
 
-	{% if (most_recent is not defined) or (not most_recent) %}
+	{% if false %} <!-- (most_recent is not defined) or (not most_recent) -->
 		<div class="row text-center">
 			<div class="col-sm-8 col-sm-offset-2">
 				<p class="lead">
-					{{ _('There is not active Adventures <i class="fa fa-frown-o"></i><br> Be first and create ours')}}
+					{{ _('There is not active Adventures <i class="fa fa-frown-o"></i><br> Be first and create yours')}}
 				</p>
 				<p><a class="hd-btn hd-btn-black" href="{{ url_for('adventures.new') }}">{{ _('Create Adventure') }}</a></p>
 			</div>
@@ -130,6 +174,7 @@
 			</div>
 		</div>
 		<br><br><br>
+		<div id="spinner"></div>
 		<div id="adventures" class="row"></div>
 	{% endif %}
 {% endblock %}

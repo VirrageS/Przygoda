@@ -212,7 +212,7 @@ def resend_confirmation_email():
 	send_email(current_user.email, subject, html)
 
 	flash(gettext(u'Confirmation email has been sent'), 'info')
-	return redirect(url_for('simple_page.index'))
+	return redirect(url_for('users.account'))
 
 # Confirm email
 @mod.route('/confirm/<token>', methods=['GET', 'POST'])
