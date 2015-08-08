@@ -4,8 +4,8 @@ machine:
 
 dependencies:
   pre:
-    - celery worker -A app.celery --loglevel=info
     - pip install -r requirements.txt
+    - celery worker -A app.celery --loglevel=info
 
 test:
   override:
