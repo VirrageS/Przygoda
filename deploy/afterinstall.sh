@@ -72,6 +72,3 @@ sudo chmod -R 777 /home/$USER/$PROJECT_NAME/app/translations
 . ./env/bin/activate;
 pybabel compile -d app/translations;
 deactivate;
-
-# run redis
-sudo ./run-redis.sh

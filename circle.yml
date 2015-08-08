@@ -4,7 +4,6 @@ machine:
 
 dependencies:
   pre:
-    - ./run-redis.sh
     - celery worker -A app.celery --loglevel=info
     - pip install -r requirements.txt
 

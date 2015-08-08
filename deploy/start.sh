@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# run redis
+sudo ./run-redis.sh
+
 # start celery
 . ./env/bin/activate;
 celery worker -A app.celery --loglevel=info
