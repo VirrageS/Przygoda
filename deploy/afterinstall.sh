@@ -72,3 +72,6 @@ sudo chmod -R 777 /home/$USER/$PROJECT_NAME/app/translations
 . ./env/bin/activate;
 pybabel compile -d app/translations;
 deactivate;
+
+sudo chmod a+x ./run-redis.sh
+sudo chmod a+x ./run-celery.sh
