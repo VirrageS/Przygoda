@@ -6,4 +6,4 @@ if [ ! -d redis-stable/src ]; then
 fi
 cd redis-stable
 make
-sudo src/redis-server
+sudo src/redis-server &
