@@ -43,6 +43,7 @@ chdir /home/$USER/$PROJECT_NAME
 exec gunicorn --workers $WORKERS --bind unix:$PROJECT_NAME.sock -m 007 run:app" | sudo tee --append /etc/init/$PROJECT_NAME.conf > /dev/null
 
 aws s3 cp s3://przygoda/config.sh /home/$USER/$PROJECT_NAME/config.sh --region eu-west-1
+sudo chmod a+x config.sh
 . ./config.sh
 
 sudo rm -rf /etc/nginx/sites-enabled/default;
@@ -73,5 +74,5 @@ sudo chmod -R 777 /home/$USER/$PROJECT_NAME/app/translations
 pybabel compile -d app/translations;
 deactivate;
 
-sudo chmod a+x ./run-redis.sh
-sudo chmod a+x ./run-celery.sh
+sudo chmod a+x run-redis.sh
+sudo chmod a+x run-celery.sh

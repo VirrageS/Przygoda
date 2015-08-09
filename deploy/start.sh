@@ -6,8 +6,8 @@ USER=ubuntu
 cd /home/$USER/$PROJECT_NAME;
 
 # run redis
-sudo ./run-redis.sh
-sudo ./run-celery.sh
+. ./run-redis.sh
+. ./run-celery.sh
 
 sleep 60
 

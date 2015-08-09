@@ -1,3 +1,5 @@
+#!/bin/bash
+
 PROJECT_NAME=przygoda
 USER=ubuntu
 
