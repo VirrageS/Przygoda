@@ -55,7 +55,6 @@
 				var isNew = true;
 				for (var j = 0; j < mostRecent.length; j++) {
 					if (newMostRecent[i].id === mostRecent[j].id) {
-						console.log('true')
 						isNew = false;
 						break;
 					}
@@ -132,9 +131,15 @@
 
 				if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
 					// show adventures
-					showMostRecent($("#mostRecent").get());
+					showMostRecent($("#most_recent").get());
 
-					// stop spinner
+					if (mostRecent.length <= 0) {
+						$("#no-adventure").show(); // show no adventures comment
+					} else {
+						$("#all-adventures").show(); // show all adventures
+					}
+
+					// stop spinner with small delay
 					setTimeout(function() {
 						spinner.stop();
 					}, 500);
@@ -156,16 +161,18 @@
 		});
 	</script>
 
-	{% if false %} <!-- (most_recent is not defined) or (not most_recent) -->
-		<div class="row text-center">
-			<div class="col-sm-8 col-sm-offset-2">
-				<p class="lead">
-					{{ _('There is not active Adventures <i class="fa fa-frown-o"></i><br> Be first and create yours')}}
-				</p>
-				<p><a class="hd-btn hd-btn-black" href="{{ url_for('adventures.new') }}">{{ _('Create Adventure') }}</a></p>
-			</div>
+	<div id="spinner"></div>
+
+	<div id="no-adventure" class="row text-center" style="display: none">
+		<div class="col-sm-8 col-sm-offset-2">
+			<p class="lead">
+				{{ _('There is not active Adventures <i class="fa fa-frown-o"></i><br> Be first and create yours')}}
+			</p>
+			<p><a class="hd-btn hd-btn-black" href="{{ url_for('adventures.new') }}">{{ _('Create Adventure') }}</a></p>
 		</div>
-	{% else %}
+	</div>
+
+	<div id="all-adventures" style="display: none">
 		<div class="text-center">
 			<div class="btn-group" role="group" aria-label="adventure feed">
 				<button id="most_recent" type="button" class="btn btn-info" onclick="showMostRecent(this)">{{ _('Most Recent') }}</button>
@@ -174,7 +181,6 @@
 			</div>
 		</div>
 		<br><br><br>
-		<div id="spinner"></div>
 		<div id="adventures" class="row"></div>
-	{% endif %}
+	</div>
 {% endblock %}
