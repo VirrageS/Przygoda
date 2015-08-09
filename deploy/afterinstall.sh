@@ -80,3 +80,6 @@ sudo ./run-redis.sh &
 . ./env/bin/activate;
 celery worker -A app.celery --loglevel=info &
 deactivate;
+
+sleep 60
+echo "smth"
