@@ -7,7 +7,6 @@ if [ ! -d redis-stable/src ]; then
 fi
 cd redis-stable
 make
-sudo ./src/redis-server &
+sudo ./src/redis-server --daemonize yes
 
-sleep 10
-echo "Redis - Finished"
+echo "Redis - Ready"
