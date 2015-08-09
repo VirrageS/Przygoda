@@ -6,10 +6,12 @@ USER=ubuntu
 cd /home/$USER/$PROJECT_NAME;
 
 # run redis
-. ./run-redis.sh
-. ./run-celery.sh
+. ./run-redis.sh;
 
-sleep 60
+sleep 10;
+
+# run celery
+. ./run-celery.sh;
 
 # start app
 sudo start przygoda;
