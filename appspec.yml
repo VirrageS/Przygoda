@@ -89,7 +89,7 @@ hooks:
 #   in the script specified in "location".
   BeforeInstall:
     - location: /deploy/beforeinstall.sh
-    #   timeout: 300
+      timeout: 300
     #   runas: root
     # - location: ./deploy/start.sh
       # timeout:
@@ -98,7 +98,7 @@ hooks:
 #   in the script specified in "location".
   AfterInstall:
     - location: /deploy/afterinstall.sh
-    #   timeout: 300
+      timeout: 400
     #   runas: root
     # - location:
       # timeout:
@@ -107,7 +107,7 @@ hooks:
 #   in the script specified in "location".
   ApplicationStart:
     - location: /deploy/start.sh
-    #   timeout: 300
+      timeout: 300
     #   runas: root
     # - location:
       # timeout:

@@ -72,14 +72,3 @@ sudo chmod -R 777 /home/$USER/$PROJECT_NAME/app/translations
 . ./env/bin/activate;
 pybabel compile -d app/translations;
 deactivate;
-
-# run redis
-sudo ./run-redis.sh &
-
-# start celery
-. ./env/bin/activate;
-celery worker -A app.celery --loglevel=info &
-deactivate;
-
-sleep 60
-echo "smth"
