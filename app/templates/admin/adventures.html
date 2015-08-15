@@ -1,14 +1,15 @@
 {% extends "layout.html" %}
 {% block body %}
-	<h2>Wszystkie Przygody</h2>
+	<h1>All Adventures</h1>
 	<br><br>
 	<table class="table table-striped table-bordered">
 		<tr>
 			<th>#</th>
-			<th>Data przygody</th>
-			<th width="60%">Informacje</th>
-			<th>Dołączyło</th>
-			<th>Akcja</th>
+			<th>Adventure date</th>
+			<th>Informations</th>
+			<th>Joined</th>
+			<th>Status</th>
+			<th>Action</th>
 		</tr>
 		{% for adventure in adventures %}
 			<tr>
@@ -16,7 +17,11 @@
 				<td>{{ adventure.date.strftime('%d %m %Y')|safe }}</td>
 				<td style="word-break: break-all;">{{ adventure.info|safe }}</td>
 				<td>{{ adventure.joined|safe }}</td>
-				<td><a href="/admin/adventures/edit/{{ adventure.id|safe }}">Edytuj</a> | <a href="/admin/adventures/delete/{{ adventure.id|safe }}">Usuń</a></td>
+				<td>{{ adventure.status|safe }}</td>
+				<td><a href="/admin/adventures/disable/{{ adventure.id|safe }}">Disable</a> |
+					<a href="/admin/adventures/edit/{{ adventure.id|safe }}">Edit</a> |
+					<a href="/admin/adventures/delete/{{ adventure.id|safe }}">Delete</a>
+				</td>
 			</tr>
 		{% endfor %}
 	</table>

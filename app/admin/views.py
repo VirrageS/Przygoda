@@ -184,7 +184,23 @@ def show_all_users():
 @mod.route('/adventures/')
 @admin_required
 def show_all_adventures():
-	all_adventures = Adventure.query.all()
+	adventures = Adventure.query.all()
+
+	all_adventures = []
+	for adventure in adventures:
+		status = 'no active'
+		if adventure.is_active():
+			status = 'active'
+
+		adventure_participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+
+		all_adventures.append({
+			'id': adventure.id,
+			'date': adventure.date,
+			'info': adventure.info,
+			'status': status,
+			'joined': len(adventure_participants)
+		})
 
 	return render_template(
 		'admin/adventures.html',
