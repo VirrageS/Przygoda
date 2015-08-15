@@ -7,6 +7,6 @@ if [ ! -d redis-stable/src ]; then
 fi
 cd redis-stable
 make
-sudo ./src/redis-server --daemonize yes
+sudo ./src/redis-server ../redis.conf
 
 echo "Redis - Ready"
