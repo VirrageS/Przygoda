@@ -127,13 +127,6 @@ def internal_error(error):
 	db.session.rollback()
 	return render_template('500.html', error=error), 500
 
-
-# robots
-@app.route('/robots.txt')
-# @app.route('/sitemap.xml')
-def static_from_root():
-    return send_from_directory(app.static_folder, request.path[1:])
-
 # blueprint
 from app.users.views import mod as usersModule
 app.register_blueprint(usersModule)

@@ -107,7 +107,7 @@ msgid ""
 "mode or area"
 msgstr ""
 "Niestety nie udało się znaleźć żadnych Przygód. Spróbuj zmienić obszar "
-"lub kryteria"
+"lub kryteria wyszukiwania"
 
 #: app/templates/all.html:76 app/templates/adventures/show.html:113
 msgid "Join"

@@ -153,7 +153,8 @@
   -ms-user-select: none;
   user-select: none;
   font-size: 13px;
-  background-color: transparent; }
+  background-color: transparent;
+  transition: all 0.2s ease-in-out; }
   .hd-btn:hover {
     text-decoration: none;
     background: #000000; }
