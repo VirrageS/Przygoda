@@ -36,13 +36,13 @@ def get_all_adventures(self, user_id, position):
 				continue
 
 			# get joined participants
-			participants = adventure.get_participants()
+			participants = adven/Users/VirrageS/Desktop/przygoda/app/templates/landing.htmlture.get_participants()
 
 			action = 'no-action'
 			if user_id:
 				participant = AdventureParticipant.query.filter_by(
 					adventure_id=adventure.id,
-					user_id=user_id
+					user_id=user/Users/VirrageS/Desktop/przygoda/app/templates/layout.html_id
 				).first()
 
 				if (participant is None) or (not participant.is_active()):

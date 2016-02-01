@@ -1,52 +1,54 @@
 # Przygoda | [![Circle CI](https://circleci.com/gh/VirrageS/przygoda.svg?style=shield&&circle-token=bbdd9a0c1379c15241b877d9678c64538730b6d5)](https://circleci.com/gh/VirrageS/przygoda) | [![Build Status](https://magnum.travis-ci.com/VirrageS/przygoda.svg?token=cnzFxz77oBFevu6Vrpep&branch=master)](https://magnum.travis-ci.com/VirrageS/przygoda)
-Aplikacja Przygoda jest najlepszym sposobem na znajdowanie miłośników rowerów
+Przygoda is the best way to find enthusiasts of bike tours.
 
-# Preinstall
+Application helps users to connect with each others and create bike rides.
 
-## Clone GitHub project
+## Live website
+
+[Bike Adventures](http://www.sportoweprzygody.pl)
+
+## Preinstall
+
+### Clone GitHub project
 
 Our first move is to clone GitHub project into our computer.
 
-	MacBook-Air-Janusz:Desktop VirrageS$ sudo apt-get install git
-	MacBook-Air-Janusz:Desktop VirrageS$ git clone https://github.com/VirrageS/przygoda
-	MacBook-Air-Janusz:Desktop VirrageS$ cd przygoda
+	$ sudo apt-get install git
+	$ git clone https://github.com/VirrageS/przygoda
+	$ cd przygoda
 
-## Virtual Environment initialization
+### Virtual Environment initialization
 
 Now we have to install virtual env and get all python packages we need.
 So lets get python packages first:
 
-	MacBook-Air-Janusz:przygoda VirrageS$ sudo apt-get update
-	MacBook-Air-Janusz:przygoda VirrageS$ sudo apt-get install python3-pip python3-dev
-	MacBook-Air-Janusz:przygoda VirrageS$ sudo apt-get build-dep python3-psycopg2
+	przygoda$ sudo apt-get update
+	przygoda$ sudo apt-get install python3-pip python3-dev
+	przygoda$ sudo apt-get build-dep python3-psycopg2
 
 Now we need to install virtual env:
 
-	MacBook-Air-Janusz:przygoda VirrageS$ sudo pip3 install virtualenv
+	przygoda$ sudo pip3 install virtualenv
 
 Lets create virtual env in our folder:
 
-	MacBook-Air-Janusz:przygoda VirrageS$ virtualenv env
+	przygoda$ virtualenv env
 
 Now we have to start our virtual env (if ever would want to leave virtual env just type `deactivate`):
 
-	MacBook-Air-Janusz:przygoda VirrageS$ source env/bin/activate
-
-We should get something like this:
-
-	(env)MacBook-Air-Janusz:przygoda VirrageS$
+	przygoda$ source env/bin/activate
 
 And finally install requirements which we need to make our app running.
 This code will install all dependencies which our app is using. You can open `requirements.txt` to see what they are.
 
-	(env)MacBook-Air-Janusz:przygoda VirrageS$ pip3 install -r requirements.txt
+	(env)przygoda$ pip3 install -r requirements.txt
 
-## Database
+### Database
 
 Now we have to create simply database which will handle our queries.
 To make one, type:
 
-	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 shell.py
+	(env)przygoda$ python3 shell.py
 	>>> db.create_all()
 	>>> exit()
 
@@ -55,11 +57,11 @@ To make one, type:
 Unfortunetly if we use sqlite database we need delete our database and
 create fresh one every time we code new model or add something to existing one.
 
-## Run app
+### Run app
 
 Now we can run our app by just typing `python3 run.py`.
 
-	(env)MacBook-Air-Janusz:przygoda VirrageS$ python3 run.py
+	(env)przygoda$ python3 run.py
 	 * Running on http://127.0.0.1:5000/
 	 * Restarting with reloader
 
@@ -71,7 +73,7 @@ Hurray! Our app is alive. Open [http://127.0.0.1:5000] in your browser and that'
 
 To run unit tests type:
 
-	(env)MacBook-Air-Janusz:przygoda VirrageS$ nosetests --with-coverage --cover-erase --cover-package=app --cover-html
+	(env)przygoda$ nosetests --with-coverage --cover-erase --cover-package=app --cover-html
 
 ## Babel
 
@@ -95,7 +97,7 @@ Now I will show you how to setup running app on your custom virtual server.
 This tutorial I have been using to setup my first server on [Digital Ocean](digitalocean.com)
 I used `Ubuntu 14.04`
 
-## SSH
+### SSH
 
 So our first step after starting our server is to set SSH between virtual server and our local machine.
 So on local machine type:
@@ -105,7 +107,7 @@ So on local machine type:
 It should ask us for current user and current password (you should get it in email) and then
 it will us to change this password. After we do that lets go deeper.
 
-## New custom user
+### New custom user
 
 Now it is time to create our own user. To do it type on virtual server command.
 
@@ -117,7 +119,7 @@ Now we must add all privileges to our new user. To make it happen type:
 
 	gpasswd -a USER sudo
 
-## SSH next part
+### SSH next part
 
 On our local machine we must create new SSH key to make it easy to communicate with our virtual server. Type:
 
@@ -131,7 +133,7 @@ Now we have to copy SSH key to our virtual server. Type:
 	local$ ssh-copy-id USER@SERVER_IP_ADDRESS
 
 
-## Security
+### Security
 
 To make our server a little bit secure we must deactivate root user.
 Type
@@ -148,7 +150,7 @@ to
 
 Now click `CTRL + X` then `YES` and click enter. That is it we deactivated root user.
 
-## SSH Testing
+### SSH Testing
 
 Now lets restart our SSH
 
@@ -160,48 +162,7 @@ Make new tab (or new window) in terminal and type:
 
 Now we should been redirected to our virtual server. Hurray! :)
 
-## All in one
-
-This part is for people who understand what is going on and wants to make it fast to set up server.
-Scroll if you want to dive into details.
-
-	sudo apt-get update; sudo apt-get build-dep python3-psycopg2; sudo apt-get install python3-pip python3-dev nginx git; sudo pip3 install virtualenv; s cd przygoda; virtualenv env; source env/bin/activate; pip3 install psycopg2; pip3 install -r requirements.txt; deactivate; sudo nano /etc/init/przygoda.conf;
-
-```
-description "Gunicorn application server running PROJECT_NAME"
-
-start on runlevel [2345]
-stop on runlevel [!2345]
-
-respawn
-setuid USER
-setgid www-data
-
-env PATH=/home/USER/PROJECT_NAME/env/bin
-chdir /home/USER/PROJECT_NAME
-exec gunicorn --workers 3 --bind unix:PROJECT_NAME.sock -m 007 run:app
-```
-
-	sudo start przygoda; sudo rm -rf /etc/nginx/sites-enabled/default; sudo rm -rf /etc/nginx/sites-available/default; sudo nano /etc/nginx/sites-available/przygoda
-
-```
-server {
-    listen 80;
-    server_name ;
-
-    location / {
-        include proxy_params;
-        proxy_pass http://unix:/home/ubuntu/przygoda/przygoda.sock;
-        proxy_connect_timeout 30s;
-        proxy_read_timeout 30s;
-    }
-}
-```
-
-	sudo ln -s /etc/nginx/sites-available/przygoda /etc/nginx/sites-enabled; sudo nginx -t; sudo service nginx restart
-
-
-## Application
+### Setting up application
 
 To make our app working on our virtual server lets install some packages.
 
@@ -229,7 +190,7 @@ Deactivate virtual env because for the next part we will not need it
 
 	deactivate
 
-## Gunicorn
+### Gunicorn
 
 Now we have to create script that will run our server. First step is to type:
 
@@ -238,7 +199,7 @@ Now we have to create script that will run our server. First step is to type:
 and put this code:
 
 ```
-description "Gunicorn application server running PROJECT_NAME"
+description \"Gunicorn application server running $PROJECT_NAME\"
 
 start on runlevel [2345]
 stop on runlevel [!2345]
@@ -248,16 +209,30 @@ setuid USER
 setgid www-data
 
 env PATH=/home/USER/PROJECT_NAME/env/bin
+env CONFIG=Development
+
+env MAIL_USERNAME=CHANGE_THIS_!!!
+env MAIL_PASSWORD=CHANGE_THIS_!!!
+env DATABASE_USERNAME=CHANGE_THIS_!!!
+env DATABASE_PASSWORD=CHANGE_THIS_!!!
+env DATABASE_HOST=CHANGE_THIS_!!!
+env DATABASE_PORT=CHANGE_THIS_!!!
+env DATABASE_NAME=CHANGE_THIS_!!!
+env CREDENTIALS_FB_ID=CHANGE_THIS_!!!
+env CREDENTIALS_FB_SECRET=CHANGE_THIS_!!!
+env API_KEY=CHANGE_THIS_!!!
+
 chdir /home/USER/PROJECT_NAME
 exec gunicorn --workers 3 --bind unix:PROJECT_NAME.sock -m 007 run:app
 ```
 
-Before saving. Change **USER** and **PROJECT_NAME** to our current user and project name for example `przygoda`.
+Before saving. Change **USER** and **PROJECT_NAME** to our current user and project name
+for example: `ubuntu` and `przygoda` respectively.
 Now lets test our script and set it running.
 
 	sudo start przygoda
 
-## NGINX
+### NGINX
 
 First step is to remove default sites because we will not need them. Type:
 
@@ -311,7 +286,7 @@ Parameter | Desc | Value
 
 # Amazon AWS
 
-## Init EC2 instance
+### Init EC2 instance
 
 Initing EC2 is quite simple but good practice is to set init code into our instance.
 
@@ -324,7 +299,7 @@ Initing EC2 is quite simple but good practice is to set init code into our insta
 	chmod +x ./install
 	./install auto
 
-## Instance Role
+### Instance Role
 
 Inline Policies:
 
@@ -360,7 +335,7 @@ Trust relationships:
 	  ]
 	}
 
-## CodeDeploy Role
+### CodeDeploy Role
 
 Inline Policies:
 
