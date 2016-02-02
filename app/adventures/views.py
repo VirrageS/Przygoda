@@ -94,13 +94,16 @@ def show(adventure_id):
     }
 
     # update adventure views
-    views = AdventureViews(user_id=get_current_user_id(), adventure_id=adventure.id)
+    views = AdventureViews(user_id=get_current_user_id(),
+                           adventure_id=adventure.id)
     db.session.add(views)
     db.session.commit()
 
     # get coordinates of existing points
     coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
-    final_coordinates = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]
+    final_coordinates = [
+        (coordinate.latitude, coordinate.longitude) for coordinate in coordinates
+    ]
 
     return render_template(
         'adventures/show.html',
@@ -125,7 +128,10 @@ def join(adventure_id):
         flash(gettext(u'Adventure not found'), 'danger')
         return redirect(url_for('simple_page.index'))
 
-    participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
+    participant = AdventureParticipant.query.filter_by(
+        adventure_id=adventure_id,
+        user_id=current_user.id
+    ).first()
 
     # check if user joining adventure for the first time
     if participant is None:
@@ -170,7 +176,10 @@ def leave(adventure_id):
         flash(gettext(u'You cannot leave this Adventure'), 'warning')
         return redirect(url_for('simple_page.index'))
 
-    participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=current_user.id).first()
+    participant = AdventureParticipant.query.filter_by(
+        adventure_id=adventure_id,
+        user_id=current_user.id
+    ).first()
 
     # check if user joined adventure
     if (participant is None) or (not participant.is_active()):
@@ -193,8 +202,13 @@ def my_adventures():
     final_joined_adventures = []
 
     # get all adventures which created user
-    created_adventures = Adventure.query.filter_by(creator_id=current_user.id).order_by(Adventure.date.asc()).all()
-    created_adventures = [adventure for adventure in created_adventures if adventure.is_active()]
+    created_adventures = Adventure.query.filter_by(
+        creator_id=current_user.id
+    ).order_by(Adventure.date.asc()).all()
+    created_adventures = [
+        adventure for adventure in created_adventures
+            if adventure.is_active()
+    ]
 
     for created_adventure in created_adventures:
         # get joined participants
@@ -215,11 +229,13 @@ def my_adventures():
     ]
 
     for joined_adventure_id in joined_adventures_ids:
-        # get adventure
+        # get adventure active adventures
         adventure = Adventure.query.filter_by(id=joined_adventure_id).first()
+        if (adventure is None) or (not adventure.is_active()):
+            continue
 
-        # check if user is not creator (we do not want duplicates) and if the adventure is active
-        if (adventure is not None) and (adventure.is_active()) and (adventure.creator_id != current_user.id):
+        # get only joined adventures, not created
+        if adventure.creator_id != current_user.id:
             final_joined_adventures.append(adventure)
 
     return render_template(
@@ -285,7 +301,9 @@ def edit(adventure_id=0):
                 return redirect(url_for('simple_page.index'))
 
             # delete existing coordinates for the adventure_id
-            db.session.query(Coordinate).filter_by(adventure_id=adventure_id).delete()
+            db.session.query(Coordinate).filter_by(
+                adventure_id=adventure_id
+            ).delete()
             db.session.commit()
 
             for i, waypoint in enumerate(waypoints):
@@ -304,7 +322,9 @@ def edit(adventure_id=0):
 
             # update adventure in database
             db.session.commit()
-        except (googlemaps.exceptions.ApiError, googlemaps.exceptions.HTTPError, googlemaps.exceptions.TransportError):
+        except (googlemaps.exceptions.ApiError,
+                googlemaps.exceptions.HTTPError,
+                googlemaps.exceptions.TransportError):
             flash(gettext(u'Something went wrong'), 'danger')
             return redirect(url_for('simple_page.index'))
 
@@ -314,7 +334,9 @@ def edit(adventure_id=0):
 
     # get coordinates of existing points
     coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
-    final_coordinates = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]
+    final_coordinates = [
+        (coordinate.latitude, coordinate.longitude) for coordinate in coordinates
+    ]
 
     return render_template(
         'adventures/edit.html',
@@ -372,7 +394,8 @@ def new():
             db.session.commit()
 
             # add participant of adventure to database
-            participant = AdventureParticipant(adventure_id=adventure.id, user_id=current_user.id)
+            participant = AdventureParticipant(adventure_id=adventure.id,
+                                               user_id=current_user.id)
             db.session.add(participant)
             db.session.commit()
 
@@ -387,7 +410,9 @@ def new():
                 db.session.add(coordinate)
                 db.session.commit()
 
-        except (googlemaps.exceptions.ApiError, googlemaps.exceptions.HTTPError, googlemaps.exceptions.TransportError):
+        except (googlemaps.exceptions.ApiError,
+                googlemaps.exceptions.HTTPError,
+                googlemaps.exceptions.TransportError):
             flash(gettext(u'Something went wrong'), 'danger')
             return redirect(url_for('adventures.new'))
 
@@ -492,7 +517,8 @@ def search():
                 })
 
                 # update adventure search times
-                searches = AdventureSearches(user_id=get_current_user_id(), adventure_id=adventure.id)
+                searches = AdventureSearches(user_id=get_current_user_id(),
+                                             adventure_id=adventure.id)
                 db.session.add(searches)
                 db.session.commit()
 
@@ -503,9 +529,11 @@ def search():
         final_adventures = sorted(final_adventures, key=(lambda a: a['date']))
 
         if final_adventures:
-            flash(gettext(u'Below you can find some Adventures we have found for you'), 'success')
+            flash(gettext(u'Below you can find some Adventures we have \
+                            found for you'), 'success')
         else:
-            flash(gettext(u'Unfortunately we have not found any Adventures for you. Try to change mode or area'), 'warning')
+            flash(gettext(u'Unfortunately we have not found any Adventures \
+                            for you. Try to change mode or area'), 'warning')
 
     return render_template(
         'adventures/search.html',

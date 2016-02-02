@@ -25,15 +25,19 @@ def charts():
         start_date = datetime.now() - timedelta(days=days)
         end_date = datetime.now()
         for single_date in daterange(start_date, end_date):
-            all_adventures = Adventure.query.filter(single_date >= Adventure.created_on).all()
+            all_adventures = Adventure.query.filter(
+                single_date >= Adventure.created_on
+            ).all()
+
             active_adventures = Adventure.query.filter(
                 Adventure.date > single_date,
                 Adventure.created_on < single_date
             ).all()
 
-            active_adventures = [adventure for adventure in active_adventures if
-                ((adventure.deleted_on is None) or (adventure.deleted_on > single_date)) and
-                ((adventure.disabled_on is None) or (adventure.disabled_on > single_date))
+            active_adventures = [
+                adventure for adventure in active_adventures
+                    if ((adventure.deleted_on is None) or (adventure.deleted_on > single_date))
+                        and ((adventure.disabled_on is None) or (adventure.disabled_on > single_date))
             ]
 
             final_adventures.append({
@@ -88,12 +92,20 @@ def charts():
         start_date = datetime.now() - timedelta(days=days)
         end_date = datetime.now()
         for single_date in daterange(start_date, end_date):
-            all_participants = AdventureParticipant.query.filter(single_date >= AdventureParticipant.joined_on).all()
-            all_adventures = Adventure.query.filter(single_date >= Adventure.created_on).all()
+            # get all participants which have joined to specific date
+            all_participants = AdventureParticipant.query.filter(
+                single_date >= AdventureParticipant.joined_on
+            ).all()
+
+            # get all adventures which have been created to specific date
+            all_adventures = Adventure.query.filter(
+                single_date >= Adventure.created_on
+            ).all()
 
             final_users_per_adventure.append({
                 'date': single_date,
-                'users_per_adventure': (0 if len(all_adventures) <= 0 else len(all_participants)/len(all_adventures))
+                'users_per_adventure': (0 if len(all_adventures) <= 0
+                                          else len(all_participants)/len(all_adventures))
             })
 
         final_users_per_adventure = json.dumps(final_users_per_adventure)
@@ -103,7 +115,8 @@ def charts():
     def get_adventures_views():
         all_adventures_views = []
         adventures = db.session.query(
-            AdventureViews.adventure_id.label('adventure_id'), func.sum(AdventureViews.value).label('views')
+            AdventureViews.adventure_id.label('adventure_id'),
+            func.sum(AdventureViews.value).label('views')
         ).group_by(AdventureViews.adventure_id).all()
 
         for adventure in adventures:
@@ -203,7 +216,9 @@ def show_all_adventures():
         if adventure.is_active():
             status = 'active'
 
-        adventure_participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
+        adventure_participants = AdventureParticipant.query.filter_by(
+            adventure_id=adventure.id
+        ).all()
 
         all_adventures.append({
             'id': adventure.id,

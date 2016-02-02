@@ -5,7 +5,7 @@ from werkzeug import check_password_hash, generate_password_hash
 from flask import Blueprint, request, make_response, jsonify
 from flask.ext.sqlalchemy import get_debug_queries
 
-#from app.miscellaneous import api_key_required
+from app.miscellaneous import to_valid_int#, api_key_required
 
 from app import app, db
 from app.users.models import User
@@ -14,13 +14,6 @@ from app.adventures.models import Adventure, AdventureParticipant, Coordinate
 from app.adventures import constants as ADVENTURES
 
 mod = Blueprint('api', __name__, url_prefix='/api/v1.0')
-
-def to_valid_int(value):
-    value = int(value)
-    if value >= 9223372036854775807 or (value < 0):
-        raise ValueError('Value is not valid')
-
-    return value
 
 # check for slow quieries
 @mod.after_request
@@ -122,7 +115,9 @@ def get_user_adventures():
     final_joined_adventures = {}
 
     # get adventures created by user_id
-    created_adventures = Adventure.query.filter_by(creator_id=user_id).order_by(Adventure.date.asc()).all()
+    created_adventures = Adventure.query.filter_by(
+        creator_id=user_id
+    ).order_by(Adventure.date.asc()).all()
 
     # filter active
     created_adventures = [
@@ -182,6 +177,8 @@ def get_user_adventures():
 
     # get all adventures to which user joined
     adventures_participant = AdventureParticipant.query.filter_by(user_id=user_id).all()
+
+    # get adventures ids
     joined_adventures_ids = [
         participant.adventure_id for participant in adventures_participant
             if participant.is_active()
@@ -190,9 +187,11 @@ def get_user_adventures():
     for joined_adventure_id in joined_adventures_ids:
         # get adventure
         adventure = Adventure.query.filter_by(id=joined_adventure_id).first()
+        if (adventure is None) or (not adventure.is_active()):
+            continue
 
-        # check if user is not creator (we do not want duplicates)
-        if (adventure is None) or (not adventure.is_active()) or (adventure.creator_id == user_id):
+        # we want only adventures to which user joined, not created
+        if (adventure.creator_id == user_id):
             continue
 
         # get creator and check if exists
@@ -231,7 +230,8 @@ def get_user_adventures():
                 'longitude': coordinate.longitude
             }
 
-            static_image_url += '|' + str(coordinate.latitude) + ',' + str(coordinate.longitude)
+            static_image_url += '|' + str(coordinate.latitude)
+            static_image_url += ',' + str(coordinate.longitude)
 
         # add everything
         final_joined_adventures[adventure.id] = {
@@ -277,7 +277,10 @@ def get_adventure(adventure_id):
     # get joined participants
     final_participants = {}
     participants = AdventureParticipant.query.filter_by(adventure_id=adventure.id).all()
-    participants = [participant for participant in participants if participant.is_active()]
+    participants = [
+        participant for participant in participants
+            if participant.is_active()
+    ]
 
     for participant in participants:
         user = User.query.filter_by(id=participant.user_id).first()
@@ -372,7 +375,8 @@ def get_all_adventures():
                 'longitude': coordinate.longitude
             }
 
-            static_image_url += '|' + str(coordinate.latitude) + ',' + str(coordinate.longitude)
+            static_image_url += '|' + str(coordinate.latitude)
+            static_image_url += ',' + str(coordinate.longitude)
 
         # add everything
         final_adventures[adventure.id] = {
@@ -424,7 +428,10 @@ def leave_adventure():
         return make_response(jsonify({'error': 'User cannot leave this adventure'}), 400)
 
     # get participant
-    participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=user_id).first()
+    participant = AdventureParticipant.query.filter_by(
+        adventure_id=adventure_id,
+        user_id=user_id
+    ).first()
 
     # check if user joined adventure
     if (participant is None) or (not participant.is_active()):
@@ -463,7 +470,10 @@ def join_adventure():
         return make_response(jsonify({'error': 'User does not exists'}), 400)
 
     # get participant
-    participant = AdventureParticipant.query.filter_by(adventure_id=adventure_id, user_id=user_id).first()
+    participant = AdventureParticipant.query.filter_by(
+        adventure_id=adventure_id,
+        user_id=user_id
+    ).first()
 
     # check if user joining adventure for the first time
     if participant is None:

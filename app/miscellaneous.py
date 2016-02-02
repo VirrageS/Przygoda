@@ -92,6 +92,16 @@ def daterange(start_date, end_date):
     for day in range(int((end_date - start_date).days)):
         yield start_date + timedelta(day)
 
+def to_valid_int(value):
+    """Converts some type to int and checks if has sensible value
+    :param value: Value which will be converted
+    """
+    value = int(value)
+    if value >= 9223372036854775807 or (value < 0):
+        raise ValueError('Value is not valid')
+
+    return value
+
 # decorator to filter no-api_key requests to api
 def api_key_required(f):
     @wraps(f)

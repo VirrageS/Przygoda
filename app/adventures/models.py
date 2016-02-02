@@ -26,6 +26,7 @@ class Adventure(db.Model):
         self.deleted = False
 
     def get_mode(self):
+        """Returns mode of adventure"""
         return ADVENTURES.MODES[self.mode]
 
     def is_active(self):
@@ -34,9 +35,14 @@ class Adventure(db.Model):
 
     def get_participants(self):
         """Returns active participants of the adventure"""
+        participants = AdventureParticipant.query.filter_by(
+            adventure_id=self.id
+        ).all()
 
-        participants = AdventureParticipant.query.filter_by(adventure_id=self.id).all()
-        participants = [participant for participant in participants if participant.is_active()]
+        participants = [
+            participant for participant in participants
+                if participant.is_active()
+        ]
 
         return participants
 
@@ -70,4 +76,5 @@ class AdventureParticipant(db.Model):
         self.joined_on = datetime.now()
 
     def is_active(self):
-        return self.left_on is None
+        """Checks if participant of adventure is still active"""
+        return (self.left_on is None)
