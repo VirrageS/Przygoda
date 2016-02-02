@@ -5,9 +5,14 @@ if [ ! -d redis-stable/src ]; then
     tar xvzf redis-stable.tar.gz
     rm redis-stable.tar.gz
 fi
+
 cd redis-stable
 make
-sudo ./src/redis-server ../redis.conf
-./src/redis-server ../redis.conf
+
+if [ "$EUID" -ne 0 ]; then
+    ./src/redis-server ../redis.conf
+else
+    sudo ./src/redis-server ../redis.conf
+fi
 
 echo "Redis - Ready"
