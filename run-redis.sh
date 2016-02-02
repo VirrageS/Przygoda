@@ -8,5 +8,6 @@ fi
 cd redis-stable
 make
 sudo ./src/redis-server ../redis.conf
+./src/redis-server ../redis.conf
 
 echo "Redis - Ready"
