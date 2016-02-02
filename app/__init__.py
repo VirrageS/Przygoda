@@ -13,9 +13,9 @@ from celery import Celery
 app = Flask(__name__)
 
 if os.environ.get('CONFIG'):
-	app.config.from_object('config.' + os.environ.get('CONFIG') + 'Config')
+    app.config.from_object('config.' + os.environ.get('CONFIG') + 'Config')
 else:
-	app.config.from_object('config.DevelopmentConfig')
+    app.config.from_object('config.DevelopmentConfig')
 
 # set database
 db = SQLAlchemy(app)
@@ -46,37 +46,41 @@ celery = make_celery(app)
 
 # if not debuging we should keep log of our app
 if not app.config['DEBUG']:
-	import logging
-	from logging.handlers import RotatingFileHandler
+    import logging
+    from logging.handlers import RotatingFileHandler
 
-	try:
-		file_handler = RotatingFileHandler('logs/przygoda.log', 'a', 1 * 1024 * 1024, 10)
-		file_handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-		app.logger.setLevel(logging.INFO)
-		file_handler.setLevel(logging.INFO)
-		app.logger.addHandler(file_handler)
-		app.logger.info('przygoda startup')
-	except:
-		print('Probably missing logs folder' + str(sys.exc_info()[0]))
+    try:
+        file_handler = RotatingFileHandler('logs/przygoda.log', 'a', 1 * 1024 * 1024, 10)
+        file_handler.setLevel(logging.INFO)
+        file_handler.setFormatter(
+            logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+        )
+
+        app.logger.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+        app.logger.info('przygoda startup')
+    except:
+        print('Probably missing logs folder' + str(sys.exc_info()[0]))
 
 # secret key
 def install_secret_key(application, filename='secret_key'):
-	filename = os.path.join(application.instance_path, filename)
+    filename = os.path.join(application.instance_path, filename)
 
-	try:
-		app.config['SECRET_KEY'] = open(filename, 'rb').read()
-	except IOError:
-		print('Error: No secret key. Create it with:')
-		full_path = os.path.dirname(filename)
-		if not os.path.isdir(full_path):
-			print('mkdir -p {filename}'.format(filename=full_path))
-		print('head -c 24 /dev/urandom > {filename}'.format(filename=filename))
-		sys.exit(1)
+    try:
+        app.config['SECRET_KEY'] = open(filename, 'rb').read()
+    except IOError:
+        print('Error: No secret key. Create it with:')
+        full_path = os.path.dirname(filename)
+        if not os.path.isdir(full_path):
+            print('mkdir -p {filename}'.format(filename=full_path))
+
+        print('head -c 24 /dev/urandom > {filename}'.format(filename=filename))
+        sys.exit(1)
 
 
 if not app.config['DEBUG']:
-	pass
-	# install_secret_key(app)
+    pass
+    # install_secret_key(app)
 
 from flask.json import JSONEncoder
 
@@ -93,11 +97,11 @@ app.json_encoder = CustomJSONEncoder
 
 @babel.localeselector
 def get_locale():
-	language = request.accept_languages.best_match(['pl', 'en'])
-	if (language is not None) and language:
-		app.config['BABEL_DEFAULT_LOCALE'] = language
+    language = request.accept_languages.best_match(['pl', 'en'])
+    if (language is not None) and language:
+        app.config['BABEL_DEFAULT_LOCALE'] = language
 
-	return language
+    return language
 
 # login setup
 login_manager = LoginManager()
@@ -109,23 +113,23 @@ login_manager.login_message_category = 'warning'
 from app.users.models import User
 @login_manager.user_loader
 def load_user(id):
-	return User.query.get(int(id))
+    return User.query.get(int(id))
 
 
 @app.before_request
 def before_request():
-	g.user = current_user
+    g.user = current_user
 
 # error handling
 @app.errorhandler(404)
 def not_found_error(error):
-	return render_template('404.html', error=error), 404
+    return render_template('404.html', error=error), 404
 
 
 @app.errorhandler(500)
 def internal_error(error):
-	db.session.rollback()
-	return render_template('500.html', error=error), 500
+    db.session.rollback()
+    return render_template('500.html', error=error), 500
 
 # blueprint
 from app.users.views import mod as usersModule

@@ -4,9 +4,9 @@ AMATEURISH = 1
 DOWNHILL = 2
 
 MODES = {
-	RECREATIONAL: 'rekreacyjny',
-	AMATEURISH: 'amatorski',
-	DOWNHILL: 'downhill',
+    RECREATIONAL: 'rekreacyjny',
+    AMATEURISH: 'amatorski',
+    DOWNHILL: 'downhill',
 }
 
 # point constants

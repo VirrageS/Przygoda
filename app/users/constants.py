@@ -4,7 +4,7 @@ STAFF = 1
 USER = 2
 
 ROLE = {
-	ADMIN: 'admin',
-	STAFF: 'staff',
-	USER: 'user',
+    ADMIN: 'admin',
+    STAFF: 'staff',
+    USER: 'user',
 }
