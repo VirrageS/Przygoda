@@ -15,6 +15,13 @@ from app.adventures import constants as ADVENTURES
 
 mod = Blueprint('api', __name__, url_prefix='/api/v1.0')
 
+def to_valid_int(value):
+    value = int(value)
+    if value >= 9223372036854775807 or (value < 0):
+        raise ValueError('Value is not valid')
+
+    return value
+
 # check for slow quieries
 @mod.after_request
 def after_request(response):
@@ -101,11 +108,8 @@ def get_user_adventures():
     # check if there is no input error
     user_id = None
     try:
-        user_id = int(request.args['user_id'])
+        user_id = to_valid_int(request.args['user_id'])
     except:
-        return make_response(jsonify({'error': "Input error"}), 400)
-
-    if (user_id >= 9223372036854775807) or (user_id < 0):
         return make_response(jsonify({'error': "Input error"}), 400)
 
     # check if adventure exists
@@ -256,8 +260,10 @@ def get_user_adventures():
 @mod.route('/adventure/get/<int:adventure_id>', methods=['GET'])
 # @api_key_required
 def get_adventure(adventure_id):
-    if adventure_id >= 9223372036854775807:
-        return make_response(jsonify({'error': 'Adventure id is too large'}), 400)
+    try:
+        adventure_id = to_valid_int(adventure_id)
+    except:
+        return make_response(jsonify({'error': 'Adventure id is invalid'}), 400)
 
     adventure = Adventure.query.filter_by(id=adventure_id).first()
     if (adventure is None) or (not adventure.is_active()):
@@ -325,7 +331,9 @@ def get_all_adventures():
 
     # get all adventures
     adventures = Adventure.query.order_by(Adventure.date.asc()).all()
-    adventures = [adventure for adventure in adventures if adventure.is_active()] # filter active
+
+    # filter active
+    adventures = [adventure for adventure in adventures if adventure.is_active()]
 
     for adventure in adventures:
         # get creator and check if exists
@@ -397,15 +405,9 @@ def leave_adventure():
     user_id = None
     adventure_id = None
     try:
-        user_id = int(request.args['user_id'])
-        adventure_id = int(request.args['adventure_id'])
+        user_id = to_valid_int(request.args['user_id'])
+        adventure_id = to_valid_int(request.args['adventure_id'])
     except:
-        return make_response(jsonify({'error': 'Input error'}), 400)
-
-    if (user_id >= 9223372036854775807) or (user_id < 0):
-        return make_response(jsonify({'error': 'Input error'}), 400)
-
-    if (adventure_id >= 9223372036854775807) or (adventure_id < 0):
         return make_response(jsonify({'error': 'Input error'}), 400)
 
     # check if adventure exists
@@ -446,15 +448,9 @@ def join_adventure():
     user_id = None
     adventure_id = None
     try:
-        user_id = int(request.args['user_id'])
-        adventure_id = int(request.args['adventure_id'])
+        user_id = to_valid_int(request.args['user_id'])
+        adventure_id = to_valid_int(request.args['adventure_id'])
     except:
-        return make_response(jsonify({'error': 'Input error'}), 400)
-
-    if (user_id >= 9223372036854775807) or (user_id < 0):
-        return make_response(jsonify({'error': 'Input error'}), 400)
-
-    if (adventure_id >= 9223372036854775807) or (adventure_id < 0):
         return make_response(jsonify({'error': 'Input error'}), 400)
 
     # check if adventure exists
@@ -503,15 +499,9 @@ def delete_adventure():
     user_id = None
     adventure_id = None
     try:
-        user_id = int(request.args['user_id'])
-        adventure_id = int(request.args['adventure_id'])
+        user_id = to_valid_int(request.args['user_id'])
+        adventure_id = to_valid_int(request.args['adventure_id'])
     except:
-        return make_response(jsonify({'error': 'Input error'}), 400)
-
-    if (user_id >= 9223372036854775807) or (user_id < 0):
-        return make_response(jsonify({'error': 'Input error'}), 400)
-
-    if (adventure_id >= 9223372036854775807) or (adventure_id < 0):
         return make_response(jsonify({'error': 'Input error'}), 400)
 
     # check if adventure exists

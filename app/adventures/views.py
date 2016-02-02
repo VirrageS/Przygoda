@@ -71,7 +71,11 @@ def show(adventure_id):
     # get avaiable action
     action = 'no-action'
     if current_user.is_authenticated():
-        participant = AdventureParticipant.query.filter_by(adventure_id=adventure.id, user_id=current_user.id).first()
+        participant = AdventureParticipant.query.filter_by(
+            adventure_id=adventure.id,
+            user_id=current_user.id
+        ).first()
+
         if (participant is None) or (not participant.is_active()):
             action = 'join'
         else:

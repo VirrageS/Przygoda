@@ -8,6 +8,10 @@ Application helps users to connect with each others and create bike rides.
 
 [Bike Adventures](http://www.sportoweprzygody.pl)
 
+## About
+
+Application is build on microframework [Flask](https://github.com/mitsuhiko/flask).
+
 ## Preinstall
 
 ### Clone GitHub project
