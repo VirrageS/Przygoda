@@ -4,7 +4,8 @@ python:
   - 3.4
 install:
   - pip install -r requirements.txt
-  - celery worker -A app.celery --loglevel=info &
+  - ./run-redis.sh
+  - ./run-celery.sh
 script:
   - pip install codecov
   - pip install nose
