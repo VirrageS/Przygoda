@@ -1,0 +1,11 @@
+language: python
+python:
+  - 3.3
+  - 3.4
+install:
+  - pip install -r requirements.txt
+  - celery worker -A app.celery --loglevel=info &
+script:
+  - pip install codecov
+  - pip install nose
+  - nosetests --with-coverage --cover-erase --cover-package=app --cover-html
