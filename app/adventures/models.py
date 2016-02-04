@@ -4,11 +4,19 @@ from app.adventures import constants as ADVENTURES
 from datetime import datetime
 
 class Adventure(db.Model):
+    """Provides class model for Adventure
+
+    Adventure is a main class in system which represents all
+    necessary infomartions about
+
+    """
+
     __tablename__ = 'adventures'
     id = db.Column(db.Integer, primary_key=True)
     creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     date = db.Column('date', db.DateTime)
-    mode = db.Column('mode', db.SmallInteger, nullable=False, default=ADVENTURES.RECREATIONAL)
+    mode = db.Column('mode', db.SmallInteger, nullable=False,
+                     default=ADVENTURES.RECREATIONAL)
     info = db.Column('info', db.String, nullable=False, default='')
     created_on = db.Column('created_on', db.DateTime)
     disabled = db.Column('disabled', db.Boolean, nullable=False, default=False)
@@ -31,7 +39,8 @@ class Adventure(db.Model):
 
     def is_active(self):
         """Checks if adventure is active"""
-        return (not self.deleted) and (self.date >= datetime.now()) and (not self.disabled)
+        return ((not self.deleted) and (self.date >= datetime.now())
+                and (not self.disabled))
 
     def get_participants(self):
         """Returns active participants of the adventure"""
@@ -39,10 +48,8 @@ class Adventure(db.Model):
             adventure_id=self.id
         ).all()
 
-        participants = [
-            participant for participant in participants
-                if participant.is_active()
-        ]
+        participants = [participant for participant in participants
+                        if participant.is_active()]
 
         return participants
 

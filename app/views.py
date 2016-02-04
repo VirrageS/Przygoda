@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from flask import Blueprint, request, render_template, flash, redirect, url_for, jsonify, current_app
+from flask import Blueprint, request, render_template
+from flask import flash, redirect, url_for, jsonify
 
 from flask.ext.login import current_user
 from flask.ext.babel import gettext
@@ -24,9 +25,8 @@ def get_all_adventures(self, user_id, position):
         'top_adventures': []
     }
 
-    recommended_adventures = get_recommended_adventures(
-        user_id=user_id,
-        user_position=position)
+    recommended_adventures = get_recommended_adventures(user_id=user_id,
+                                                        user_position=position)
 
     for sort_type, adventures in recommended_adventures.items():
         for adventure in adventures:
@@ -36,13 +36,13 @@ def get_all_adventures(self, user_id, position):
                 continue
 
             # get joined participants
-            participants = adven/Users/VirrageS/Desktop/przygoda/app/templates/landing.htmlture.get_participants()
+            participants = adventure.get_participants()
 
             action = 'no-action'
             if user_id:
                 participant = AdventureParticipant.query.filter_by(
                     adventure_id=adventure.id,
-                    user_id=user/Users/VirrageS/Desktop/przygoda/app/templates/layout.html_id
+                    user_id=user_id
                 ).first()
 
                 if (participant is None) or (not participant.is_active()):
@@ -53,8 +53,12 @@ def get_all_adventures(self, user_id, position):
                 if adventure.creator_id == user_id:
                     action = 'manage'
 
-            coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
-            markers = [(coordinate.latitude, coordinate.longitude) for coordinate in coordinates]
+            coordinates = Coordinate.query.filter_by(
+                adventure_id=adventure.id
+            ).all()
+
+            markers = [(coordinate.latitude, coordinate.longitude)
+                       for coordinate in coordinates]
 
             all_adventures[sort_type].append({
                 'id': adventure.id,
@@ -69,7 +73,7 @@ def get_all_adventures(self, user_id, position):
 
         self.update_state(state='PROGRESS',
                           meta={'most_recent': all_adventures['most_recent'],
-                                  'start_soon': all_adventures['start_soon'],
+                                'start_soon': all_adventures['start_soon'],
                                 'top_adventures': all_adventures['top_adventures']})
 
     return {
@@ -167,7 +171,9 @@ def contact():
         db.session.add(report)
         db.session.commit()
 
-        flash(gettext(u'Message sent. Thank you for contact. We really appreciate it!'), 'success')
+        flash(gettext(u'Message sent. Thank you for contact. \
+                        We really appreciate it!'),
+              'success')
         return redirect(url_for('simple_page.index'))
 
     return render_template(

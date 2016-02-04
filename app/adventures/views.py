@@ -101,9 +101,8 @@ def show(adventure_id):
 
     # get coordinates of existing points
     coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
-    final_coordinates = [
-        (coordinate.latitude, coordinate.longitude) for coordinate in coordinates
-    ]
+    final_coordinates = [(coordinate.latitude, coordinate.longitude)
+                         for coordinate in coordinates]
 
     return render_template(
         'adventures/show.html',
@@ -136,7 +135,8 @@ def join(adventure_id):
     # check if user joining adventure for the first time
     if participant is None:
         # add user to adventure participants to database
-        participant = AdventureParticipant(adventure_id=adventure_id, user_id=current_user.id)
+        participant = AdventureParticipant(adventure_id=adventure_id,
+                                           user_id=current_user.id)
         db.session.add(participant)
         db.session.commit()
         flash(gettext(u'You successfully joined to Adventure'), 'success')
@@ -202,13 +202,10 @@ def my_adventures():
     final_joined_adventures = []
 
     # get all adventures which created user
-    created_adventures = Adventure.query.filter_by(
-        creator_id=current_user.id
-    ).order_by(Adventure.date.asc()).all()
-    created_adventures = [
-        adventure for adventure in created_adventures
-            if adventure.is_active()
-    ]
+    created_adventures = Adventure.query.filter_by(creator_id=current_user.id)\
+                                  .order_by(Adventure.date.asc()).all()
+    created_adventures = [adventure for adventure in created_adventures
+                          if adventure.is_active()]
 
     for created_adventure in created_adventures:
         # get joined participants
@@ -222,11 +219,12 @@ def my_adventures():
         })
 
     # get all adventures to which user joined
-    adventures_participant = AdventureParticipant.query.filter_by(user_id=current_user.id).all()
-    joined_adventures_ids = [
-        participant.adventure_id for participant in adventures_participant
-            if participant.is_active()
-    ]
+    adventures_participant = AdventureParticipant.query.filter_by(
+        user_id=current_user.id
+    ).all()
+    joined_adventures_ids = [participant.adventure_id
+                             for participant in adventures_participant
+                             if participant.is_active()]
 
     for joined_adventure_id in joined_adventures_ids:
         # get adventure active adventures
@@ -334,9 +332,8 @@ def edit(adventure_id=0):
 
     # get coordinates of existing points
     coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
-    final_coordinates = [
-        (coordinate.latitude, coordinate.longitude) for coordinate in coordinates
-    ]
+    final_coordinates = [(coordinate.latitude, coordinate.longitude)
+                         for coordinate in coordinates]
 
     return render_template(
         'adventures/edit.html',
@@ -530,10 +527,12 @@ def search():
 
         if final_adventures:
             flash(gettext(u'Below you can find some Adventures we have \
-                            found for you'), 'success')
+                            found for you'),
+                  'success')
         else:
             flash(gettext(u'Unfortunately we have not found any Adventures \
-                            for you. Try to change mode or area'), 'warning')
+                            for you. Try to change mode or area'),
+                  'warning')
 
     return render_template(
         'adventures/search.html',

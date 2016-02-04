@@ -46,7 +46,8 @@ def login():
     if form.validate_on_submit():
         registered_user = User.query.filter_by(email=form.email.data).first()
 
-        if (registered_user is not None) and check_password_hash(registered_user.password, form.password.data):
+        if ((registered_user is not None)
+                and check_password_hash(registered_user.password, form.password.data)):
             # login user to system
             login_user(registered_user, remember=form.remember_me.data)
             registered_user.update_login_info()
@@ -192,7 +193,12 @@ def oauth_callback(provider):
     # check if user exists and if no creates new
     user = User.query.filter_by(social_id=social_id).first()
     if user is None:
-        user = User(username=username, password='', email=email, social_id=social_id)
+        user = User(
+            username=username,
+            password='',
+            email=email,
+            social_id=social_id
+        )
         db.session.add(user)
         db.session.commit()
 

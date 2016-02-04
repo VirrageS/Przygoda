@@ -34,8 +34,8 @@ def charts():
                 Adventure.created_on < single_date
             ).all()
 
-            active_adventures = [
-                adventure for adventure in active_adventures
+            active_adventures = [adventure
+                for adventure in active_adventures
                     if ((adventure.deleted_on is None) or (adventure.deleted_on > single_date))
                         and ((adventure.disabled_on is None) or (adventure.disabled_on > single_date))
             ]

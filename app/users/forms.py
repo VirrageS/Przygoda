@@ -62,7 +62,12 @@ class RegisterForm(Form):
     username = StringField('Username', [Length(min=4, max=25)])
     email = StringField('Email Address', [Email(), Length(min=6, max=35)])
     password = PasswordField('Password', [Required()])
-    confirm = PasswordField('Repeat Password', [Required(), EqualTo('password', message=gettext(u'Passwords must match.'))])
+    confirm = PasswordField(
+        'Repeat Password', [
+            Required(),
+            EqualTo('password', message=gettext(u'Passwords must match.'))
+        ]
+    )
 
     def validate(self):
         if not Form.validate(self):
@@ -95,7 +100,12 @@ class AccountForm(Form):
     username = StringField('Username', [Length(min=4, max=25)])
     email = StringField('Email Address', [Email(), Length(min=6, max=35)])
     password = PasswordField('Password', [Optional()])
-    confirm = PasswordField('Repeat Password', [Optional(), EqualTo('password', message=gettext(u'Passwords must match.'))])
+    confirm = PasswordField(
+        'Repeat Password', [
+            Optional(),
+            EqualTo('password', message=gettext(u'Passwords must match.'))
+        ]
+    )
     old_password = PasswordField('Old Password', [RequiredIf('password')])
 
     def validate(self):
@@ -124,9 +134,8 @@ class AccountForm(Form):
             return False
 
         # check old password
-        if ((self.old_password.data is not None) and
-            self.old_password.data and (not check_password_hash(current_user.password, self.old_password.data))
-        ):
+        if ((self.old_password.data is not None) and self.old_password.data
+                and (not check_password_hash(current_user.password, self.old_password.data))):
             self.old_password.errors.append(gettext(u'Old password is not correct.'))
             return False
 
@@ -153,4 +162,9 @@ class LostForm(Form):
 
 class ChangePasswordForm(Form):
     password = PasswordField('Password', [Required()])
-    confirm = PasswordField('Repeat Password', [Required(), EqualTo('password', message=gettext(u'Passwords must match.'))])
+    confirm = PasswordField(
+        'Repeat Password', [
+            Required(),
+            EqualTo('password', message=gettext(u'Passwords must match.'))
+        ]
+    )

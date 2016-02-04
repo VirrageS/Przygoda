@@ -45,6 +45,8 @@ class User(UserMixin, db.Model):
         self.paid = False
 
     def is_authenticated(self):
+        """Checks if user has been authenticated"""
+        # TODO: change this to something more useful
         return True
 
     def is_active(self):
@@ -52,15 +54,19 @@ class User(UserMixin, db.Model):
         return True #self.confirmed
 
     def is_anonymous(self):
+        """Checks if user is anonymous"""
         return False
 
     def get_role(self):
+        """Returns current user role"""
         return USER.ROLE[self.role]
 
     def is_admin(self):
+        """Checks if user is has admin privileges"""
         return self.role == USER.ADMIN
 
     def update_login_info(self):
+        """Updates all necessary info when user is logging into website"""
         # update first login date
         if self.first_login is None:
             self.first_login = datetime.now()
@@ -71,6 +77,7 @@ class User(UserMixin, db.Model):
         db.session.commit()
 
     def is_active_login(self, delta=timedelta(days=4)):
+        """Checks if user is active logger"""
         if self.last_login is None:
             return False
 

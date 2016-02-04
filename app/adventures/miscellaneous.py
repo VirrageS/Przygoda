@@ -21,7 +21,8 @@ def get_waypoints(form):
         # convert value to point (double, double) and add it to database
         try:
             raw_coordinate = ast.literal_eval(str(marker))
-            if (raw_coordinate is not None) and is_float(raw_coordinate[0]) and is_float(raw_coordinate[1]):
+            if ((raw_coordinate is not None)
+                    and is_float(raw_coordinate[0]) and is_float(raw_coordinate[1])):
                 waypoints.append({'lat': raw_coordinate[0], 'lng': raw_coordinate[1]})
         except:
             return None
