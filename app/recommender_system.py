@@ -251,16 +251,24 @@ def get_adventures_by_mode(user_id):
 # @execution_time
 def get_recommended_adventures(user_id, user_position=None):
     # get all active adventures which has been created lately
-    most_recent = Adventure.query.order_by(Adventure.created_on.desc()).all()
-    most_recent = [adventure
-                   for adventure in most_recent
-                       if adventure.is_active]
+    most_recent = []
+    try:
+        most_recent = Adventure.query.order_by(Adventure.created_on.desc()).all()
+        most_recent = [adventure
+                       for adventure in most_recent
+                           if adventure.is_active]
+    except:
+        pass
 
     # get all active adventures which starts soon
-    start_soon = Adventure.query.order_by(Adventure.date.asc()).all()
-    start_soon = [adventure
-                  for adventure in start_soon
-                      if adventure.is_active()]
+    start_soon = []
+    try:
+        start_soon = Adventure.query.order_by(Adventure.date.asc()).all()
+        start_soon = [adventure
+                      for adventure in start_soon
+                          if adventure.is_active()]
+    except:
+        pass
 
     # if user is not logged we should not compute top_adventures
     if user_id is None:
@@ -289,10 +297,14 @@ def get_recommended_adventures(user_id, user_position=None):
 
     # get all active adventures
     # filter adventures which user has not created
-    adventures = Adventure.query.all()
-    adventures = [adventure
-                  for adventure in adventures
-                  if (adventure.is_active() and adventure.creator_id != user_id)]
+    adventures = []
+    try:
+        adventures = Adventure.query.all()
+        adventures = [adventure
+                      for adventure in adventures
+                      if (adventure.is_active() and adventure.creator_id != user_id)]
+    except:
+        pass
 
     # get only adventures to which user has not joined
     tmp_adventures = []

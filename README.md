@@ -66,6 +66,8 @@ create fresh one every time we code new model or add something to existing one.
 
 Now we can run our app by just typing `python3 run.py`.
 
+    przygoda$ ./run-redis; ./run-celery
+    przygoda$ . ./env/bin/activate
 	(env)przygoda$ python3 run.py
 	 * Running on http://127.0.0.1:5000/
 	 * Restarting with reloader

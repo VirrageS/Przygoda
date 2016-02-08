@@ -27,54 +27,54 @@ def get_all_adventures(self, user_id, position):
 
     recommended_adventures = get_recommended_adventures(user_id=user_id,
                                                         user_position=position)
-
-    for sort_type, adventures in recommended_adventures.items():
-        for adventure in adventures:
-            # get creator of the event and check if still exists
-            user = User.query.filter_by(id=adventure.creator_id).first()
-            if user is None:
-                continue
-
-            # get joined participants
-            participants = adventure.get_participants()
-
-            action = 'no-action'
-            if user_id:
-                participant = AdventureParticipant.query.filter_by(
-                    adventure_id=adventure.id,
-                    user_id=user_id
-                ).first()
-
-                if (participant is None) or (not participant.is_active()):
-                    action = 'join'
-                else:
-                    action = 'leave'
-
-                if adventure.creator_id == user_id:
-                    action = 'manage'
-
-            coordinates = Coordinate.query.filter_by(
-                adventure_id=adventure.id
-            ).all()
-
-            markers = [(coordinate.latitude, coordinate.longitude)
-                       for coordinate in coordinates]
-
-            all_adventures[sort_type].append({
-                'id': adventure.id,
-                'username': user.username,
-                'date': adventure.date.strftime('%d.%m.%Y %H:%M'),
-                'info': adventure.info,
-                'joined': len(participants),
-                'mode': ADVENTURES.MODES[int(adventure.mode)],
-                'action': action,
-                'markers': markers
-            })
-
-        self.update_state(state='PROGRESS',
-                          meta={'most_recent': all_adventures['most_recent'],
-                                'start_soon': all_adventures['start_soon'],
-                                'top_adventures': all_adventures['top_adventures']})
+    #
+    # for sort_type, adventures in recommended_adventures.items():
+    #     for adventure in adventures:
+    #         # get creator of the event and check if still exists
+    #         user = User.query.filter_by(id=adventure.creator_id).first()
+    #         if user is None:
+    #             continue
+    #
+    #         # get joined participants
+    #         participants = adventure.get_participants()
+    #
+    #         action = 'no-action'
+    #         if user_id:
+    #             participant = AdventureParticipant.query.filter_by(
+    #                 adventure_id=adventure.id,
+    #                 user_id=user_id
+    #             ).first()
+    #
+    #             if (participant is None) or (not participant.is_active()):
+    #                 action = 'join'
+    #             else:
+    #                 action = 'leave'
+    #
+    #             if adventure.creator_id == user_id:
+    #                 action = 'manage'
+    #
+    #         coordinates = Coordinate.query.filter_by(
+    #             adventure_id=adventure.id
+    #         ).all()
+    #
+    #         markers = [(coordinate.latitude, coordinate.longitude)
+    #                    for coordinate in coordinates]
+    #
+    #         all_adventures[sort_type].append({
+    #             'id': adventure.id,
+    #             'username': user.username,
+    #             'date': adventure.date.strftime('%d.%m.%Y %H:%M'),
+    #             'info': adventure.info,
+    #             'joined': len(participants),
+    #             'mode': ADVENTURES.MODES[int(adventure.mode)],
+    #             'action': action,
+    #             'markers': markers
+    #         })
+    #
+    #     self.update_state(state='PROGRESS',
+    #                       meta={'most_recent': all_adventures['most_recent'],
+    #                             'start_soon': all_adventures['start_soon'],
+    #                             'top_adventures': all_adventures['top_adventures']})
 
     return {
         'status': 'COMPLETED',
