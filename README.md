@@ -1,8 +1,8 @@
 # Przygoda | [![Circle CI](https://circleci.com/gh/VirrageS/przygoda.svg?style=shield&&circle-token=bbdd9a0c1379c15241b877d9678c64538730b6d5)](https://circleci.com/gh/VirrageS/przygoda) | [![Build Status](https://travis-ci.org/VirrageS/przygoda.svg?branch=master)](https://travis-ci.org/VirrageS/przygoda)
 
-Przygoda is the best way to find enthusiasts of bike tours.
+The best way to find enthusiasts of bike tours.
 
-Application helps users to connect with each others and create bike rides.
+Application make it easier to connect and create bike rides.
 
 ## Live website
 
@@ -84,116 +84,32 @@ To run unit tests type:
 
 To run babel
 
-	pybabel extract -F babel.cfg -o messages.pot app
-	pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot app
-	pybabel init -i messages.pot -d app/translations -l pl
-	pybabel compile -d app/translations
+	(env)przygoda$ pybabel extract -F babel.cfg -o messages.pot app
+	(env)przygoda$ pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot app
+	(env)przygoda$ pybabel init -i messages.pot -d app/translations -l pl
+	(env)przygoda$ pybabel compile -d app/translations
 
 to update
 
-	pybabel extract -F babel.cfg -o messages.pot app
-	pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot app
-	pybabel update -i messages.pot -d app/translations
-	pybabel compile -d app/translations
+	(env)przygoda$ pybabel extract -F babel.cfg -o messages.pot app
+	(env)przygoda$ pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot app
+	(env)przygoda$ pybabel update -i messages.pot -d app/translations
+	(env)przygoda$ pybabel compile -d app/translations
 
-# Virtual Server
+## Stress tests
 
-Now I will show you how to setup running app on your custom virtual server.
-This tutorial I have been using to setup my first server on [Digital Ocean](digitalocean.com)
-I used `Ubuntu 14.04`
+To check if our site is able to handle a lot of traffic we can preform stress tests:
 
-### SSH
+	ab -k -r -n 50000 -c 500 http://..../
 
-So our first step after starting our server is to set SSH between virtual server and our local machine.
-So on local machine type:
+Parameter | Desc | Value
+--- | --- | ---
+-n | Set how much packets will be send to our server | 50000
+-c | Simulate simultaneous user connections (most important parameter) | 500
 
-	local$ ssh root@SERVER_IP_ADDRESS
+---
 
-It should ask us for current user and current password (you should get it in email) and then
-it will us to change this password. After we do that lets go deeper.
-
-### New custom user
-
-Now it is time to create our own user. To do it type on virtual server command.
-
-	adduser USER
-
-`USER` is your custom **username**.
-
-Now we must add all privileges to our new user. To make it happen type:
-
-	gpasswd -a USER sudo
-
-### SSH next part
-
-On our local machine we must create new SSH key to make it easy to communicate with our virtual server. Type:
-
-	local$ ssh-keygen
-
-After it will ask us to provide some info but better is to leave it default
-so we just click enter until we do not have to :)
-
-Now we have to copy SSH key to our virtual server. Type:
-
-	local$ ssh-copy-id USER@SERVER_IP_ADDRESS
-
-
-### Security
-
-To make our server a little bit secure we must deactivate root user.
-Type
-
-	sudo nano /etc/ssh/sshd_config
-
-and change line
-
-	PermitRootLogin yes
-
-to
-
-	PermitRootLogin no
-
-Now click `CTRL + X` then `YES` and click enter. That is it we deactivated root user.
-
-### SSH Testing
-
-Now lets restart our SSH
-
-	local$ service ssh restart
-
-Make new tab (or new window) in terminal and type:
-
-	local$ ssh USER@SERVER_IP_ADDRESS
-
-Now we should been redirected to our virtual server. Hurray! :)
-
-### Setting up application
-
-To make our app working on our virtual server lets install some packages.
-
-	sudo apt-get update
-	sudo apt-get build-dep python3-psycopg2
-	sudo apt-get install python3-pip python3-dev nginx git
-	sudo pip3 install virtualenv
-
-Now lets clone our project:
-
-	git clone https://github.com/VirrageS/przygoda
-	cd ~/przygoda
-
-Setup virtual env and activate it
-
-	virtualenv env
-	source env/bin/activate
-
-Install all packages
-
-	pip3 install psycopg2
-	pip3 install -r requirements.txt
-
-Deactivate virtual env because for the next part we will not need it
-
-	deactivate
+## Extras
 
 ### Gunicorn
 
@@ -204,7 +120,7 @@ Now we have to create script that will run our server. First step is to type:
 and put this code:
 
 ```
-description \"Gunicorn application server running $PROJECT_NAME\"
+description \"Gunicorn application server running PROJECT_NAME\"
 
 start on runlevel [2345]
 stop on runlevel [!2345]
@@ -276,106 +192,4 @@ And start nginx:
 
 	sudo service nginx restart
 
-Now, if we type SERVER_IP_ADDRESS into our browser we should see our app up and running :)!
-
-## Stress tests
-
-To check if our site is able to handle a lot of traffic we can preform stress tests:
-
-	ab -k -r -n 50000 -c 500 http://..../
-
-Parameter | Desc | Value
---- | --- | ---
--n | Set how much packets will be send to our server | 50000
--c | Simulate simultaneous user connections (most important parameter) | 500
-
-# Amazon AWS
-
-### Init EC2 instance
-
-Initing EC2 is quite simple but good practice is to set init code into our instance.
-
-	#!/bin/bash
-	apt-get -y update
-	apt-get -y install awscli
-	apt-get -y install ruby2.0
-	cd /home/ubuntu
-	aws s3 cp s3://aws-codedeploy-eu-west-1/latest/install . --region eu-west-1
-	chmod +x ./install
-	./install auto
-
-### Instance Role
-
-Inline Policies:
-
-	{
-	    "Statement": [
-	        {
-	            "Resource": "*",
-	            "Action": [
-	                "autoscaling:Describe*",
-	                "cloudformation:Describe*",
-	                "cloudformation:GetTemplate",
-	                "s3:Get*",
-	                "s3:List*"
-	            ],
-	            "Effect": "Allow"
-	        }
-	    ]
-	}
-
-Trust relationships:
-
-	{
-	  "Version": "2012-10-17",
-	  "Statement": [
-	    {
-	      "Sid": "",
-	      "Effect": "Allow",
-	      "Principal": {
-	        "Service": "ec2.amazonaws.com"
-	      },
-	      "Action": "sts:AssumeRole"
-	    }
-	  ]
-	}
-
-### CodeDeploy Role
-
-Inline Policies:
-
-	{
-	    "Version": "2012-10-17",
-	    "Statement": [
-	        {
-	            "Action": [
-	                "autoscaling:PutLifecycleHook",
-	                "autoscaling:DeleteLifecycleHook",
-	                "autoscaling:RecordLifecycleActionHeartbeat",
-	                "autoscaling:CompleteLifecycleAction",
-	                "autoscaling:DescribeAutoscalingGroups",
-	                "autoscaling:PutInstanceInStandby",
-	                "autoscaling:PutInstanceInService",
-	                "ec2:Describe*"
-	            ],
-	            "Effect": "Allow",
-	            "Resource": "*"
-	        }
-	    ]
-	}
-
-Trust relationships:
-
-	{
-	  "Version": "2008-10-17",
-	  "Statement": [
-	    {
-	      "Sid": "1",
-	      "Effect": "Allow",
-	      "Principal": {
-	        "Service": "codedeploy.amazonaws.com"
-	      },
-	      "Action": "sts:AssumeRole"
-	    }
-	  ]
-	}
+Now, if we type **SERVER_IP_ADDRESS** into our browser we should see our app up and running :)!
