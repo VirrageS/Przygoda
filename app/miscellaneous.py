@@ -66,7 +66,7 @@ def admin_required(f):
 
 # function to add admin to database
 def add_admin():
-    # add admin
+    """Adds admin to database"""
     admin = User.query.filter_by(username="admin").first()
     if admin is None:
         new_admin = User("admin", generate_password_hash("supertajnehaslo"), "email@email.com", social_id=None)
@@ -120,6 +120,7 @@ def get_current_user_id():
 
 
 def add_fake_data():
+    """Add fake users to database"""
     # add users
     users = [
         {'username': 'tomek', 'email':'tomek@tomek.com', 'password': 't'},
@@ -203,6 +204,7 @@ def add_fake_data():
 
 
 def db_init_with_data():
+    """Inititialize database with fake data and admin account"""
     db.create_all()
     add_admin()
     add_fake_data()

@@ -3,6 +3,33 @@ from app.adventures import constants as ADVENTURES
 
 from datetime import datetime
 
+class AdventureManager():
+    """Adventure manager"""
+
+    def adventures(self):
+        """Returns a list of all adventures"""
+        adventures = Adventure.query.all()
+        return adventures
+
+    def active_adventures(self):
+        """Returns a list of all active adventures"""
+        adventures = Adventure.query.all()
+        adventures = [adventure
+                      for adventure in adventures if adventure.is_active()]
+        return adventures
+
+    def user_adventures(self, user):
+        """Returns a list of all adventures created by specific user"""
+        adventures = Adventure.query.filter_by(creator_id=user.id)
+        return adventures
+
+    def active_user_adventures(self, user):
+        """Returns a list of all active adventures created by specific user"""
+        adventures = Adventure.query.filter_by(created_id=user.id)
+        adventures = [adventure
+                      for adventure in adventures if adventure.is_active()]
+        return adventures
+
 class Adventure(db.Model):
     """Provides class model for Adventure
 
@@ -13,7 +40,7 @@ class Adventure(db.Model):
 
     __tablename__ = 'adventures'
     id = db.Column(db.Integer, primary_key=True)
-    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    creator_id = db.Column('creator_id', db.Integer, db.ForeignKey('users.id'))
     date = db.Column('date', db.DateTime)
     mode = db.Column('mode', db.SmallInteger, nullable=False,
                      default=ADVENTURES.RECREATIONAL)

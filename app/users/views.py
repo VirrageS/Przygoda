@@ -105,6 +105,7 @@ def logout():
     # everything okay so back
     return redirect(url_for('simple_page.index'))
 
+# Account
 @mod.route('/account/', methods=['GET', 'POST'])
 @login_required
 def account():
@@ -170,6 +171,7 @@ def lost():
 
     return render_template('users/lost.html', form=form)
 
+# Login authorization
 @mod.route('/authorize/<provider>')
 def oauth_authorize(provider):
     if not current_user.is_anonymous():
@@ -178,7 +180,7 @@ def oauth_authorize(provider):
     oauth = OAuthSignIn.get_provider(provider)
     return oauth.authorize()
 
-
+# Sign in callback
 @mod.route('/callback/<provider>')
 def oauth_callback(provider):
     if not current_user.is_anonymous():

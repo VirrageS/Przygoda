@@ -18,6 +18,6 @@ def send_email(to, subject, template):
 
 @celery.task
 def send_async_email(msg):
-    """Background task to send an email with Flask-Mail."""
+    """Background task to send an email with Flask-Mail"""
     with app.app_context():
         mail.send(msg)

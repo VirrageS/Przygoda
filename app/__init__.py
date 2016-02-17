@@ -30,15 +30,17 @@ babel = Babel(app)
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 # celery
-def make_celery(app):
-    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-    celery.conf.update(app.config)
+def make_celery(application):
+    celery = Celery(application.name,
+                    broker=application.config['CELERY_BROKER_URL'])
+    celery.conf.update(application.config)
     TaskBase = celery.Task
     class ContextTask(TaskBase):
         abstract = True
         def __call__(self, *args, **kwargs):
-            with app.app_context():
+            with application.app_context():
                 return TaskBase.__call__(self, *args, **kwargs)
+
     celery.Task = ContextTask
     return celery
 
@@ -50,10 +52,13 @@ if not app.config['DEBUG']:
     from logging.handlers import RotatingFileHandler
 
     try:
-        file_handler = RotatingFileHandler('logs/przygoda.log', 'a', 1 * 1024 * 1024, 10)
+        file_handler = RotatingFileHandler('logs/przygoda.log', 'a',
+                                           1 * 1024 * 1024, 10)
+
         file_handler.setLevel(logging.INFO)
         file_handler.setFormatter(
-            logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+            logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s \
+                               [in %(pathname)s:%(lineno)d]')
         )
 
         app.logger.setLevel(logging.INFO)
@@ -106,7 +111,7 @@ def get_locale():
 # login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'users.login'  # path to login (handel 'required_login')
+login_manager.login_view = 'users.login' # path to login
 login_manager.login_message = lazy_gettext(u'Please log in to access this page')
 login_manager.login_message_category = 'warning'
 
