@@ -114,16 +114,9 @@ def get_user_adventures():
     final_created_adventures = {}
     final_joined_adventures = {}
 
-    # get adventures created by user_id
-    created_adventures = Adventure.query.filter_by(
-        creator_id=user_id
-    ).order_by(Adventure.date.asc()).all()
-
-    # filter active
-    created_adventures = [
-        adventure for adventure in created_adventures
-            if adventure.is_active()
-    ]
+    # get all active adventures created by user_id
+    created_adventures = Adventure.objects.user_active_adventures(user_id)
+    sorted(created_adventures, key=(lambda a: a.date), reverse=False)
 
     for created_adventure in created_adventures:
         # get joined participants
@@ -131,7 +124,8 @@ def get_user_adventures():
         participants = created_adventure.get_participants()
 
         for participant in participants:
-            user_participant = User.query.filter_by(id=participant.user_id).first()
+            user_participant = User.query.filter_by(
+                id=participant.user_id).first()
 
             if user is not None:
                 final_participants[user_participant.id] = {
@@ -151,7 +145,9 @@ def get_user_adventures():
 
         # get all coordinates
         final_coordinates = {}
-        coordinates = Coordinate.query.filter_by(adventure_id=created_adventure.id).all()
+        coordinates = Coordinate.query.filter_by(
+            adventure_id=created_adventure.id).all()
+
         for coordinate in coordinates:
             final_coordinates[coordinate.path_point] = {
                 'latitude': coordinate.latitude,
@@ -332,11 +328,9 @@ def get_adventure(adventure_id):
 def get_all_adventures():
     final_adventures = {}
 
-    # get all adventures
-    adventures = Adventure.query.order_by(Adventure.date.asc()).all()
-
-    # filter active
-    adventures = [adventure for adventure in adventures if adventure.is_active()]
+    # get all active adventures
+    adventures = Adventure.objects.active_adventures()
+    sorted(adventures, key=(lambda a: a.date), reverse=False)
 
     for adventure in adventures:
         # get creator and check if exists

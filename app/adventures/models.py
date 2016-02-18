@@ -30,6 +30,15 @@ class AdventureManager():
                       for adventure in adventures if adventure.is_active()]
         return adventures
 
+    def user_joined_adventures(self, user_id):
+        # TODO: create
+        pass
+
+    def user_active_joined_adventures(self, user_id):
+        # TODO: create
+        pass
+
+
 class Adventure(db.Model):
     """Provides class model for Adventure
 

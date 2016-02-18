@@ -202,10 +202,8 @@ def my_adventures():
     final_joined_adventures = []
 
     # get all adventures which created user
-    created_adventures = Adventure.query.filter_by(creator_id=current_user.id)\
-                                  .order_by(Adventure.date.asc()).all()
-    created_adventures = [adventure for adventure in created_adventures
-                          if adventure.is_active()]
+    created_adventures = Adventure.objects.user_active_adventures(current_user.id)
+    sorted(created_adventures, key=(lambda a: a.date), reverse=False)
 
     for created_adventure in created_adventures:
         # get joined participants
