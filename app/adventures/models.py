@@ -31,12 +31,42 @@ class AdventureManager():
         return adventures
 
     def user_joined_adventures(self, user_id):
-        # TODO: create
-        pass
+        adventure_participated = AdventureParticipant.query.filter_by(
+            user_id=user_id).all()
+
+        all_adventures = []
+        for participant in adventure_participated:
+            if not participant.is_active():
+                continue
+
+            # get adventure in which user participated
+            adv = Adventure.query.filter_by(id=participant.adventure_id).first()
+            if adv is not None:
+                all_adventures.append(adv)
+
+        return all_adventures
 
     def user_active_joined_adventures(self, user_id):
-        # TODO: create
-        pass
+        adventures = self.user_joined_adventures(user_id)
+        adventures = [adventure
+                      for adventure in adventures if adventure.is_active()]
+        return adventures
+
+    def coordinates(self, adventure_id):
+        coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
+        return coordinates
+
+    def participants(self, adventure_id):
+        paritcipants = AdventureParticipant.query.filter_by(
+            adventure_id=adventure_id
+        ).all()
+        return paritcipants
+
+    def active_participants(self, adventure_id):
+        participants = self.adventure_participants(adventure_id)
+        participants = [participant for participant in participants
+                            if participant.is_active()]
+        return paritcipants
 
 
 class Adventure(db.Model):
