@@ -2,6 +2,7 @@ import os
 import unittest
 
 from datetime import datetime
+
 from app import app, db
 from app.friends.models import Friend
 from app.friends.models import FriendshipRequest, FriendshipManager

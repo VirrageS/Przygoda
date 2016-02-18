@@ -1,8 +1,13 @@
 import os
 import unittest
 
-from datetime import datetime
+from datetime import datetime, timedelta
+
 from app import app, db
+
+from app.users.models import User
+from werkzeug import generate_password_hash
+
 from app.adventures.models import Coordinate, AdventureParticipant
 from app.adventures.models import Adventure, AdventureManager
 from app.adventures import constants as ADVENTURES
@@ -204,7 +209,7 @@ class AdventureManagerTestCase(unittest.TestCase):
         db.session.commit()
 
         # user's adventures
-        for i in range(1, stop=5, step=1):
+        for i in range(1, 5):
             adventure = Adventure(
                 creator_id=user.id,
                 date=datetime.now() + timedelta(minutes=9),
@@ -216,7 +221,7 @@ class AdventureManagerTestCase(unittest.TestCase):
             db.session.commit()
 
         # not user's adventures
-        for i in range(1, stop=5, step=1):
+        for i in range(1, 5):
             adventure = Adventure(
                 creator_id=user.id + 1,
                 date=datetime.now() + timedelta(minutes=9),
@@ -250,7 +255,7 @@ class AdventureManagerTestCase(unittest.TestCase):
         db.session.commit()
 
         # user's active adventures
-        for i in range(1, stop=5, step=1):
+        for i in range(1, 5):
             adventure = Adventure(
                 creator_id=user.id,
                 date=datetime.now() + timedelta(minutes=9),
@@ -262,7 +267,7 @@ class AdventureManagerTestCase(unittest.TestCase):
             db.session.commit()
 
         # user's non active adventures
-        for i in range(1, stop=5, step=1):
+        for i in range(1, 5):
             adventure = Adventure(
                 creator_id=user.id,
                 date=datetime.now() + timedelta(minutes=-9),
@@ -274,7 +279,7 @@ class AdventureManagerTestCase(unittest.TestCase):
             db.session.commit()
 
         # not user's adventures
-        for i in range(1, stop=5, step=1):
+        for i in range(1, 5):
             adventure = Adventure(
                 creator_id=user.id + 1,
                 date=datetime.now() + timedelta(minutes=9),

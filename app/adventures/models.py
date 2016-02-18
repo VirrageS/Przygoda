@@ -18,14 +18,14 @@ class AdventureManager():
                       for adventure in adventures if adventure.is_active()]
         return adventures
 
-    def user_adventures(self, user):
+    def user_adventures(self, user_id):
         """Returns a list of all adventures created by specific user"""
-        adventures = Adventure.query.filter_by(creator_id=user.id)
+        adventures = Adventure.query.filter_by(creator_id=user_id).all()
         return adventures
 
-    def user_active_adventures(self, user):
+    def user_active_adventures(self, user_id):
         """Returns a list of all active adventures created by specific user"""
-        adventures = Adventure.query.filter_by(created_id=user.id)
+        adventures = Adventure.query.filter_by(creator_id=user_id).all()
         adventures = [adventure
                       for adventure in adventures if adventure.is_active()]
         return adventures

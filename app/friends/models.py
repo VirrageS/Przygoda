@@ -59,10 +59,9 @@ class FriendshipManager():
     """ Friendship manager """
 
     def friends(self, user_id):
-        """Returns a list of all friends"""
+        """Returns a list of all friends ids"""
         friends = Friend.query.filter_by(to_user=user_id).all()
-        # NOTE: should it be ids? or full users?
-        # friends = [u.from_user for u in friends]
+        friends = [u.from_user for u in friends]
         return friends
 
     def requests(self, user_id):
@@ -193,7 +192,6 @@ class Friend(db.Model):
     def __init__(self, from_user, to_user):
         self.from_user = from_user
         self.to_user = to_user
-        self.created_on = created_on
 
     def save(self, *args, **kwargs):
         # Ensure users cannot be friends with themselves
