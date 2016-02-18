@@ -8,9 +8,9 @@ from app.friends.models import FriendshipRequest, FriendshipManager
 
 
 class FriendTestCase(unittest.TestCase):
-	def setUp(self):
-		app.config.from_object('config.TestingConfig')
-		self.app = app.test_client()
+    def setUp(self):
+        app.config.from_object('config.TestingConfig')
+        self.app = app.test_client()
 
     def test_friend_from_user(self):
         friend = Friend(from_user=1, to_user=2)

@@ -277,7 +277,7 @@ class AdventureManagerTestCase(unittest.TestCase):
         for i in range(1, stop=5, step=1):
             adventure = Adventure(
                 creator_id=user.id + 1,
-                date=datetime.now() + timedelta(minutes=9)
+                date=datetime.now() + timedelta(minutes=9),
                 mode=ADVENTURES.RECREATIONAL,
                 info='Info'
             )
