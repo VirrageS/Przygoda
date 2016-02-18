@@ -23,7 +23,7 @@ class AdventureManager():
         adventures = Adventure.query.filter_by(creator_id=user.id)
         return adventures
 
-    def active_user_adventures(self, user):
+    def user_active_adventures(self, user):
         """Returns a list of all active adventures created by specific user"""
         adventures = Adventure.query.filter_by(created_id=user.id)
         adventures = [adventure
@@ -51,6 +51,8 @@ class Adventure(db.Model):
     deleted = db.Column('deleted', db.Boolean, nullable=False, default=False)
     deleted_on = db.Column('deleted_on', db.DateTime, nullable=True)
 
+    objects = AdventureManager()
+
     def __init__(self, creator_id, date, mode, info):
         self.creator_id = creator_id
         self.date = date
@@ -76,8 +78,7 @@ class Adventure(db.Model):
         ).all()
 
         participants = [participant for participant in participants
-                        if participant.is_active()]
-
+                            if participant.is_active()]
         return participants
 
 

@@ -58,135 +58,125 @@ class FriendshipRequest(db.Model):
 class FriendshipManager():
     """ Friendship manager """
 
-    def friends(self, user):
-        """ Return a list of all friends """
-        qs = Friend.objects.select_related('from_user', 'to_user').filter(to_user=user).all()
-        friends = [u.from_user for u in qs]
+    def friends(self, user_id):
+        """Returns a list of all friends"""
+        friends = Friend.query.filter_by(to_user=user_id).all()
+        # NOTE: should it be ids? or full users?
+        # friends = [u.from_user for u in friends]
         return friends
 
-    def requests(self, user):
-        """ Return a list of friendship requests """
-        qs = FriendshipRequest.objects.select_related('from_user', 'to_user').filter(
-            to_user=user).all()
-        requests = list(qs)
+    def requests(self, user_id):
+        """Return a list of friendship requests"""
+        requests = FriendshipRequest.query.filter_by(to_user=user_id).all()
         return requests
 
-    def sent_requests(self, user):
-        """ Return a list of friendship requests from user """
-        requests = FriendshipRequest.query.filter_by(from_user=user).all()
+    def sent_requests(self, user_id):
+        """Returns a list of friendship requests from user"""
+        requests = FriendshipRequest.query.filter_by(from_user=user_id).all()
         return requests
 
-    def unread_requests(self, user):
-        """ Return a list of unread friendship requests """
-        qs = FriendshipRequest.objects.select_related('from_user', 'to_user').filter(
-            to_user=user,
-            viewed__isnull=True).all()
-        unread_requests = list(qs)
+    def unread_requests(self, user_id):
+        """Returns a list of unread friendship requests"""
+        unread_requests = FriendshipRequest.query.filter_by(
+            to_user=user_id
+        ).all()
+
+        unread_requests = [request for request in unread_requests
+                              if request.viewed_on is None]
         return unread_requests
 
-    def unread_request_count(self, user):
-        """ Return a count of unread friendship requests """
-        count = FriendshipRequest.objects.select_related('from_user', 'to_user').filter(
-            to_user=user,
-            viewed__isnull=True).count()
-        return count
+    def unread_request_count(self, user_id):
+        """Returns a count of unread friendship requests"""
+        return len(self.unread_requests(user_id))
 
-    def read_requests(self, user):
-        """ Return a list of read friendship requests """
-        qs = FriendshipRequest.objects.select_related('from_user', 'to_user').filter(
-            to_user=user,
-            viewed__isnull=False).all()
-        read_requests = list(qs)
+    def read_requests(self, user_id):
+        """Returns a list of read friendship requests"""
+        read_requests = FriendshipRequest.query.filter_by(to_user=user_id).all()
+        read_requests = [request for request in read_requests
+                            if request.viewed_on is not None]
         return read_requests
 
-    def rejected_requests(self, user):
-        """ Return a list of rejected friendship requests """
-        qs = FriendshipRequest.objects.select_related('from_user', 'to_user').filter(
-            to_user=user,
-            rejected__isnull=False).all()
-        rejected_requests = list(qs)
+    def rejected_requests(self, user_id):
+        """Returns a list of rejected friendship requests"""
+        rejected_requests = FriendshipRequest.query.filter_by(
+            to_user=user_id
+        ).all()
+
+        rejected_requests = [request for request in rejected_requests
+                                if request.rejected_on is not None]
         return rejected_requests
 
-    def unrejected_requests(self, user):
-        """ All requests that haven't been rejected """
-        key = cache_key('unrejected_requests', user.pk)
-        unrejected_requests = cache.get(key)
+    def unrejected_requests(self, user_id):
+        """Returns all requests that have not been rejected"""
+        requests = FriendshipRequest.query.filter_by(to_user=user_id).all()
+        requests = [request for request in requests
+                        if request.rejected_on is None]
+        return requests
 
-        if unrejected_requests is None:
-            qs = FriendshipRequest.objects.select_related('from_user', 'to_user').filter(
-                to_user=user,
-                rejected__isnull=True).all()
-            unrejected_requests = list(qs)
-            cache.set(key, unrejected_requests)
+    def unrejected_request_count(self, user_id):
+        """Returns a count of unrejected friendship requests"""
+        return len(self.unrejected_requests())
 
-        return unrejected_requests
+    # def add_friend(self, from_user, to_user, message=None):
+    #     """ Create a friendship request """
+    #     if from_user == to_user:
+    #         raise ValidationError("Users cannot be friends with themselves")
+    #
+    #     if self.are_friends(from_user, to_user):
+    #         raise AlreadyFriendsError("Users are already friends")
+    #
+    #     if message is None:
+    #         message = ''
+    #
+    #     request, created = FriendshipRequest.objects.get_or_create(
+    #         from_user=from_user,
+    #         to_user=to_user,
+    #     )
+    #
+    #     if created is False:
+    #         raise AlreadyExistsError("Friendship already requested")
+    #
+    #     if message:
+    #         request.message = message
+    #         request.save()
+    #
+    #     bust_cache('requests', to_user.pk)
+    #     bust_cache('sent_requests', from_user.pk)
+    #     friendship_request_created.send(sender=request)
+    #
+    #     return request
 
-    def unrejected_request_count(self, user):
-        """ Return a count of unrejected friendship requests """
-        count = FriendshipRequest.objects.select_related('from_user', 'to_user').filter(
-            to_user=user,
-            rejected__isnull=True).count()
-        return count
+    # def remove_friend(self, to_user, from_user):
+    #     """Destroy a friendship relationship"""
+    #     try:
+    #         qs = Friend.objects.filter(
+    #             Q(to_user=to_user, from_user=from_user) |
+    #             Q(to_user=from_user, from_user=to_user)
+    #         ).distinct().all()
+    #
+    #         if qs:
+    #             friendship_removed.send(
+    #                 sender=qs[0],
+    #                 from_user=from_user,
+    #                 to_user=to_user
+    #             )
+    #             qs.delete()
+    #             bust_cache('friends', to_user.pk)
+    #             bust_cache('friends', from_user.pk)
+    #             return True
+    #         else:
+    #             return False
+    #     except Friend.DoesNotExist:
+    #         return False
 
-    def add_friend(self, from_user, to_user, message=None):
-        """ Create a friendship request """
-        if from_user == to_user:
-            raise ValidationError("Users cannot be friends with themselves")
+    def are_friends(self, user1_id, user2_id):
+        """Checks if these two users are friends"""
+        friends = Friend.query.filter_by(
+            to_user=user1_id,
+            from_user=user2_id
+        ).all()
 
-        if self.are_friends(from_user, to_user):
-            raise AlreadyFriendsError("Users are already friends")
-
-        if message is None:
-            message = ''
-
-        request, created = FriendshipRequest.objects.get_or_create(
-            from_user=from_user,
-            to_user=to_user,
-        )
-
-        if created is False:
-            raise AlreadyExistsError("Friendship already requested")
-
-        if message:
-            request.message = message
-            request.save()
-
-        bust_cache('requests', to_user.pk)
-        bust_cache('sent_requests', from_user.pk)
-        friendship_request_created.send(sender=request)
-
-        return request
-
-    def remove_friend(self, to_user, from_user):
-        """ Destroy a friendship relationship """
-        try:
-            qs = Friend.objects.filter(
-                Q(to_user=to_user, from_user=from_user) |
-                Q(to_user=from_user, from_user=to_user)
-            ).distinct().all()
-
-            if qs:
-                friendship_removed.send(
-                    sender=qs[0],
-                    from_user=from_user,
-                    to_user=to_user
-                )
-                qs.delete()
-                bust_cache('friends', to_user.pk)
-                bust_cache('friends', from_user.pk)
-                return True
-            else:
-                return False
-        except Friend.DoesNotExist:
-            return False
-
-    def are_friends(self, user1, user2):
-        """ Are these two users friends? """
-        try:
-            Friend.objects.get(to_user=user1, from_user=user2)
-            return True
-        except Friend.DoesNotExist:
-            return False
+        return (friends and len(friends) > 0)
 
 class Friend(db.Model):
     """Represents friendship between 2 users
@@ -197,6 +187,8 @@ class Friend(db.Model):
     from_user = db.Column('from_user', db.Integer, db.ForeignKey('users.id'))
     to_user = db.Column('to_user', db.Integer, db.ForeignKey('users.id'))
     created_on = db.Column('created_on', db.DateTime, default=datetime.now())
+
+    objects = FriendshipManager()
 
     def __init__(self, from_user, to_user):
         self.from_user = from_user

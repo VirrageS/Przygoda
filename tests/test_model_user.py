@@ -11,19 +11,35 @@ class UserTestCase(unittest.TestCase):
         self.app = app.test_client()
 
     def test_user_username(self):
-        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        u = User(
+            username='john',
+            password=generate_password_hash('a'),
+            email='john@example.com'
+        )
         assert u.username == 'john'
 
     def test_user_password(self):
-        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        u = User(
+            username='john',
+            password=generate_password_hash('a'),
+            email='john@example.com'
+        )
         assert check_password_hash(u.password, 'a')
 
     def test_user_email(self):
-        u = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        u = User(
+            username='john',
+            password=generate_password_hash('a'),
+            email='john@example.com'
+        )
         assert u.email == 'john@example.com'
 
     def test_user_social_id(self):
-        user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        user = User(
+            username='john',
+            password=generate_password_hash('a'),
+            email='john@example.com'
+        )
         self.assertIn('facebook$john', user.social_id)
 
         user = User(
