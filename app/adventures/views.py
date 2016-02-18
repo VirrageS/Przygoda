@@ -59,14 +59,7 @@ def show(adventure_id):
         return redirect(url_for('simple_page.index'))
 
     # get joined participants
-    participants = adventure.get_participants()
-
-    for participant in participants:
-        user = User.query.filter_by(id=participant.user_id).first()
-
-        if user is not None:
-            final_participants.append(user)
-
+    final_participants = Adventure.objects.active_participants(adventure.id)
 
     # get avaiable action
     action = 'no-action'
@@ -89,7 +82,7 @@ def show(adventure_id):
         'username': user.username,
         'date': adventure.date,
         'info': adventure.info,
-        'joined': len(participants),
+        'joined': len(final_participants),
         'action': action
     }
 
@@ -265,7 +258,7 @@ def edit(adventure_id=0):
         return redirect(url_for('simple_page.index'))
 
     # get joined participants
-    final_participants = adventure.get_participants()
+    final_participants = Adventure.objects.active_participants(adventure_id)
 
     # get form
     form = EditForm(request.form, obj=adventure)

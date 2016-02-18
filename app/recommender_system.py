@@ -48,7 +48,7 @@ def get_adventures_by_friends(user_id):
     friends_ids = set() # set of friends user_ids
 
     # get all adventures to which user joined
-    user_joined_adventures = Adventure.objects.user_joined_adventures()
+    user_joined_adventures = Adventure.objects.user_joined_adventures(user_id)
 
     for adventure in user_joined_adventures:
         # check if creator exists
@@ -57,7 +57,7 @@ def get_adventures_by_friends(user_id):
             continue
 
         # get active participants
-        participants = Adventure.objects.active_participants()
+        participants = Adventure.objects.active_participants(adventure.id)
 
         # save participants as a friends
         for participant in participants:
@@ -101,9 +101,9 @@ def get_adventures_by_partcipants_number():
     results = []
 
     # get all active adventures
-    adventure = Adventure.objects.active_adventures()
+    adventures = Adventure.objects.active_adventures()
     for adventure in adventures:
-        paritcipants = Adventure.objects.participants(adventure.id)
+        participants = Adventure.objects.participants(adventure.id)
         results.append({
             'adventure_id': adventure.id,
             'partcipants_number': len(participants)
@@ -181,7 +181,7 @@ def get_adventures_by_mode(user_id):
     final_results = {}
 
     # get all adventures to which user joined
-    user_joined_adventures = Adventure.objects.user_joined_adventures()
+    user_joined_adventures = Adventure.objects.user_joined_adventures(user_id)
 
     for adventure in user_joined_adventures:
         # check if creator exists
@@ -204,12 +204,20 @@ def get_adventures_by_mode(user_id):
 # @execution_time
 def get_recommended_adventures(user_id, user_position=None):
     # get all active adventures which has been created lately
-    most_recent = Adventure.objects.active_adventures()
-    sorted(most_recent, key=(lambda a: a.created_on), reverse=True)
+    most_recent = []
+    try:
+        most_recent = Adventure.objects.active_adventures()
+        sorted(most_recent, key=(lambda a: a.created_on), reverse=True)
+    except:
+        pass
 
     # get all active adventures which starts soon
-    start_soon = Adventure.objects.active_adventures()
-    sorted(start_soon, key=(lambda a: a.date), reverse=False)
+    start_soon = []
+    try:
+        start_soon = Adventure.objects.active_adventures()
+        sorted(start_soon, key=(lambda a: a.date), reverse=False)
+    except:
+        pass
 
     # if user is not logged we should not compute top_adventures
     if user_id is None:
@@ -238,9 +246,13 @@ def get_recommended_adventures(user_id, user_position=None):
 
     # get all active adventures
     # filter adventures which user has not created
-    adventures = Adventure.objects.active_adventures()
-    adventures = [adventure for adventure in adventures
-                    if adventure.creator_id != user_id]
+    adventures = []
+    try:
+        adventures = Adventure.objects.active_adventures()
+        adventures = [adventure for adventure in adventures
+                        if adventure.creator_id != user_id]
+    except:
+        pass
 
     # get only adventures to which user has not joined
     tmp_adventures = []

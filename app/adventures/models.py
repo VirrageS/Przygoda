@@ -3,6 +3,8 @@ from app.adventures import constants as ADVENTURES
 
 from datetime import datetime
 
+from app.users.models import User
+
 class AdventureManager():
     """Adventure manager"""
 
@@ -57,16 +59,23 @@ class AdventureManager():
         return coordinates
 
     def participants(self, adventure_id):
-        paritcipants = AdventureParticipant.query.filter_by(
+        participants = AdventureParticipant.query.filter_by(
             adventure_id=adventure_id
         ).all()
-        return paritcipants
+        return participants
 
     def active_participants(self, adventure_id):
-        participants = self.adventure_participants(adventure_id)
+        participants = self.participants(adventure_id)
         participants = [participant for participant in participants
                             if participant.is_active()]
-        return paritcipants
+
+        users = []
+        for participant in participants:
+            user = User.query.filter_by(id=participant.user_id).first()
+            if user is not None:
+                users.append(user)
+
+        return users
 
 
 class Adventure(db.Model):

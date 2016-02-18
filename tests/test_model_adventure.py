@@ -133,7 +133,7 @@ class AdventureManagerTestCase(unittest.TestCase):
         app.config['LIVESERVER_PORT'] = 8943
         return app
 
-    def test_adventure_manager_get_all_adventures(self):
+    def test_adventure_manager_get_adventures(self):
         ids = [1,2,3,4,5]
         for cid in ids:
             adventure = Adventure(
@@ -155,7 +155,7 @@ class AdventureManagerTestCase(unittest.TestCase):
             assert adventure.creator_id in ids
 
 
-    def test_adventure_manager_get_all_active_adventures(self):
+    def test_adventure_manager_get_active_adventures(self):
         active = [1,2]
         non_active = [3,4,5]
 
@@ -198,7 +198,7 @@ class AdventureManagerTestCase(unittest.TestCase):
             self.assertIn(adventure.creator_id, (active + non_active))
 
 
-    def test_adventure_manager_get_all_user_adventures(self):
+    def test_adventure_manager_get_user_adventures(self):
         user = User(
             username='john',
             password=generate_password_hash('a'),
@@ -244,7 +244,7 @@ class AdventureManagerTestCase(unittest.TestCase):
             self.assertEqual(adventure.creator_id, user.id, msg=None)
 
 
-    def test_adventure_manager_get_all_user_active_adventures(self):
+    def test_adventure_manager_get_user_active_adventures(self):
         user = User(
             username='john',
             password=generate_password_hash('a'),
@@ -309,3 +309,18 @@ class AdventureManagerTestCase(unittest.TestCase):
             self.assertIsNotNone(adventure, msg=None)
             self.assertEqual(adventure.creator_id, user.id, msg=None)
             self.assertEqual(adventure.info, 'active', msg=None)
+
+    def test_adventure_manager_get_coordinates(self):
+        pass
+
+    def test_adventure_manager_get_participants(self):
+        pass
+
+    def test_adventure_manager_get_active_participants(self):
+        pass
+
+    def test_adventure_manager_get_user_joined_adventures(self):
+        pass
+
+    def test_adventure_manager_get_user_active_joined_adventures(self):
+        pass
