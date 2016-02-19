@@ -1,8 +1,8 @@
 from app import db
 from app.adventures import constants as ADVENTURES
+from app.adventures.exceptions import AlreadyParticipantError
 
 from datetime import datetime
-
 from app.users.models import User
 
 class AdventureManager():
@@ -48,10 +48,11 @@ class AdventureManager():
 
         return all_adventures
 
-    def user_active_joined_adventures(self, user_id):
+    def user_joined_active_adventures(self, user_id):
         adventures = self.user_joined_adventures(user_id)
         adventures = [adventure
-                      for adventure in adventures if adventure.is_active()]
+                      for adventure in adventures
+                      if adventure.is_active()]
         return adventures
 
     def coordinates(self, adventure_id):
@@ -62,12 +63,6 @@ class AdventureManager():
         participants = AdventureParticipant.query.filter_by(
             adventure_id=adventure_id
         ).all()
-        return participants
-
-    def active_participants(self, adventure_id):
-        participants = self.participants(adventure_id)
-        participants = [participant for participant in participants
-                            if participant.is_active()]
 
         users = []
         for participant in participants:
@@ -77,9 +72,71 @@ class AdventureManager():
 
         return users
 
+    def active_participants(self, adventure_id):
+        participants = AdventureParticipant.query.filter_by(
+            adventure_id=adventure_id
+        ).all()
+
+        participants = [participant
+                        for participant in participants
+                        if participant.is_active()]
+
+        users = []
+        for participant in participants:
+            user = User.query.filter_by(id=participant.user_id).first()
+            if user is not None:
+                users.append(user)
+
+        return users
+
+    def add_participant(self, adventure_id, user_id):
+        """Adds user as participant to adventure"""
+        # NOTE: should we check if adventure is active and exists?
+
+        participant = AdventureParticipant.query.filter_by(
+            adventure_id=adventure_id,
+            user_id=user_id
+        ).first()
+
+        # check if participant is in this adventure
+        if participant is None:
+            participant = AdventureParticipant(
+                adventure_id=adventure_id,
+                user_id=user_id
+            )
+
+            db.session.add(participant)
+            db.session.commit()
+            return True
+
+        # check if participant is active (we cannot add them one more time)
+        if participant.is_active():
+            raise AlreadyParticipantError("User is arleady participant")
+
+        participant.left_on = None
+        participant.joined_on = datetime.now()
+        db.session.add(participant)
+        db.session.commit()
+        return True
+
+    def remove_participant(self, adventure_id, user_id):
+        """Removes user as participant from adventure"""
+        participant = AdventureParticipant.query.filter_by(
+            adventure_id=adventure_id,
+            user_id=user_id
+        ).first()
+
+        # checks if user is already no longer adventure participant
+        if (participant is None) or (not participant.is_active()):
+            return False
+
+        participant.left_on = datetime.now()
+        db.session.commit()
+        return True
 
 class Adventure(db.Model):
-    """Provides class model for Adventure
+    """
+    Provides class model for Adventure
 
     Adventure is a main class in system which represents all
     necessary infomartions about

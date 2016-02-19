@@ -1,0 +1,2 @@
+class AlreadyParticipantError(Exception):
+    pass
