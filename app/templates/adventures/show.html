@@ -2,139 +2,139 @@
 {% extends "layout.html" %}
 
 {% block body %}
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp?language=pl?key=AIzaSyD9ryFHC07cVPEgeKlRG-wFHRgF9dTPPL8"></script>
-	<script>
-		var rendererOptions = {
-    		suppressBicyclingLayer: true,
-			suppressMarkers : true
-		};
-		var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
-		var directionsService = new google.maps.DirectionsService();
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp?language=pl?key=AIzaSyD9ryFHC07cVPEgeKlRG-wFHRgF9dTPPL8"></script>
+    <script>
+        var rendererOptions = {
+            suppressBicyclingLayer: true,
+            suppressMarkers : true
+        };
+        var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
+        var directionsService = new google.maps.DirectionsService();
 
-		var map;
+        var map;
 
-		function initialize() {
-		    var mapOptions = {
-		        zoom: 13,
-		        center: new google.maps.LatLng(52.229937, 21.011380),
-		        mapTypeId: google.maps.MapTypeId.ROADMAP
-		    };
+        function initialize() {
+            var mapOptions = {
+                zoom: 13,
+                center: new google.maps.LatLng(52.229937, 21.011380),
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
 
-		    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-		    directionsDisplay.setMap(map);
+            map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+            directionsDisplay.setMap(map);
 
-		    google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
-				// show total distance
-				computeTotalDistance(directionsDisplay.getDirections());
-		    });
+            google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+                // show total distance
+                computeTotalDistance(directionsDisplay.getDirections());
+            });
 
-			// show route on map
-		    showRoute();
-		}
+            // show route on map
+            showRoute();
+        }
 
-		function showRoute() {
-			var waypoints = [];
-			{%- for marker in markers %}
-				{% if loop.first -%}
-					var origin = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
-				{%- elif loop.last -%}
-					var destination = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
-				{%- else -%}
-					waypoints.push({location: new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }}), stopover: true});
-				{%- endif %}
-			{%- endfor %}
+        function showRoute() {
+            var waypoints = [];
+            {%- for marker in markers %}
+                {% if loop.first -%}
+                    var origin = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
+                {%- elif loop.last -%}
+                    var destination = new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }});
+                {%- else -%}
+                    waypoints.push({location: new google.maps.LatLng({{ marker[0]|tojson|safe }}, {{ marker[1]|tojson|safe }}), stopover: true});
+                {%- endif %}
+            {%- endfor %}
 
-			var request = {
-		        origin: origin,
-		        destination: destination,
-		        waypoints: waypoints,
-				optimizeWaypoints: false,
-		        travelMode: google.maps.TravelMode.BICYCLING // BICYCLING
-		    };
+            var request = {
+                origin: origin,
+                destination: destination,
+                waypoints: waypoints,
+                optimizeWaypoints: false,
+                travelMode: google.maps.TravelMode.BICYCLING // BICYCLING
+            };
 
-			directionsService.route(request, function(response, status) {
-		        if (status == google.maps.DirectionsStatus.OK) {
-		            directionsDisplay.setDirections(response);
+            directionsService.route(request, function(response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
 
-					// add start and end marker to map with description
-					addMarker(origin, 'Start', 'http://maps.google.com/mapfiles/ms/icons/red-dot.png');
-					addMarker(destination, 'Koniec', 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
-		        }
-		    });
-		}
+                    // add start and end marker to map with description
+                    addMarker(origin, 'Start', 'http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+                    addMarker(destination, 'Koniec', 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+                }
+            });
+        }
 
-		function addMarker(markerPosition, title, icon) {
-			var marker = new google.maps.Marker({
-				position: markerPosition,
-				map: map,
-				title: title,
-				icon: icon
-			});
+        function addMarker(markerPosition, title, icon) {
+            var marker = new google.maps.Marker({
+                position: markerPosition,
+                map: map,
+                title: title,
+                icon: icon
+            });
 
-			google.maps.event.addListener(marker, 'click', function() {
-				infowindow.open(map,marker);
-			});
+            google.maps.event.addListener(marker, 'click', function() {
+                infowindow.open(map, marker);
+            });
 
-			var infowindow = new google.maps.InfoWindow({
-		    	content: title
-			});
-		}
+            var infowindow = new google.maps.InfoWindow({
+                content: title
+            });
+        }
 
-		function computeTotalDistance(result) {
-		    var total = 0;
-		    var myroute = result.routes[0];
-		    for (var i = 0; i < myroute.legs.length; i++) {
-		        total += myroute.legs[i].distance.value;
-		    }
+        function computeTotalDistance(result) {
+            var total = 0;
+            var myroute = result.routes[0];
+            for (var i = 0; i < myroute.legs.length; i++) {
+                total += myroute.legs[i].distance.value;
+            }
 
-		    total = total / 1000.0;
-		    document.getElementById('total-distance').innerHTML = total + ' km';
-		}
+            total = total / 1000.0;
+            document.getElementById('total-distance').innerHTML = total + ' km';
+        }
 
-		google.maps.event.addDomListener(window, 'load', initialize);
-	</script>
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
 
-	<h2>{{ _('Adventure') }} #{{ adventure.id|safe }}</h2>
-	<br><br>
-	<div id="map-canvas"></div>
-	<br>
-	<div class="panel panel-info">
-		<div class="panel-heading">{{ _('Informations') }}</div>
-		<ul class="list-group">
-			<li class="list-group-item">{{ _('Route length') }}: <b><div id="total-distance" style="display: inline;">0 km</div></b></li>
-			<li class="list-group-item">{{ _('Creator') }}: <b>{{ adventure.username|safe }}</b></li>
-			<li class="list-group-item">{{ _('Date') }}: <b>{{ adventure.date|safe }}</b></li>
-			<li class="list-group-item" style="word-break: break-all;">{{ _('Informations') }}: <b>{{ adventure.info|safe }}</b></li>
-			<li class="list-group-item">{{ _('Action') }}:
-				<b style="text-transform: lowercase;">
-				{% if adventure.action == 'no-action' %}
-					{{ _('No action') }}
-				{% elif adventure.action == 'join' %}
-					<a href="/adventures/join/{{ adventure.id|safe }}">{{ _('Join') }}</a>
-				{% elif adventure.action == 'leave' %}
-					<a href="/adventures/leave/{{ adventure.id|safe }}">{{ _('Leave') }}</a>
-				{% elif adventure.action == 'manage' %}
-					<a href="/adventures/edit/{{ adventure.id|safe }}">{{ _('Edit') }}</a> | <a href="/adventures/delete/{{ adventure.id|safe }}">{{ _('Delete') }}</a>
-				{% endif %}
-				</b>
-			</li>
-		</ul>
-	</div>
-	<div class="panel panel-info">
-		<div class="panel-heading">{{ _('Participants') }}</div>
-		<ul class="list-group">
-			{% if (participants is defined) and participants %}
-				{% for participant in participants %}
-					<li class="list-group-item">
-						{{ participant.username|safe }}
-					</li>
-				{% endfor %}
-			{% else %}
-				<li class="list-group-item">
-					<span class="glyphicon glyphicon-remove" style="color:#FF0000; padding-right: 15px;"></span>
-					{{ _('No one has joined this Adventure yet') }}
-				</li>
-			{% endif %}
-		</ul>
-	</div>
+    <h2>{{ _('Adventure') }} #{{ adventure.id|safe }}</h2>
+    <br><br>
+    <div id="map-canvas"></div>
+    <br>
+    <div class="panel panel-info">
+        <div class="panel-heading">{{ _('Informations') }}</div>
+        <ul class="list-group">
+            <li class="list-group-item">{{ _('Route length') }}: <b><div id="total-distance" style="display: inline;">0 km</div></b></li>
+            <li class="list-group-item">{{ _('Creator') }}: <b>{{ adventure.creator|safe }}</b></li>
+            <li class="list-group-item">{{ _('Date') }}: <b>{{ adventure.date|safe }}</b></li>
+            <li class="list-group-item" style="word-break: break-all;">{{ _('Informations') }}: <b>{{ adventure.info|safe }}</b></li>
+            <li class="list-group-item">{{ _('Action') }}:
+                <b style="text-transform: lowercase;">
+                {% if adventure.action == 'no-action' %}
+                    {{ _('No action') }}
+                {% elif adventure.action == 'join' %}
+                    <a href="/adventures/join/{{ adventure.id|safe }}">{{ _('Join') }}</a>
+                {% elif adventure.action == 'leave' %}
+                    <a href="/adventures/leave/{{ adventure.id|safe }}">{{ _('Leave') }}</a>
+                {% elif adventure.action == 'manage' %}
+                    <a href="/adventures/edit/{{ adventure.id|safe }}">{{ _('Edit') }}</a> | <a href="/adventures/delete/{{ adventure.id|safe }}">{{ _('Delete') }}</a>
+                {% endif %}
+                </b>
+            </li>
+        </ul>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">{{ _('Participants') }}</div>
+        <ul class="list-group">
+            {% if (participants is defined) and participants %}
+                {% for participant in participants %}
+                    <li class="list-group-item">
+                        {{ participant.username|safe }}
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item">
+                    <span class="glyphicon glyphicon-remove" style="color:#FF0000; padding-right: 15px;"></span>
+                    {{ _('No one has joined this Adventure yet') }}
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 {% endblock %}

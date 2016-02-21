@@ -487,6 +487,56 @@ class AdventureManagerTestCase(unittest.TestCase):
             self.assertIsNotNone(adventure, msg=None)
             self.assertIsInstance(adventure, Adventure, msg=None)
 
+    def test_adventure_manager_get_user_joined_adventures_not_active(self):
+        adventures_number = 10
+        for i in range(0, adventures_number):
+            adventure = Adventure(
+                creator_id=1,
+                date=datetime.now() + timedelta(minutes=9),
+                mode=ADVENTURES.RECREATIONAL,
+                info='Info'
+            )
+
+            db.session.add(adventure)
+            db.session.commit()
+
+        adventures = Adventure.objects.adventures()
+
+        user = User(
+            username='asdf'+str(i),
+            password=generate_password_hash('a'),
+            email='asdf@example.com'+str(i)
+        )
+
+        db.session.add(user)
+        db.session.commit()
+
+        joined_adventures_number = 5
+        for i in range(0, joined_adventures_number):
+            added = Adventure.objects.add_participant(adventures[i].id, user.id)
+            self.assertTrue(added, msg=None)
+
+        # add user and the remove to make it non active participant
+        added = Adventure.objects.add_participant(
+            adventures[joined_adventures_number].id,
+            user.id
+        )
+        removed = Adventure.objects.remove_participant(
+            adventures[joined_adventures_number].id,
+            user.id
+        )
+
+        self.assertTrue(added, msg=None)
+        self.assertTrue(removed, msg=None)
+
+        joined_adventures = Adventure.objects.user_joined_adventures(user.id)
+        self.assertIsNotNone(joined_adventures, msg=None)
+        self.assertEqual(len(joined_adventures), joined_adventures_number)
+
+        for adventure in joined_adventures:
+            self.assertIsNotNone(adventure, msg=None)
+            self.assertIsInstance(adventure, Adventure, msg=None)
+
     def test_adventure_manager_get_user_joined_active_adventures(self):
         adventures_number = 20
         for i in range(0, adventures_number):

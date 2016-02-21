@@ -53,8 +53,8 @@ def show(adventure_id):
         return redirect(url_for('simple_page.index'))
 
     # get adventures creator and check if exists
-    user = User.query.filter_by(id=adventure.creator_id).first()
-    if user is None:
+    creator = User.query.filter_by(id=adventure.creator_id).first()
+    if creator is None:
         flash(gettext(u'Creator not found'), 'danger')
         return redirect(url_for('simple_page.index'))
 
@@ -79,7 +79,7 @@ def show(adventure_id):
 
     final_adventure = {
         'id': adventure.id,
-        'username': user.username,
+        'creator': creator.username,
         'date': adventure.date,
         'info': adventure.info,
         'joined': len(final_participants),
@@ -93,6 +93,7 @@ def show(adventure_id):
     db.session.commit()
 
     # get coordinates of existing points
+    coordinates = Adventure.objects.coordinates(adventure_id=adventure_id)
     coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
     final_coordinates = [(coordinate.latitude, coordinate.longitude)
                          for coordinate in coordinates]
