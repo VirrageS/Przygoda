@@ -21,6 +21,7 @@ virtualenv env;
 . ./env/bin/activate;
 pip3 install psycopg2;
 pip3 install -r requirements.txt;
+pip3 install --upgrade -r requirements.txt;
 deactivate;
 
 sudo touch /etc/init/$PROJECT_NAME.conf;
