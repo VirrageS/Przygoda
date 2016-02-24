@@ -7,12 +7,12 @@ USER=ubuntu
 sudo stop przygoda;
 sudo service nginx stop;
 
+# stop celery
+sudo ps auxww | grep 'celery worker' | awk '{print $2}' | xargs kill -9
+
 # stop redis
 sudo apt-get install redis-tools
 sudo redis-cli shutdown
-
-# stop celery
-sudo ps auxww | grep 'celery worker' | awk '{print $2}' | xargs kill -9
 
 # remove all client/server files
 sudo rm -f /etc/init/$PROJECT_NAME.conf
