@@ -25,4 +25,5 @@ else
     sudo ./src/redis-server ../redis.conf
 fi
 
+cd ..
 echo "Redis - Ready"
