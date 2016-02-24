@@ -3,8 +3,8 @@
 from flask import Blueprint, request, render_template
 from flask import flash, redirect, url_for, jsonify
 
-from flask.ext.login import current_user
-from flask.ext.babel import gettext
+from flask_login import current_user
+from flask_babel import gettext
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
 from app.miscellaneous import get_current_user_id

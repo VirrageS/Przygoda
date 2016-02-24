@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from flask.ext.wtf import Form
-from flask.ext.babel import gettext
-from flask.ext.login import current_user
+from flask_wtf import Form
+from flask_babel import gettext
+from flask_login import current_user
 
 from wtforms import BooleanField, StringField, PasswordField
 from wtforms.validators import Required, EqualTo, Email, Optional, Length

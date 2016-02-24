@@ -3,7 +3,7 @@ import random
 
 from datetime import datetime, timedelta
 
-from flask.ext.login import UserMixin
+from flask_login import UserMixin
 
 from app import db
 from app.users import constants as USER

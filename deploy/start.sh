@@ -13,6 +13,8 @@ sleep 10;
 # run celery
 . ./run-celery.sh;
 
+sleep 10;
+
 # start app
 sudo start przygoda;
 sudo service nginx restart;

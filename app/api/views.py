@@ -3,7 +3,7 @@
 from datetime import datetime
 from werkzeug import check_password_hash, generate_password_hash
 from flask import Blueprint, request, make_response, jsonify
-from flask.ext.sqlalchemy import get_debug_queries
+from flask_sqlalchemy import get_debug_queries
 
 from app.miscellaneous import to_valid_int#, api_key_required
 

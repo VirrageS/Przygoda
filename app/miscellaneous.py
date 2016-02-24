@@ -2,8 +2,8 @@
 
 from datetime import datetime, timedelta
 from functools import wraps
-from flask.ext.login import current_user
-from flask.ext.babel import gettext
+from flask_login import current_user
+from flask_babel import gettext
 from flask import redirect, url_for, flash, abort, make_response, jsonify, request
 from app.users import constants as USER
 from app import app, db

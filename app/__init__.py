@@ -2,11 +2,11 @@ import os
 import sys
 
 from flask import Flask, render_template, g, request, send_from_directory
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.login import LoginManager, current_user
-from flask.ext.mail import Mail
-from flask.ext.cache import Cache
-from flask.ext.babel import Babel, lazy_gettext
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, current_user
+from flask_mail import Mail
+from flask_cache import Cache
+from flask_babel import Babel, lazy_gettext
 from celery import Celery
 
 # set app

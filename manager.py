@@ -1,13 +1,11 @@
 from app import app, db
-from flask.ext.script import Manager
-from flask.ext.migrate import Migrate, MigrateCommand
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 
-# set migration
 migrate = Migrate(app, db)
 
-# set manager
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     manager.run()

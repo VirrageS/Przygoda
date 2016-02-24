@@ -8,15 +8,15 @@ from config import base_dir
 from werkzeug import check_password_hash, generate_password_hash
 
 from flask import Flask, render_template, g
-from flask.ext.testing import TestCase
+from flask_testing import TestCase
 
-from flask.ext.login import login_user, logout_user, login_required, LoginManager, current_user
+from flask_login import login_user, logout_user, login_required, LoginManager, current_user
 
 from app import app, db, mail
 from app.users.models import User
 from app.adventures.models import Adventure, Coordinate, AdventureParticipant
 from app.adventures import constants as ADVENTURES
-from flask.ext.mail import Mail
+from flask_mail import Mail
 
 class RoutesUsersTestCase(TestCase, unittest.TestCase):
 	def setUp(self):

@@ -77,10 +77,6 @@ sudo nginx -t;
 sudo mkdir /home/$USER/$PROJECT_NAME/logs
 sudo chmod 777 /home/$USER/$PROJECT_NAME/logs
 
-# update db models
-python3 manager.py db migrate
-python3 manager.py db upgrade
-
 # update translations
 sudo chmod -R 777 /home/$USER/$PROJECT_NAME/app/translations
 . ./env/bin/activate;

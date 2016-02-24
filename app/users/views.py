@@ -3,9 +3,9 @@
 from datetime import datetime
 from werkzeug import check_password_hash, generate_password_hash
 from flask import Blueprint, request, render_template, flash, redirect, url_for
-from flask.ext.login import current_user, login_user, logout_user, login_required
-from flask.ext.sqlalchemy import get_debug_queries
-from flask.ext.babel import gettext
+from flask_login import current_user, login_user, logout_user, login_required
+from flask_sqlalchemy import get_debug_queries
+from flask_babel import gettext
 
 from app import app, db
 from app.users.models import User
