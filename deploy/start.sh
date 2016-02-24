@@ -5,6 +5,7 @@ USER=ubuntu
 
 cd /home/$USER/;
 sudo chown ubuntu:ubuntu $PROJECT_NAME/;
+sudo chmod -R 777 $PROJECT_NAME/;
 cd $PROJECT_NAME;
 
 # run redis
