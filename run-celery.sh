@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# celery requires to save files into folder
+cd ..;
+sudo chmod 777 przygoda/
+cd przygoda/;
+
 # stop celery
 sudo ps auxww | grep 'celery worker' | awk '{print $2}' | xargs kill -9
 
