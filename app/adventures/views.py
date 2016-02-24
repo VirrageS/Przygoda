@@ -53,20 +53,13 @@ def show(adventure_id):
         return redirect(url_for('simple_page.index'))
 
     # get adventures creator and check if exists
-    user = User.query.filter_by(id=adventure.creator_id).first()
-    if user is None:
+    creator = User.query.filter_by(id=adventure.creator_id).first()
+    if creator is None:
         flash(gettext(u'Creator not found'), 'danger')
         return redirect(url_for('simple_page.index'))
 
     # get joined participants
-    participants = adventure.get_participants()
-
-    for participant in participants:
-        user = User.query.filter_by(id=participant.user_id).first()
-
-        if user is not None:
-            final_participants.append(user)
-
+    final_participants = Adventure.objects.active_participants(adventure.id)
 
     # get avaiable action
     action = 'no-action'
@@ -86,10 +79,10 @@ def show(adventure_id):
 
     final_adventure = {
         'id': adventure.id,
-        'username': user.username,
+        'creator': creator.username,
         'date': adventure.date,
         'info': adventure.info,
-        'joined': len(participants),
+        'joined': len(final_participants),
         'action': action
     }
 
@@ -100,6 +93,7 @@ def show(adventure_id):
     db.session.commit()
 
     # get coordinates of existing points
+    coordinates = Adventure.objects.coordinates(adventure_id=adventure_id)
     coordinates = Coordinate.query.filter_by(adventure_id=adventure_id).all()
     final_coordinates = [(coordinate.latitude, coordinate.longitude)
                          for coordinate in coordinates]
@@ -202,10 +196,8 @@ def my_adventures():
     final_joined_adventures = []
 
     # get all adventures which created user
-    created_adventures = Adventure.query.filter_by(creator_id=current_user.id)\
-                                  .order_by(Adventure.date.asc()).all()
-    created_adventures = [adventure for adventure in created_adventures
-                          if adventure.is_active()]
+    created_adventures = Adventure.objects.user_active_adventures(current_user.id)
+    sorted(created_adventures, key=(lambda a: a.date), reverse=False)
 
     for created_adventure in created_adventures:
         # get joined participants
@@ -267,7 +259,7 @@ def edit(adventure_id=0):
         return redirect(url_for('simple_page.index'))
 
     # get joined participants
-    final_participants = adventure.get_participants()
+    final_participants = Adventure.objects.active_participants(adventure_id)
 
     # get form
     form = EditForm(request.form, obj=adventure)

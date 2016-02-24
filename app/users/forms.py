@@ -6,20 +6,17 @@ from flask.ext.login import current_user
 
 from wtforms import BooleanField, StringField, PasswordField
 from wtforms.validators import Required, EqualTo, Email, Optional, Length
-
 from werkzeug import check_password_hash, generate_password_hash
-
 from app.users.models import User
-
 import re # for checking username
 
 def validate_username_characters(username):
+    """Validates username"""
     return username == re.sub("[^a-zA-Z0-9_\.]", "", username)
 
 def validate_username_blocked(username):
-    # blocked names
+    """Checks if username is not blocked"""
     blocked_names = ['admin', 'mod', 'moderator']
-
     for blocked_name in blocked_names:
         # check if username is substring of blocked name
         if (username.lower() in blocked_name) or (blocked_name in username.lower()):

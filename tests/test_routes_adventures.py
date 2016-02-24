@@ -8,7 +8,8 @@ from werkzeug import check_password_hash, generate_password_hash
 from flask import Flask, render_template, g
 from flask.ext.testing import TestCase
 
-from flask.ext.login import login_user, logout_user, login_required, LoginManager, current_user
+from flask.ext.login import login_user, logout_user
+from flask.ext.login import login_required, LoginManager, current_user
 
 from app import app, db
 from app.users.models import User
@@ -89,18 +90,91 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         """Ensure that show adventure require existing creator"""
 
         # add adventure to database
-        a = Adventure(
+        adventure = Adventure(
             creator_id=1,
             date=datetime.now() + timedelta(minutes=9),
             mode=ADVENTURES.RECREATIONAL,
             info='Some info today'
         )
-        db.session.add(a)
+        db.session.add(adventure)
         db.session.commit()
 
         response = self.app.get('/adventures/1', follow_redirects=True)
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed('landing.html')
+
+    def tsest_adventures_show_route_actions(self):
+        """Checks all possible actions depending on user"""
+
+        # add adventure to database
+        adventure = Adventure(
+            creator_id=2,
+            date=datetime.now() + timedelta(minutes=9),
+            mode=ADVENTURES.RECREATIONAL,
+            info='Some info today'
+        )
+        db.session.add(adventure)
+        db.session.commit()
+
+        # add user to database
+        user = User(
+            username='john',
+            password=generate_password_hash('a'),
+            email='john@example.com'
+        )
+        db.session.add(user)
+        db.session.commit()
+
+        # checks no-action
+        response = self.app.get('/adventures/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('show.html')
+        self.assertIn("no-action", response.data)
+
+        # login user to system
+        self.login(email='john@example.com', password='a')
+
+        # checks join
+        response = self.app.get('/adventures/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('show.html')
+        self.assertIn("join", response.data)
+
+        participant = AdventureParticipant(
+            user_id=user.id,
+            adventure_id=adventure.id
+        )
+        db.session.add(participant)
+        db.session.commit()
+
+        # checks join
+        response = self.app.get('/adventures/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('show.html')
+        self.assertIn("leave", response.data)
+
+
+
+        participant.left_on = datetime().now() + timedelta(minutes=-9)
+        db.session.add(participant)
+        db.session.commit()
+
+        # checks join
+        response = self.app.get('/adventures/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('show.html')
+        self.assertIn("join", response.data)
+
+
+        adventure.creator_id = 1
+        db.session.add(adventure)
+        db.session.commit()
+
+        # checks join
+        response = self.app.get('/adventures/1', follow_redirects=True)
+        self.assertTrue(response.status_code == 200)
+        self.assertTemplateUsed('show.html')
+        self.assertIn("manage", response.data)
 
     def test_adventures_show_route(self):
         """Ensure that show adventure redirect us to the right place"""
@@ -116,11 +190,18 @@ class RoutesAdventuresTestCase(TestCase, unittest.TestCase):
         db.session.commit()
 
         # add user to database
-        user = User(username='john', password=generate_password_hash('a'), email='john@example.com')
+        user = User(
+            username='john',
+            password=generate_password_hash('a'),
+            email='john@example.com'
+        )
         db.session.add(user)
         db.session.commit()
 
-        participant = AdventureParticipant(user_id=user.id, adventure_id=adventure.id)
+        participant = AdventureParticipant(
+            user_id=user.id,
+            adventure_id=adventure.id
+        )
         db.session.add(participant)
         db.session.commit()
 

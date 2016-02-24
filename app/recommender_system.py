@@ -8,12 +8,12 @@ from math import expm1
 def get_adventures_by_user_position(user_id, current_position):
     results = []
 
-    adventures = Adventure.query.all() # get all adventures
-    adventures = [adventure for adventure in adventures if adventure.is_active()] # get all active adventures
+    # get all active adventures
+    adventures = Adventure.objects.active_adventures()
 
     for adventure in adventures:
         # get add coordinates of adventure route
-        coordinates = Coordinate.query.filter_by(adventure_id=adventure.id).all()
+        coordinates = Adventure.objects.coordinates(adventure.id)
 
         # compute average distance from current position
         average_distance = 0.0
@@ -48,60 +48,34 @@ def get_adventures_by_friends(user_id):
     friends_ids = set() # set of friends user_ids
 
     # get all adventures to which user joined
-    adventures_participant = AdventureParticipant.query.filter_by(
-        user_id=user_id
-    ).all()
+    user_joined_adventures = Adventure.objects.user_joined_adventures(user_id)
 
-    joined_adventures_ids = [participant.adventure_id
-                             for participant in adventures_participant
-                             if participant.is_active()]
-
-    for joined_adventures_id in joined_adventures_ids:
-        # check if adventure ever existed
-        adventure = Adventure.query.filter_by(id=joined_adventures_id).first()
-        if adventure is None:
-            continue
-
+    for adventure in user_joined_adventures:
         # check if creator exists
         creator = User.query.filter_by(id=adventure.creator_id).first()
         if creator is None:
             continue
 
-
         # get active participants
-        participants = AdventureParticipant.query.filter_by(
-            adventure_id=adventure.id
-        ).all()
-
-        participants = [participant
-                        for participant in participants
-                            if participant.is_active()]
+        participants = Adventure.objects.active_participants(adventure.id)
 
         # save participants as a friends
         for participant in participants:
-            friends_ids.add(participant.user_id) # FIXME: change to touple (user_id, counter)
+            friends_ids.add(participant.id) # FIXME: change to touple (user_id, counter)
 
 
     results = [] # results of algorithm
 
     # get all active adventures
-    adventures = Adventure.query.all()
-    adventures = [adventure
-                  for adventure in adventures if adventure.is_active()]
+    adventures = Adventure.objects.active_adventures()
 
     for adventure in adventures:
         # get active participants
-        participants = AdventureParticipant.query.filter_by(
-            adventure_id=adventure.id
-        ).all()
-
-        participants = [participant
-                        for participant in participants
-                            if participant.is_active()]
+        paritcipants = Adventure.objects.active_participants(adventure.id)
 
         participants_ids = set()
         for participant in participants:
-            participants_ids.add(participant.user_id)
+            participants_ids.add(participant.id)
 
         # get intersection of participants_ids and friends_ids
         friends_in_adventure = friends_ids & participants_ids
@@ -127,15 +101,9 @@ def get_adventures_by_partcipants_number():
     results = []
 
     # get all active adventures
-    adventures = Adventure.query.all()
-    adventures = [adventure
-                  for adventure in adventures
-                      if adventure.is_active()]
-
+    adventures = Adventure.objects.active_adventures()
     for adventure in adventures:
-        participants = AdventureParticipant.query.filter_by(
-            adventure_id=adventure.id).all()
-
+        participants = Adventure.objects.participants(adventure.id)
         results.append({
             'adventure_id': adventure.id,
             'partcipants_number': len(participants)
@@ -153,10 +121,8 @@ def get_adventures_by_partcipants_number():
 def get_adventures_by_views():
     results = [] # final results
 
-    adventures = Adventure.query.all()
-    adventures = [adventure
-                  for adventure in adventures
-                      if adventure.is_active()]
+    # get all active adventures
+    adventures = Adventure.objects.active_adventures()
 
     for adventure in adventures:
         views = AdventureViews.query.filter_by(adventure_id=adventure.id).all()
@@ -183,10 +149,8 @@ def get_adventures_by_views():
 def get_adventures_by_searches():
     results = [] # final results
 
-    adventures = Adventure.query.all()
-    adventures = [adventure
-                  for adventure in adventures
-                      if adventure.is_active()]
+    # get all active adventures
+    adventures = Adventure.objects.active_adventures()
 
     for adventure in adventures:
         searches = AdventureSearches.query.filter_by(
@@ -217,20 +181,9 @@ def get_adventures_by_mode(user_id):
     final_results = {}
 
     # get all adventures to which user joined
-    adventures_participant = AdventureParticipant.query.filter_by(
-        user_id=user_id
-    ).all()
+    user_joined_adventures = Adventure.objects.user_joined_adventures(user_id)
 
-    joined_adventures_ids = [participant.adventure_id
-                             for participant in adventures_participant
-                                 if participant.is_active()]
-
-    for joined_adventures_id in joined_adventures_ids:
-        # check if adventure exists and is active
-        adventure = Adventure.query.filter_by(id=joined_adventures_id).first()
-        if adventure is None:
-            continue
-
+    for adventure in user_joined_adventures:
         # check if creator exists
         creator = User.query.filter_by(id=adventure.creator_id).first()
         if creator is None:
@@ -251,24 +204,12 @@ def get_adventures_by_mode(user_id):
 # @execution_time
 def get_recommended_adventures(user_id, user_position=None):
     # get all active adventures which has been created lately
-    most_recent = []
-    try:
-        most_recent = Adventure.query.order_by(Adventure.created_on.desc()).all()
-        most_recent = [adventure
-                       for adventure in most_recent
-                           if adventure.is_active]
-    except:
-        pass
+    most_recent = Adventure.objects.active_adventures()
+    sorted(most_recent, key=(lambda a: a.created_on), reverse=True)
 
     # get all active adventures which starts soon
-    start_soon = []
-    try:
-        start_soon = Adventure.query.order_by(Adventure.date.asc()).all()
-        start_soon = [adventure
-                      for adventure in start_soon
-                          if adventure.is_active()]
-    except:
-        pass
+    start_soon = Adventure.objects.active_adventures()
+    sorted(start_soon, key=(lambda a: a.date), reverse=False)
 
     # if user is not logged we should not compute top_adventures
     if user_id is None:
@@ -297,14 +238,9 @@ def get_recommended_adventures(user_id, user_position=None):
 
     # get all active adventures
     # filter adventures which user has not created
-    adventures = []
-    try:
-        adventures = Adventure.query.all()
-        adventures = [adventure
-                      for adventure in adventures
-                      if (adventure.is_active() and adventure.creator_id != user_id)]
-    except:
-        pass
+    adventures = Adventure.objects.active_adventures()
+    adventures = [adventure for adventure in adventures
+                    if adventure.creator_id != user_id]
 
     # get only adventures to which user has not joined
     tmp_adventures = []
