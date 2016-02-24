@@ -6,7 +6,7 @@ USER=ubuntu
 cd /home/$USER/$PROJECT_NAME;
 
 # run redis
-. ./run-redis.sh;
+. ./run-redis.sh -y;
 
 sleep 10;
 
