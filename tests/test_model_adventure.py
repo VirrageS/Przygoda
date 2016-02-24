@@ -148,13 +148,12 @@ class AdventureManagerTestCase(unittest.TestCase):
             db.session.commit()
 
         adventures = Adventure.objects.adventures()
-        assert adventures is not None
-        assert len(adventures) == len(ids)
+        self.assertIsNotNone(adventure)
+        self.assertEqual(len(adventures), len(ids), msg=None)
 
         for adventure in adventures:
-            assert adventure is not None
-            assert adventure.creator_id in ids
-
+            self.assertIsNotNone(adventure)
+            self.assertIn(adventure.creator_id, ids, msg=None)
 
     def test_adventure_manager_get_active_adventures(self):
         active = [1,2]

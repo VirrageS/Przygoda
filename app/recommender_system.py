@@ -61,7 +61,7 @@ def get_adventures_by_friends(user_id):
 
         # save participants as a friends
         for participant in participants:
-            friends_ids.add(participant.user_id) # FIXME: change to touple (user_id, counter)
+            friends_ids.add(participant.id) # FIXME: change to touple (user_id, counter)
 
 
     results = [] # results of algorithm
@@ -75,7 +75,7 @@ def get_adventures_by_friends(user_id):
 
         participants_ids = set()
         for participant in participants:
-            participants_ids.add(participant.user_id)
+            participants_ids.add(participant.id)
 
         # get intersection of participants_ids and friends_ids
         friends_in_adventure = friends_ids & participants_ids
@@ -204,20 +204,12 @@ def get_adventures_by_mode(user_id):
 # @execution_time
 def get_recommended_adventures(user_id, user_position=None):
     # get all active adventures which has been created lately
-    most_recent = []
-    try:
-        most_recent = Adventure.objects.active_adventures()
-        sorted(most_recent, key=(lambda a: a.created_on), reverse=True)
-    except:
-        pass
+    most_recent = Adventure.objects.active_adventures()
+    sorted(most_recent, key=(lambda a: a.created_on), reverse=True)
 
     # get all active adventures which starts soon
-    start_soon = []
-    try:
-        start_soon = Adventure.objects.active_adventures()
-        sorted(start_soon, key=(lambda a: a.date), reverse=False)
-    except:
-        pass
+    start_soon = Adventure.objects.active_adventures()
+    sorted(start_soon, key=(lambda a: a.date), reverse=False)
 
     # if user is not logged we should not compute top_adventures
     if user_id is None:
@@ -246,13 +238,9 @@ def get_recommended_adventures(user_id, user_position=None):
 
     # get all active adventures
     # filter adventures which user has not created
-    adventures = []
-    try:
-        adventures = Adventure.objects.active_adventures()
-        adventures = [adventure for adventure in adventures
-                        if adventure.creator_id != user_id]
-    except:
-        pass
+    adventures = Adventure.objects.active_adventures()
+    adventures = [adventure for adventure in adventures
+                    if adventure.creator_id != user_id]
 
     # get only adventures to which user has not joined
     tmp_adventures = []
