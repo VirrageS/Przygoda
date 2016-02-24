@@ -2,7 +2,7 @@
 
 # celery requires to save files into folder
 cd ..;
-sudo chmod 777 przygoda/
+sudo chmod -R 777 przygoda/
 cd przygoda/;
 
 # stop celery

@@ -9,13 +9,13 @@ if [ -z "$CELERY" ]; then
 fi
 
 REDIS=`pgrep -f 'redis'`;
-fi [ -z "$REDIS" ]; then
+if [ -z "$REDIS" ]; then
     echo "Redis failed!";
     exit 1;
 fi
 
 SERVICE=`pgrep -f 'przygoda'`;
-fi [ -z "$SERVICE" ]; then
+if [ -z "$SERVICE" ]; then
     echo "Service failed!";
     exit 1;
 fi

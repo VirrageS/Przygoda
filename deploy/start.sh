@@ -8,12 +8,12 @@ cd /home/$USER/$PROJECT_NAME;
 # run redis
 . ./run-redis.sh -y;
 
-sleep 10;
+sleep 5;
 
 # run celery
 . ./run-celery.sh;
 
-sleep 10;
+sleep 5;
 
 # start app
 sudo start przygoda;
