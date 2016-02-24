@@ -90,7 +90,7 @@ hooks:
   BeforeInstall:
     - location: /deploy/beforeinstall.sh
       timeout: 300
-    #   runas: root
+      runas: ubuntu
     # - location: ./deploy/start.sh
       # timeout:
       # runas:
@@ -99,7 +99,7 @@ hooks:
   AfterInstall:
     - location: /deploy/afterinstall.sh
       timeout: 400
-    #   runas: root
+      runas: ubuntu
     # - location:
       # timeout:
       # runas:
@@ -108,7 +108,7 @@ hooks:
   ApplicationStart:
     - location: /deploy/start.sh
       timeout: 300
-    #   runas: root
+      runas: ubuntu
     # - location:
       # timeout:
       # runas:
@@ -117,7 +117,7 @@ hooks:
   ValidateService:
     - location: /deploy/validateservice.sh
       timeout: 300
-      # runas:
+      runas: ubuntu
     # - location:
       # timeout:
       # runas:

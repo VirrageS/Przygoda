@@ -86,6 +86,5 @@ deactivate;
 sudo chmod a+x run-redis.sh
 sudo chmod a+x run-celery.sh
 
-cd ..;
-sudo chown ubuntu:ubuntu $PROJECT_NAME/;
-sudo chmod -R 777 $PROJECT_NAME/;
+sudo chown ubuntu:ubuntu *;
+sudo chmod -R 777 *;
