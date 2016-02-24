@@ -3,10 +3,7 @@
 PROJECT_NAME=przygoda
 USER=ubuntu
 
-cd /home/$USER/;
-sudo chown ubuntu:ubuntu $PROJECT_NAME/;
-sudo chmod -R 777 $PROJECT_NAME/;
-cd $PROJECT_NAME;
+cd /home/$USER/$PROJECT_NAME;
 
 # run redis
 . ./run-redis.sh -y;
