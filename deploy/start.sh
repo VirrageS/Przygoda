@@ -10,6 +10,11 @@ cd /home/$USER/$PROJECT_NAME;
 
 sleep 5;
 
+# celery requires to save files into folder
+cd ..;
+sudo chmod -R 777 przygoda/
+cd przygoda/;
+
 # run celery
 . ./run-celery.sh;
 
