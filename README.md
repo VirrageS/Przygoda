@@ -1,4 +1,4 @@
-# Przygoda | [![Circle CI](https://circleci.com/gh/VirrageS/przygoda.svg?style=shield&&circle-token=bbdd9a0c1379c15241b877d9678c64538730b6d5)](https://circleci.com/gh/VirrageS/przygoda) | [![Build Status](https://travis-ci.org/VirrageS/przygoda.svg?branch=master)](https://travis-ci.org/VirrageS/przygoda)
+# Przygoda | [![Circle CI](https://circleci.com/gh/VirrageS/przygoda.svg?style=shield&&circle-token=bbdd9a0c1379c15241b877d9678c64538730b6d5)](https://circleci.com/gh/VirrageS/przygoda) | [![Build Status](https://travis-ci.org/VirrageS/przygoda.svg?branch=master)](https://travis-ci.org/VirrageS/przygoda) | [![Coverage Status](https://coveralls.io/repos/github/VirrageS/przygoda/badge.svg?branch=master)](https://coveralls.io/github/VirrageS/przygoda?branch=master)
 
 The best way to find enthusiasts of bike tours.
 

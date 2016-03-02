@@ -9,4 +9,7 @@ install:
 script:
   - pip install codecov
   - pip install nose
+  - pip install python-coveralls
   - nosetests --with-coverage --cover-erase --cover-package=app --cover-html
+after_success:
+  - coveralls
