@@ -86,5 +86,5 @@ deactivate;
 sudo chmod a+x run-redis.sh
 sudo chmod a+x run-celery.sh
 
-sudo chown ubuntu:ubuntu *;
-sudo chmod -R 777 *;
+sudo chown ubuntu:ubuntu *
+. ./config.sh

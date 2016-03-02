@@ -11,20 +11,22 @@ class UserTestCase(unittest.TestCase):
         self.app = app.test_client()
 
     def test_user_username(self):
-        u = User(
+        user = User(
             username='john',
             password=generate_password_hash('a'),
             email='john@example.com'
         )
-        assert u.username == 'john'
+        
+        self.assertEqual(user.username, 'john', msg=None)
 
     def test_user_password(self):
-        u = User(
+        user = User(
             username='john',
             password=generate_password_hash('a'),
             email='john@example.com'
         )
-        assert check_password_hash(u.password, 'a')
+
+        self.assertTrue(check_password_hash(user.password, 'a'), msg=None)
 
     def test_user_email(self):
         u = User(

@@ -6,6 +6,9 @@ from app.mine.models import AdventureViews, AdventureSearches
 from math import expm1
 
 def get_adventures_by_user_position(user_id, current_position):
+    if current_position is None:
+        return None
+
     results = []
 
     # get all active adventures
