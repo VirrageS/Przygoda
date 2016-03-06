@@ -4,10 +4,6 @@ The best way to find enthusiasts of bike tours.
 
 Application make it easier to connect and create bike rides.
 
-## Live website
-
-[Bike Adventures](http://www.sportoweprzygody.pl)
-
 ## About
 
 Application is build on microframework [Flask](https://github.com/mitsuhiko/flask).
